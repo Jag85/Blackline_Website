@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, ExternalLink } from "lucide-react";
 
 export default function Footer() {
@@ -8,9 +9,13 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-2">
-              Blackline Strategy Partners
-            </h3>
+            <Image
+              src="/logo.png"
+              alt="Blackline Strategy Partners"
+              width={220}
+              height={55}
+              className="h-12 w-auto brightness-0 invert mb-4"
+            />
             <p className="text-sm leading-relaxed">
               Clarity. Strategy. Momentum.
             </p>

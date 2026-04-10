@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Mail, ExternalLink } from "lucide-react";
 
 export default function Footer() {
@@ -22,33 +23,36 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#about" className="hover:text-white transition-colors">
+                <Link
+                  href="/about"
+                  className="hover:text-white transition-colors"
+                >
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#services"
+                <Link
+                  href="/services"
                   className="hover:text-white transition-colors"
                 >
                   Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#pricing"
+                <Link
+                  href="/pricing"
                   className="hover:text-white transition-colors"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contact"
+                <Link
+                  href="/contact"
                   className="hover:text-white transition-colors"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -77,9 +81,22 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-center">
-          &copy; {new Date().getFullYear()} Blackline Strategy Partners, Inc.
-          All rights reserved.
+        <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-center space-y-2">
+          <p>
+            &copy; {new Date().getFullYear()} Blackline Strategy Partners, Inc.
+            All rights reserved.
+          </p>
+          <p className="text-gray-500">
+            Website by{" "}
+            <a
+              href="https://automatenexus.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              AutomateNexus
+            </a>
+          </p>
         </div>
       </div>
     </footer>

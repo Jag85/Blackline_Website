@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 
 const tiers = [
@@ -151,8 +152,8 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className={`w-full inline-flex items-center justify-center gap-2 text-sm font-medium px-6 py-3 rounded transition-colors ${
                   tier.featured
                     ? "bg-black text-white hover:bg-gray-800"
@@ -161,7 +162,7 @@ export default function Pricing() {
               >
                 Book Now
                 <ArrowRight size={14} />
-              </a>
+              </Link>
             </div>
           ))}
         </div>
@@ -199,8 +200,8 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className={`w-full inline-flex items-center justify-center gap-2 text-sm font-medium px-6 py-3 rounded transition-colors ${
                   r.recommended
                     ? "bg-black text-white hover:bg-gray-800"
@@ -209,7 +210,7 @@ export default function Pricing() {
               >
                 Get Started
                 <ArrowRight size={14} />
-              </a>
+              </Link>
             </div>
           ))}
         </div>

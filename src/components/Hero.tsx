@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
@@ -31,19 +32,19 @@ export default function Hero() {
             growth.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-8 py-4 rounded hover:bg-gray-800 transition-colors"
             >
               Book Your Session
               <ArrowRight size={16} />
-            </a>
-            <a
-              href="#services"
+            </Link>
+            <Link
+              href="/services"
               className="inline-flex items-center justify-center gap-2 border border-gray-300 text-sm font-medium px-8 py-4 rounded hover:border-gray-400 transition-colors"
             >
               Explore Services
-            </a>
+            </Link>
           </div>
         </div>
       </div>

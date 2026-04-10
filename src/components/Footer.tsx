@@ -12,9 +12,9 @@ export default function Footer() {
             <Image
               src="/logo.png"
               alt="Blackline Strategy Partners"
-              width={220}
-              height={55}
-              className="h-12 w-auto brightness-0 invert mb-4"
+              width={300}
+              height={75}
+              className="h-16 w-auto invert mb-4"
             />
             <p className="text-sm leading-relaxed">
               Clarity. Strategy. Momentum.

@@ -17,14 +17,14 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt="Blackline Strategy Partners"
-            width={280}
-            height={70}
-            className="h-14 md:h-16 w-auto"
+            width={400}
+            height={100}
+            className="h-16 md:h-20 w-auto"
             priority
           />
         </Link>

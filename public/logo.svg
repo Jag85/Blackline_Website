@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" fill="none">
+  <rect x="2" y="5" width="50" height="70" rx="2" fill="#2d2d2d"/>
+  <text x="14" y="58" font-family="Georgia, serif" font-size="48" font-weight="bold" fill="white">B</text>
+  <polygon points="52,40 65,30 65,50" fill="#2d2d2d"/>
+  <text x="75" y="42" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="#1a1a1a" letter-spacing="3">BLACKLINE</text>
+  <text x="75" y="62" font-family="Arial, sans-serif" font-size="12" fill="#1a1a1a" letter-spacing="2">STRATEGY PARTNERS, INC.</text>
+</svg>

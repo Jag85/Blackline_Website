@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { Target, TrendingUp, Zap } from "lucide-react";
+import AnimateOnScroll from "./AnimateOnScroll";
 
 const pillars = [
   {
@@ -25,38 +27,51 @@ export default function About() {
   return (
     <section id="about" className="py-24 md:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-2xl mb-16">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gray-500 mb-4">
-            About Blackline
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">
-            Strategic clarity for founders who are ready to grow
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Blackline Strategy Partners is a consulting firm built for founders
-            and business leaders who are stuck, scaling, or pivoting. We deliver
-            focused strategy sessions that diagnose bottlenecks, sharpen your
-            offer, and create a clear execution plan — so you can move with
-            confidence.
-          </p>
+        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center mb-20">
+          <AnimateOnScroll variant="slide-left">
+            <div className="relative rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80&auto=format&fit=crop"
+                alt="Strategic planning and consulting"
+                width={600}
+                height={400}
+                className="object-cover w-full h-[400px]"
+              />
+            </div>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll variant="slide-right">
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-500 mb-4">
+              About Blackline
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">
+              Strategic clarity for founders who are ready to grow
+            </h2>
+            <p className="text-gray-600 leading-relaxed">
+              Blackline Strategy Partners is a consulting firm built for founders
+              and business leaders who are stuck, scaling, or pivoting. We deliver
+              focused strategy sessions that diagnose bottlenecks, sharpen your
+              offer, and create a clear execution plan — so you can move with
+              confidence.
+            </p>
+          </AnimateOnScroll>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {pillars.map((pillar) => (
-            <div
-              key={pillar.title}
-              className="group p-8 border border-gray-200 rounded-lg hover:border-black transition-colors"
-            >
-              <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mb-6 group-hover:bg-black group-hover:text-white transition-colors">
-                <pillar.icon size={24} />
+          {pillars.map((pillar, i) => (
+            <AnimateOnScroll key={pillar.title} variant="fade-up" delay={i * 150}>
+              <div className="group p-8 border border-gray-200 rounded-lg hover:border-black transition-colors h-full">
+                <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mb-6 group-hover:bg-black group-hover:text-white transition-colors">
+                  <pillar.icon size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-black mb-3">
+                  {pillar.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {pillar.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-black mb-3">
-                {pillar.title}
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {pillar.description}
-              </p>
-            </div>
+            </AnimateOnScroll>
           ))}
         </div>
       </div>

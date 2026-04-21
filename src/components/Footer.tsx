@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -55,6 +55,39 @@ export default function Footer() {
                   className="hover:text-white transition-colors"
                 >
                   Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Free Tools */}
+          <div>
+            <h4 className="text-white text-sm font-semibold uppercase tracking-wider mb-4">
+              Free Tools
+            </h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href="/scorecard"
+                  className="hover:text-white transition-colors"
+                >
+                  FOCUS Scorecard
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/capital-conversion"
+                  className="hover:text-white transition-colors"
+                >
+                  Capital Conversion Convo
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/clarity-index"
+                  className="hover:text-white transition-colors"
+                >
+                  Founder Clarity Index
                 </Link>
               </li>
             </ul>

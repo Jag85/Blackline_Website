@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUS Founder Scorecard</title>
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ===== PROGRESS INDICATOR ===== */
+        .progress-container {
+            margin-bottom: 32px;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .progress-step.active {
+            background: #1a1a1a;
+        }
+
+        .progress-step.completed {
+            background: #666;
+        }
+
+        .progress-label {
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+            font-weight: 500;
+        }
+
+        /* ===== SECTION STYLES ===== */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ===== QUESTION STYLES ===== */
+        .question {
+            margin-bottom: 28px;
+        }
+
+        .question-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .option.selected {
+            border-color: #1a1a1a;
+            background: #f5f5f5;
+        }
+
+        .option input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* ===== NAVIGATION BUTTONS ===== */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .button {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .button:hover {
+            background: #333;
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #e0e0e0;
+        }
+
+        .button-secondary:hover {
+            background: #fafafa;
+            border-color: #999;
+        }
+
+        /* ===== RESULTS STYLES ===== */
+        .results {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .results-header h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .scores-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .score-card {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-card.bottleneck {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .score-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .score-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .score-card.bottleneck .score-value {
+            color: #ff6b6b;
+        }
+
+        .bottleneck-indicator {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #fff5f5;
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+        }
+
+        .bottleneck-indicator h3 {
+            font-size: 20px;
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+
+        .bottleneck-indicator p {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .recommendation-box {
+            padding: 24px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 32px;
+        }
+
+        .recommendation-box h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .recommendation-box p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 32px;
+            background: #fafafa;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .cta-section h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #1a1a1a;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .cta-button:hover {
+            background: #333;
+        }
+
+        .contact-section {
+            padding: 32px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .contact-section h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            text-align: center;
+        }
+
+        .contact-section > p {
+            text-align: center;
+        }
+
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .form-field input::placeholder {
+            color: #999;
+        }
+
+        .cta-button-full {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .form-note {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        .ccc-mention {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .results .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .results .navigation button {
+            flex: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .results .navigation {
+                flex-direction: column;
+            }
+
+            .results .navigation button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>FOCUS Founder Scorecard</h1>
+            <p class="subtitle">Identify the biggest constraint in your business across five core pillars: Founder Vision, Offer Clarity, Customer Acquisition, Unit Economics, and Systems & Scalability.</p>
+        </div>
+
+        <!-- PROGRESS INDICATOR -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-step" data-step="0"></div>
+                <div class="progress-step" data-step="1"></div>
+                <div class="progress-step" data-step="2"></div>
+                <div class="progress-step" data-step="3"></div>
+                <div class="progress-step" data-step="4"></div>
+            </div>
+            <div class="progress-label">Step <span id="currentStepLabel">1</span> of 5</div>
+        </div>
+
+        <!-- SECTION 1: FOUNDER VISION -->
+        <div class="section active" data-section="0">
+            <div class="section-title">
+                <span class="section-number">F</span>
+                Founder Vision
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you clearly understand the problem your business solves?</label>
+                <div class="options">
+                    <div class="option" data-question="f1" data-value="3">
+                        <input type="radio" name="f1" value="3" id="f1-3">
+                        <label for="f1-3">Very clear</label>
+                    </div>
+                    <div class="option" data-question="f1" data-value="2">
+                        <input type="radio" name="f1" value="2" id="f1-2">
+                        <label for="f1-2">Somewhat clear</label>
+                    </div>
+                    <div class="option" data-question="f1" data-value="1">
+                        <input type="radio" name="f1" value="1" id="f1-1">
+                        <label for="f1-1">Still exploring</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you know exactly who your ideal customer is?</label>
+                <div class="options">
+                    <div class="option" data-question="f2" data-value="3">
+                        <input type="radio" name="f2" value="3" id="f2-3">
+                        <label for="f2-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="f2" data-value="2">
+                        <input type="radio" name="f2" value="2" id="f2-2">
+                        <label for="f2-2">Somewhat</label>
+                    </div>
+                    <div class="option" data-question="f2" data-value="1">
+                        <input type="radio" name="f2" value="1" id="f2-1">
+                        <label for="f2-1">Not yet</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: OFFER CLARITY -->
+        <div class="section" data-section="1">
+            <div class="section-title">
+                <span class="section-number">O</span>
+                Offer Clarity
+            </div>
+
+            <div class="question">
+                <label class="question-label">Can you describe what your business sells in one sentence?</label>
+                <div class="options">
+                    <div class="option" data-question="o1" data-value="3">
+                        <input type="radio" name="o1" value="3" id="o1-3">
+                        <label for="o1-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="o1" data-value="2">
+                        <input type="radio" name="o1" value="2" id="o1-2">
+                        <label for="o1-2">Somewhat</label>
+                    </div>
+                    <div class="option" data-question="o1" data-value="1">
+                        <input type="radio" name="o1" value="1" id="o1-1">
+                        <label for="o1-1">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Is your pricing structure defined?</label>
+                <div class="options">
+                    <div class="option" data-question="o2" data-value="3">
+                        <input type="radio" name="o2" value="3" id="o2-3">
+                        <label for="o2-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="o2" data-value="2">
+                        <input type="radio" name="o2" value="2" id="o2-2">
+                        <label for="o2-2">Partially</label>
+                    </div>
+                    <div class="option" data-question="o2" data-value="1">
+                        <input type="radio" name="o2" value="1" id="o2-1">
+                        <label for="o2-1">Not yet</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: CUSTOMER ACQUISITION -->
+        <div class="section" data-section="2">
+            <div class="section-title">
+                <span class="section-number">C</span>
+                Customer Acquisition
+            </div>
+
+            <div class="question">
+                <label class="question-label">How are customers currently finding your business?</label>
+                <div class="options">
+                    <div class="option" data-question="c1" data-value="3">
+                        <input type="radio" name="c1" value="3" id="c1-3">
+                        <label for="c1-3">Consistent system</label>
+                    </div>
+                    <div class="option" data-question="c1" data-value="2">
+                        <input type="radio" name="c1" value="2" id="c1-2">
+                        <label for="c1-2">Occasional referrals</label>
+                    </div>
+                    <div class="option" data-question="c1" data-value="1">
+                        <input type="radio" name="c1" value="1" id="c1-1">
+                        <label for="c1-1">No system yet</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you have a repeatable method for generating leads?</label>
+                <div class="options">
+                    <div class="option" data-question="c2" data-value="3">
+                        <input type="radio" name="c2" value="3" id="c2-3">
+                        <label for="c2-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="c2" data-value="2">
+                        <input type="radio" name="c2" value="2" id="c2-2">
+                        <label for="c2-2">Somewhat</label>
+                    </div>
+                    <div class="option" data-question="c2" data-value="1">
+                        <input type="radio" name="c2" value="1" id="c2-1">
+                        <label for="c2-1">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: UNIT ECONOMICS -->
+        <div class="section" data-section="3">
+            <div class="section-title">
+                <span class="section-number">U</span>
+                Unit Economics
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you know how much profit you make per sale?</label>
+                <div class="options">
+                    <div class="option" data-question="u1" data-value="3">
+                        <input type="radio" name="u1" value="3" id="u1-3">
+                        <label for="u1-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="u1" data-value="2">
+                        <input type="radio" name="u1" value="2" id="u1-2">
+                        <label for="u1-2">Rough estimate</label>
+                    </div>
+                    <div class="option" data-question="u1" data-value="1">
+                        <input type="radio" name="u1" value="1" id="u1-1">
+                        <label for="u1-1">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you know your cost to acquire a customer?</label>
+                <div class="options">
+                    <div class="option" data-question="u2" data-value="3">
+                        <input type="radio" name="u2" value="3" id="u2-3">
+                        <label for="u2-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="u2" data-value="2">
+                        <input type="radio" name="u2" value="2" id="u2-2">
+                        <label for="u2-2">Somewhat</label>
+                    </div>
+                    <div class="option" data-question="u2" data-value="1">
+                        <input type="radio" name="u2" value="1" id="u2-1">
+                        <label for="u2-1">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: SYSTEMS & SCALABILITY -->
+        <div class="section" data-section="4">
+            <div class="section-title">
+                <span class="section-number">S</span>
+                Systems & Scalability
+            </div>
+
+            <div class="question">
+                <label class="question-label">If your customers doubled tomorrow, could your business handle it?</label>
+                <div class="options">
+                    <div class="option" data-question="s1" data-value="3">
+                        <input type="radio" name="s1" value="3" id="s1-3">
+                        <label for="s1-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="s1" data-value="2">
+                        <input type="radio" name="s1" value="2" id="s1-2">
+                        <label for="s1-2">Somewhat</label>
+                    </div>
+                    <div class="option" data-question="s1" data-value="1">
+                        <input type="radio" name="s1" value="1" id="s1-1">
+                        <label for="s1-1">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Do you have documented processes for delivering your product or service?</label>
+                <div class="options">
+                    <div class="option" data-question="s2" data-value="3">
+                        <input type="radio" name="s2" value="3" id="s2-3">
+                        <label for="s2-3">Yes</label>
+                    </div>
+                    <div class="option" data-question="s2" data-value="2">
+                        <input type="radio" name="s2" value="2" id="s2-2">
+                        <label for="s2-2">Partially</label>
+                    </div>
+                    <div class="option" data-question="s2" data-value="1">
+                        <input type="radio" name="s2" value="1" id="s2-1">
+                        <label for="s2-1">Not yet</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="navigation">
+            <button class="button button-secondary" id="backBtn" style="display: none;">Back</button>
+            <div></div>
+            <button class="button" id="nextBtn" disabled>Continue</button>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="results">
+            <div class="results-header">
+                <h2>FOCUS Founder Scorecard Results</h2>
+            </div>
+
+            <div class="scores-grid" id="scoresGrid"></div>
+
+            <div class="bottleneck-indicator" id="bottleneckIndicator"></div>
+
+            <div class="recommendation-box" id="recommendationBox"></div>
+
+            <div class="contact-section">
+                <h3>Want help solving this constraint?</h3>
+                <p style="margin-bottom: 20px; color: #555; font-size: 15px;">
+                    Get personalized guidance on addressing your biggest bottleneck.
+                </p>
+                
+                <div class="contact-form">
+                    <div class="form-field">
+                        <label for="contactName">Name *</label>
+                        <input 
+                            type="text" 
+                            id="contactName" 
+                            placeholder="Your name"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="contactEmail">Email *</label>
+                        <input 
+                            type="email" 
+                            id="contactEmail" 
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="contactBusiness">Business Name (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="contactBusiness" 
+                            placeholder="Your business name"
+                        >
+                    </div>
+                    
+                    <button class="button cta-button-full" id="submitContactBtn">
+                        Book Strategy Session
+                    </button>
+                    
+                    <p class="form-note">
+                        * Required fields. Your information will be used only to follow up on your diagnostic results.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cta-section" style="display: none;" id="ctaConfirmation">
+                <h3>✓ Thank you!</h3>
+                <p style="margin-bottom: 16px;">Opening your booking page...</p>
+                <a href="https://calendly.com/jarrellagreen/30min" class="cta-button" target="_blank">Book Strategy Session</a>
+            </div>
+
+            <div class="ccc-mention">
+                <p>Many founders with this constraint benefit from improving how they convert opportunities into customers using the <strong>CCC framework</strong> (Conversation Conversion Customers).</p>
+            </div>
+
+            <div class="navigation">
+                <button class="button button-secondary" onclick="location.reload()">Start Over</button>
+                <button class="button" onclick="emailResults()">Email to Myself</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== STATE MANAGEMENT =====
+        let currentSection = 0;
+        const totalSections = 5;
+        const answers = {
+            f1: 0, f2: 0,
+            o1: 0, o2: 0,
+            c1: 0, c2: 0,
+            u1: 0, u2: 0,
+            s1: 0, s2: 0
+        };
+
+        // ===== RECOMMENDATION DATABASE =====
+        const recommendations = {
+            'Founder Vision': {
+                title: 'Your biggest constraint: Founder Vision',
+                text: 'Your business needs clearer direction. Without a well-defined problem and target customer, every other decision becomes guesswork. Focus on deeply understanding the specific problem you solve and who experiences it most acutely. This clarity will cascade into every other area of your business.'
+            },
+            'Offer Clarity': {
+                title: 'Your biggest constraint: Offer Clarity',
+                text: 'Your business may need a clearer offer. Focus on defining exactly what problem you solve and how customers buy your solution. A confused offer creates friction at every stage—marketing becomes harder, sales conversations stall, and pricing feels arbitrary. Simplify what you sell into one clear sentence.'
+            },
+            'Customer Acquisition': {
+                title: 'Your biggest constraint: Customer Acquisition',
+                text: 'Your business likely needs a structured method for attracting customers. Focus on building a repeatable system for generating leads instead of relying on random discovery. Inconsistent customer flow means unpredictable revenue, which makes every other business decision reactive rather than strategic.'
+            },
+            'Unit Economics': {
+                title: 'Your biggest constraint: Unit Economics',
+                text: 'Your business needs financial clarity. Without knowing your profit per sale and cost to acquire customers, you cannot make informed decisions about pricing, marketing spend, or growth. Focus on calculating these core metrics—they determine whether your business model is fundamentally viable.'
+            },
+            'Systems & Scalability': {
+                title: 'Your biggest constraint: Systems & Scalability',
+                text: 'Your business is likely constrained by operational readiness. Without documented processes and scalable systems, growth becomes chaotic rather than compounding. Focus on documenting your delivery process and building infrastructure that can handle 2-3x your current volume before actively pursuing that growth.'
+            }
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressIndicator();
+            attachEventListeners();
+        });
+
+        // ===== EVENT LISTENERS =====
+        function attachEventListeners() {
+            // Option click handlers
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionName = this.getAttribute('data-question');
+                    const value = this.getAttribute('data-value');
+                    const radio = this.querySelector('input[type="radio"]');
+                    
+                    // Update selection
+                    radio.checked = true;
+                    answers[questionName] = parseInt(value);
+                    
+                    // Update visual state
+                    document.querySelectorAll(`[data-question="${questionName}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // Check if section is complete
+                    checkSectionComplete();
+                });
+            });
+
+            // Navigation buttons
+            document.getElementById('nextBtn').addEventListener('click', nextSection);
+            document.getElementById('backBtn').addEventListener('click', previousSection);
+
+            // Contact form submission (will be attached after results are shown)
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'submitContactBtn') {
+                    submitContactForm();
+                }
+            });
+        }
+
+        // ===== NAVIGATION LOGIC =====
+        function checkSectionComplete() {
+            const currentQuestions = getCurrentSectionQuestions();
+            const allAnswered = currentQuestions.every(q => answers[q] > 0);
+            document.getElementById('nextBtn').disabled = !allAnswered;
+        }
+
+        function getCurrentSectionQuestions() {
+            const sections = [
+                ['f1', 'f2'],
+                ['o1', 'o2'],
+                ['c1', 'c2'],
+                ['u1', 'u2'],
+                ['s1', 's2']
+            ];
+            return sections[currentSection];
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                // Move to next section
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                currentSection++;
+                document.querySelector(`[data-section="${currentSection}"]`).classList.add('active');
+                
+                updateProgressIndicator();
+                updateNavigationButtons();
+                checkSectionComplete();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // Show results
+                generateResults();
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                currentSection--;
+                document.querySelector(`[data-section="${currentSection}"]`).classList.add('active');
+                
+                updateProgressIndicator();
+                updateNavigationButtons();
+                checkSectionComplete();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateProgressIndicator() {
+            // Update progress bars
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index < currentSection) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentSection) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+            
+            // Update label
+            document.getElementById('currentStepLabel').textContent = currentSection + 1;
+        }
+
+        function updateNavigationButtons() {
+            const backBtn = document.getElementById('backBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Show/hide back button
+            backBtn.style.display = currentSection > 0 ? 'block' : 'none';
+            
+            // Update next button text
+            nextBtn.textContent = currentSection === totalSections - 1 ? 'See Results' : 'Continue';
+        }
+
+        // ===== RESULTS CALCULATION =====
+        function generateResults() {
+            // Calculate scores for each category
+            const scores = {
+                'Founder Vision': answers.f1 + answers.f2,
+                'Offer Clarity': answers.o1 + answers.o2,
+                'Customer Acquisition': answers.c1 + answers.c2,
+                'Unit Economics': answers.u1 + answers.u2,
+                'Systems & Scalability': answers.s1 + answers.s2
+            };
+
+            // Find bottleneck (lowest score)
+            let bottleneck = null;
+            let lowestScore = Infinity;
+            for (let category in scores) {
+                if (scores[category] < lowestScore) {
+                    lowestScore = scores[category];
+                    bottleneck = category;
+                }
+            }
+
+            // Display results
+            displayResults(scores, bottleneck);
+        }
+
+        function displayResults(scores, bottleneck) {
+            // Hide sections and navigation
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.querySelector('.navigation').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+
+            // Track completion via Formspree
+            trackCompletion(scores, bottleneck);
+
+            // Populate scores grid
+            const scoresGrid = document.getElementById('scoresGrid');
+            scoresGrid.innerHTML = '';
+            
+            for (let category in scores) {
+                const isBottleneck = category === bottleneck;
+                const scoreCard = document.createElement('div');
+                scoreCard.className = `score-card ${isBottleneck ? 'bottleneck' : ''}`;
+                scoreCard.innerHTML = `
+                    <div class="score-label">${category}</div>
+                    <div class="score-value">${scores[category]}</div>
+                `;
+                scoresGrid.appendChild(scoreCard);
+            }
+
+            // Populate bottleneck indicator
+            const bottleneckIndicator = document.getElementById('bottleneckIndicator');
+            bottleneckIndicator.innerHTML = `
+                <h3>Primary Bottleneck</h3>
+                <p>${bottleneck}</p>
+            `;
+
+            // Populate recommendation
+            const recommendationBox = document.getElementById('recommendationBox');
+            const recommendation = recommendations[bottleneck];
+            recommendationBox.innerHTML = `
+                <h3>${recommendation.title}</h3>
+                <p>${recommendation.text}</p>
+            `;
+
+            // Show results
+            document.querySelector('.results').classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== FORMSPREE TRACKING =====
+        async function trackCompletion(scores, bottleneck, contactInfo = null) {
+            try {
+                const payload = {
+                    timestamp: new Date().toISOString(),
+                    // All answers
+                    f1: answers.f1,
+                    f2: answers.f2,
+                    o1: answers.o1,
+                    o2: answers.o2,
+                    c1: answers.c1,
+                    c2: answers.c2,
+                    u1: answers.u1,
+                    u2: answers.u2,
+                    s1: answers.s1,
+                    s2: answers.s2,
+                    // Calculated scores
+                    founderVisionScore: scores['Founder Vision'],
+                    offerClarityScore: scores['Offer Clarity'],
+                    customerAcquisitionScore: scores['Customer Acquisition'],
+                    unitEconomicsScore: scores['Unit Economics'],
+                    systemsScalabilityScore: scores['Systems & Scalability'],
+                    // Primary bottleneck
+                    primaryBottleneck: bottleneck
+                };
+
+                // Add contact info if provided
+                if (contactInfo) {
+                    payload.contactName = contactInfo.name;
+                    payload.contactEmail = contactInfo.email;
+                    payload.contactBusiness = contactInfo.business || 'Not provided';
+                }
+
+                await fetch('https://formspree.io/f/mjgagvyb', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.log('Tracking error:', error);
+            }
+        }
+
+        // ===== CONTACT FORM SUBMISSION =====
+        function submitContactForm() {
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const business = document.getElementById('contactBusiness').value.trim();
+
+            // Validate required fields
+            if (!name) {
+                alert('Please enter your name');
+                document.getElementById('contactName').focus();
+                return;
+            }
+
+            if (!email) {
+                alert('Please enter your email');
+                document.getElementById('contactEmail').focus();
+                return;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                document.getElementById('contactEmail').focus();
+                return;
+            }
+
+            // Get scores and bottleneck
+            const scores = {
+                'Founder Vision': answers.f1 + answers.f2,
+                'Offer Clarity': answers.o1 + answers.o2,
+                'Customer Acquisition': answers.c1 + answers.c2,
+                'Unit Economics': answers.u1 + answers.u2,
+                'Systems & Scalability': answers.s1 + answers.s2
+            };
+
+            let bottleneck = null;
+            let lowestScore = Infinity;
+            for (let category in scores) {
+                if (scores[category] < lowestScore) {
+                    lowestScore = scores[category];
+                    bottleneck = category;
+                }
+            }
+
+            // Submit to Formspree with contact info
+            const contactInfo = {
+                name: name,
+                email: email,
+                business: business
+            };
+
+            trackCompletion(scores, bottleneck, contactInfo);
+
+            // Show confirmation and open booking link
+            document.querySelector('.contact-section').style.display = 'none';
+            document.getElementById('ctaConfirmation').style.display = 'block';
+            
+            // Open booking link in new tab
+            setTimeout(() => {
+                window.open('https://calendly.com/jarrellagreen/30min', '_blank');
+            }, 500);
+        }
+
+        // ===== EMAIL RESULTS FUNCTION =====
+        function emailResults() {
+            const scores = {
+                'Founder Vision': answers.f1 + answers.f2,
+                'Offer Clarity': answers.o1 + answers.o2,
+                'Customer Acquisition': answers.c1 + answers.c2,
+                'Unit Economics': answers.u1 + answers.u2,
+                'Systems & Scalability': answers.s1 + answers.s2
+            };
+
+            let bottleneck = null;
+            let lowestScore = Infinity;
+            for (let category in scores) {
+                if (scores[category] < lowestScore) {
+                    lowestScore = scores[category];
+                    bottleneck = category;
+                }
+            }
+
+            const recommendation = recommendations[bottleneck];
+
+            const emailBody = `FOCUS FOUNDER SCORECARD - RESULTS
+
+SCORES:
+Founder Vision: ${scores['Founder Vision']}
+Offer Clarity: ${scores['Offer Clarity']}
+Customer Acquisition: ${scores['Customer Acquisition']}
+Unit Economics: ${scores['Unit Economics']}
+Systems & Scalability: ${scores['Systems & Scalability']}
+
+-----
+
+PRIMARY BOTTLENECK: ${bottleneck}
+
+${recommendation.title}
+
+${recommendation.text}
+
+-----
+
+Next Step: Book a strategy session to address this constraint.
+https://calendly.com/jarrellagreen/30min`;
+
+            const subject = encodeURIComponent('My FOCUS Scorecard Results');
+            const body = encodeURIComponent(emailBody);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>

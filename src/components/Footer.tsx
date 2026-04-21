@@ -1,22 +1,24 @@
 import Link from "next/link";
 import { Mail, ExternalLink } from "lucide-react";
+import SubscribeForm from "./SubscribeForm";
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-4 gap-12">
-          {/* Brand */}
-          <div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
+          {/* Brand + Newsletter spans wider */}
+          <div className="lg:col-span-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo-white.svg"
               alt="Blackline Strategy Partners"
               className="h-14 w-auto mb-4"
             />
-            <p className="text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed mb-8">
               Clarity. Strategy. Momentum.
             </p>
+            <SubscribeForm />
           </div>
 
           {/* Quick Links */}
@@ -47,6 +49,14 @@ export default function Footer() {
                   className="hover:text-white transition-colors"
                 >
                   Pricing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/blog"
+                  className="hover:text-white transition-colors"
+                >
+                  Blog
                 </Link>
               </li>
               <li>
@@ -101,9 +111,9 @@ export default function Footer() {
             <div className="space-y-3 text-sm">
               <a
                 href="mailto:info@blacklinestrategy.com"
-                className="flex items-center gap-2 hover:text-white transition-colors"
+                className="flex items-center gap-2 hover:text-white transition-colors break-all"
               >
-                <Mail size={16} />
+                <Mail size={16} className="shrink-0" />
                 info@blacklinestrategy.com
               </a>
               <a

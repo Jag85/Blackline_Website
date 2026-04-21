@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 import Image from "next/image";
 import { Send, ArrowRight } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
+import { contactAction, type ContactResult } from "@/app/actions/contact";
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [state, formAction, pending] = useActionState<
+    ContactResult | null,
+    FormData
+  >(contactAction, null);
 
   return (
     <section id="contact" className="py-24 md:py-32 bg-gray-50">
@@ -63,7 +67,7 @@ export default function Contact() {
           {/* Right column - form */}
           <AnimateOnScroll variant="slide-right" delay={150}>
             <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
-              {submitted ? (
+              {state?.ok ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Send size={24} className="text-green-600" />
@@ -71,18 +75,10 @@ export default function Contact() {
                   <h3 className="text-xl font-bold text-black mb-2">
                     Message Sent
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    We&apos;ll be in touch within 24 hours.
-                  </p>
+                  <p className="text-gray-600 text-sm">{state.message}</p>
                 </div>
               ) : (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSubmitted(true);
-                  }}
-                  className="space-y-5"
-                >
+                <form action={formAction} className="space-y-5">
                   <div>
                     <label
                       htmlFor="name"
@@ -93,6 +89,7 @@ export default function Contact() {
                     <input
                       type="text"
                       id="name"
+                      name="name"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors"
                       placeholder="Your name"
@@ -108,6 +105,7 @@ export default function Contact() {
                     <input
                       type="email"
                       id="email"
+                      name="email"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors"
                       placeholder="you@company.com"
@@ -122,20 +120,21 @@ export default function Contact() {
                     </label>
                     <select
                       id="service"
+                      name="service"
                       className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors bg-white"
                     >
                       <option value="">Select a service</option>
-                      <option value="bottleneck">
+                      <option value="Founder Bottleneck Session">
                         Founder Bottleneck Session ($75)
                       </option>
-                      <option value="growth-strategy">
+                      <option value="30-Day Growth Strategy">
                         30-Day Growth Strategy ($150)
                       </option>
-                      <option value="roadmap">
+                      <option value="Growth Roadmap Session">
                         Growth Roadmap Session ($350)
                       </option>
-                      <option value="advisory">Monthly Advisory</option>
-                      <option value="not-sure">Not sure yet</option>
+                      <option value="Monthly Advisory">Monthly Advisory</option>
+                      <option value="Not sure yet">Not sure yet</option>
                     </select>
                   </div>
                   <div>
@@ -147,17 +146,27 @@ export default function Contact() {
                     </label>
                     <textarea
                       id="message"
+                      name="message"
                       rows={4}
                       className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors resize-none"
                       placeholder="What's your biggest challenge right now?"
                     />
                   </div>
+                  {state && !state.ok && (
+                    <p
+                      className="text-sm text-red-600"
+                      role="alert"
+                    >
+                      {state.message}
+                    </p>
+                  )}
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-6 py-4 rounded hover:bg-gray-800 transition-colors"
+                    disabled={pending}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-6 py-4 rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message
-                    <ArrowRight size={16} />
+                    {pending ? "Sending..." : "Send Message"}
+                    {!pending && <ArrowRight size={16} />}
                   </button>
                 </form>
               )}

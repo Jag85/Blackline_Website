@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ToolEmbed from "@/components/ToolEmbed";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import NextStepsCTA from "@/components/NextStepsCTA";
 
 export const metadata: Metadata = {
   title: "Capital Conversion Convo | Blackline Strategy Partners",
@@ -37,6 +38,35 @@ export default function CapitalConversionPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      <NextStepsCTA
+        heading="Ready to put this into action?"
+        description="Turn what you learned into a clear strategy with help from our team."
+        steps={[
+          {
+            title: "Book a Growth Roadmap",
+            description:
+              "Take a deep dive into your business model, offer, and customer acquisition strategy.",
+            href: "/contact",
+            cta: "Book a Session",
+            primary: true,
+          },
+          {
+            title: "See Pricing & Packages",
+            description:
+              "From single sessions to monthly advisory — find the level of partnership that fits.",
+            href: "/pricing",
+            cta: "View Pricing",
+          },
+          {
+            title: "Try Another Tool",
+            description:
+              "Diagnose your primary bottleneck with the FOCUS Founder Scorecard.",
+            href: "/tools",
+            cta: "Browse Tools",
+          },
+        ]}
+      />
     </div>
   );
 }

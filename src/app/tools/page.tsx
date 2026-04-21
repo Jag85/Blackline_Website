@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Target, TrendingUp, Compass } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import NextStepsCTA from "@/components/NextStepsCTA";
 
 export const metadata: Metadata = {
   title: "Free Tools | Blackline Strategy Partners",
@@ -50,7 +51,14 @@ export default function ToolsPage() {
             </h1>
             <p className="text-gray-600 max-w-2xl">
               Get clarity on where you are and what to do next. Use any of our
-              free tools to assess, plan, and prioritize.
+              free tools to assess, plan, and prioritize — then{" "}
+              <Link
+                href="/contact"
+                className="text-black underline underline-offset-4 hover:text-gray-700"
+              >
+                book a session
+              </Link>{" "}
+              to put it into action.
             </p>
           </AnimateOnScroll>
         </div>
@@ -88,6 +96,30 @@ export default function ToolsPage() {
           </div>
         </div>
       </section>
+
+      <NextStepsCTA
+        eyebrow="When You're Ready"
+        heading="Turn insight into action"
+        description="Free tools give you clarity. Our team helps you execute on it."
+        variant="dark"
+        steps={[
+          {
+            title: "Book a Strategy Session",
+            description:
+              "Walk through your results and build a plan to fix your bottleneck.",
+            href: "/contact",
+            cta: "Get in Touch",
+            primary: true,
+          },
+          {
+            title: "Explore Our Services",
+            description:
+              "From single sessions to ongoing fractional CSO advisory.",
+            href: "/services",
+            cta: "View Services",
+          },
+        ]}
+      />
     </div>
   );
 }

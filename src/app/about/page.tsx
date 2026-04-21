@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import About from "@/components/About";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import NextStepsCTA from "@/components/NextStepsCTA";
 
 export const metadata: Metadata = {
   title: "About | Blackline Strategy Partners",
@@ -24,6 +25,36 @@ export default function AboutPage() {
         </div>
       </div>
       <About />
+
+      <NextStepsCTA
+        eyebrow="Get Started"
+        heading="Ready to put this into practice?"
+        description="See what we offer, explore our pricing, or start with a free diagnostic tool."
+        steps={[
+          {
+            title: "Explore Our Services",
+            description:
+              "From single strategy sessions to ongoing advisory partnerships.",
+            href: "/services",
+            cta: "View Services",
+            primary: true,
+          },
+          {
+            title: "Try a Free Tool",
+            description:
+              "Diagnose your bottleneck or measure your clarity in minutes.",
+            href: "/tools",
+            cta: "Browse Tools",
+          },
+          {
+            title: "Book a Session",
+            description:
+              "Tell us about your business and we'll recommend a starting point.",
+            href: "/contact",
+            cta: "Get in Touch",
+          },
+        ]}
+      />
     </div>
   );
 }

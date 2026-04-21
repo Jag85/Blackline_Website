@@ -131,6 +131,12 @@ export default function Home() {
               >
                 See Pricing
               </Link>
+              <Link
+                href="/tools"
+                className="inline-flex items-center justify-center gap-2 border border-gray-300 text-sm font-medium px-8 py-4 rounded hover:border-gray-400 transition-colors"
+              >
+                Free Tools
+              </Link>
             </div>
           </AnimateOnScroll>
         </div>

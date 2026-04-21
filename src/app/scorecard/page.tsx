@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ToolEmbed from "@/components/ToolEmbed";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import NextStepsCTA from "@/components/NextStepsCTA";
 
 export const metadata: Metadata = {
   title: "FOCUS Founder Scorecard | Blackline Strategy Partners",
@@ -37,6 +38,35 @@ export default function ScorecardPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      <NextStepsCTA
+        heading="Got your results? Here's what's next."
+        description="Use your scorecard insights to take the next step toward growth."
+        steps={[
+          {
+            title: "Book a Strategy Session",
+            description:
+              "Walk through your results with a strategist and build a plan to fix your bottleneck.",
+            href: "/contact",
+            cta: "Book a Session",
+            primary: true,
+          },
+          {
+            title: "Explore Our Services",
+            description:
+              "See how our diagnostic, strategy, and advisory services can help you move forward.",
+            href: "/services",
+            cta: "View Services",
+          },
+          {
+            title: "Try Another Tool",
+            description:
+              "Continue your self-assessment with the Founder Clarity Index or Capital Conversion Convo.",
+            href: "/tools",
+            cta: "Browse Tools",
+          },
+        ]}
+      />
     </div>
   );
 }

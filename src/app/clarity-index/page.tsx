@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ToolEmbed from "@/components/ToolEmbed";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import NextStepsCTA from "@/components/NextStepsCTA";
 
 export const metadata: Metadata = {
   title: "Founder Clarity Index | Blackline Strategy Partners",
@@ -37,6 +38,35 @@ export default function ClarityIndexPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      <NextStepsCTA
+        heading="Where to go from here"
+        description="Now that you've measured your clarity, build a plan to sharpen it."
+        steps={[
+          {
+            title: "Get a 30-Day Growth Strategy",
+            description:
+              "Walk away with a clear execution plan and prioritized actions for the next month.",
+            href: "/contact",
+            cta: "Book a Session",
+            primary: true,
+          },
+          {
+            title: "Explore Our Services",
+            description:
+              "From quick diagnostics to fractional CSO advisory, see what fits your stage.",
+            href: "/services",
+            cta: "View Services",
+          },
+          {
+            title: "Try Another Tool",
+            description:
+              "Take the FOCUS Founder Scorecard or Capital Conversion Convo next.",
+            href: "/tools",
+            cta: "Browse Tools",
+          },
+        ]}
+      />
     </div>
   );
 }

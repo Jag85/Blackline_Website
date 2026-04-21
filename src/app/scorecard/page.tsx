@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ToolEmbed from "@/components/ToolEmbed";
+import FocusScorecard from "@/components/tools/FocusScorecard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
 
@@ -29,12 +29,9 @@ export default function ScorecardPage() {
         </div>
       </div>
       <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">
-            <ToolEmbed
-              src="/tools/scorecard/index.html"
-              title="FOCUS Founder Scorecard"
-            />
+            <FocusScorecard />
           </AnimateOnScroll>
         </div>
       </section>

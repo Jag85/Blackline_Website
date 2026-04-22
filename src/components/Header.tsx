@@ -14,7 +14,7 @@ const navLinks = [
 const toolLinks = [
   { label: "All Tools", href: "/tools" },
   { label: "FOCUS Founder Scorecard", href: "/scorecard" },
-  { label: "Capital Conversion Convo", href: "/capital-conversion" },
+  { label: "Capital Conversion Compass", href: "/capital-conversion" },
   { label: "Founder Clarity Index", href: "/clarity-index" },
 ];
 

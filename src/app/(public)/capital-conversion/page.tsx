@@ -1,4 +1,4 @@
-import CapitalConversionConvo from "@/components/tools/CapitalConversionConvo";
+import CapitalConversionCompass from "@/components/tools/CapitalConversionCompass";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
@@ -6,9 +6,9 @@ import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
 
 export const metadata = buildPageMetadata({
-  title: "Capital Conversion Convo",
+  title: "Capital Conversion Compass",
   description:
-    "A free diagnostic for founders: understand why investor conversations stall and what to change before the next pitch.",
+    "A free diagnostic for founders whose business, investor, or sales conversations aren't converting into outcomes. Identify the structural gap costing you the most.",
   path: "/capital-conversion",
 });
 
@@ -19,7 +19,7 @@ export default function CapitalConversionPage() {
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
           { name: "Tools", path: "/tools" },
-          { name: "Capital Conversion Convo", path: "/capital-conversion" },
+          { name: "Capital Conversion Compass", path: "/capital-conversion" },
         ])}
       />
       <div className="bg-gray-50 py-16 md:py-24">
@@ -29,11 +29,12 @@ export default function CapitalConversionPage() {
               Strategy Tool
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Capital Conversion Convo
+              Capital Conversion Compass
             </h1>
             <p className="text-gray-600 max-w-2xl">
-              An interactive walkthrough to sharpen your capital conversion
-              strategy and unlock revenue clarity.
+              A diagnostic for founders whose business, investor, or sales
+              conversations aren&apos;t converting into outcomes. Find the
+              structural gap costing you the most.
             </p>
           </AnimateOnScroll>
         </div>
@@ -41,7 +42,7 @@ export default function CapitalConversionPage() {
       <section className="py-12 md:py-16 bg-white">
         <div className="max-w-3xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">
-            <CapitalConversionConvo />
+            <CapitalConversionCompass />
           </AnimateOnScroll>
         </div>
       </section>
@@ -61,7 +62,7 @@ export default function CapitalConversionPage() {
           {
             title: "See Pricing & Packages",
             description:
-              "From single sessions to monthly advisory — find the level of partnership that fits.",
+              "From single sessions to monthly advisory \u2014 find the level of partnership that fits.",
             href: "/pricing",
             cta: "View Pricing",
           },

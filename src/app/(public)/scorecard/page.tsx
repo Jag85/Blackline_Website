@@ -68,7 +68,7 @@ export default function ScorecardPage() {
           {
             title: "Try Another Tool",
             description:
-              "Continue your self-assessment with the Founder Clarity Index or Capital Conversion Convo.",
+              "Continue your self-assessment with the Founder Clarity Index or Capital Conversion Compass.",
             href: "/tools",
             cta: "Browse Tools",
           },

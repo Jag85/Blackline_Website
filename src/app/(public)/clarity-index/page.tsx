@@ -68,7 +68,7 @@ export default function ClarityIndexPage() {
           {
             title: "Try Another Tool",
             description:
-              "Take the FOCUS Founder Scorecard or Capital Conversion Convo next.",
+              "Take the FOCUS Founder Scorecard or Capital Conversion Compass next.",
             href: "/tools",
             cta: "Browse Tools",
           },

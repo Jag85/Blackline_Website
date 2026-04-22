@@ -42,7 +42,7 @@ export async function GET() {
 
 - [FOCUS Founder Scorecard](${absoluteUrl("/scorecard")}): Diagnose your primary bottleneck across Founder Vision, Offer Clarity, Customer Acquisition, Unit Economics, and Systems & Scalability.
 - [Founder Clarity Index](${absoluteUrl("/clarity-index")}): 100-point self-assessment of strategic clarity across Problem, Person, Solution, and Action Readiness.
-- [Capital Conversion Convo](${absoluteUrl("/capital-conversion")}): Diagnostic that explains why founder–investor conversations stall and what should change next.
+- [Capital Conversion Compass](${absoluteUrl("/capital-conversion")}): Diagnostic that identifies the structural gap (positioning, audience fit, offer communication, trust signals, or stage) preventing founder conversations from converting.
 
 ## Key Pages
 

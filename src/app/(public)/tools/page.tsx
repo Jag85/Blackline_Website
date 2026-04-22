@@ -23,12 +23,12 @@ const tools = [
     cta: "Take the Scorecard",
   },
   {
-    title: "Capital Conversion Convo",
+    title: "Capital Conversion Compass",
     description:
-      "An interactive walkthrough to sharpen your capital conversion strategy and unlock revenue clarity.",
+      "Identify why your business, investor, or sales conversations aren't converting — and the one structural gap costing you the most.",
     href: "/capital-conversion",
     icon: TrendingUp,
-    cta: "Start the Convo",
+    cta: "Start the Diagnostic",
   },
   {
     title: "Founder Clarity Index",

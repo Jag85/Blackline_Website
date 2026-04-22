@@ -106,7 +106,7 @@ export default function Footer() {
                   href="/capital-conversion"
                   className="hover:text-white transition-colors"
                 >
-                  Capital Conversion Convo
+                  Capital Conversion Compass
                 </Link>
               </li>
               <li>

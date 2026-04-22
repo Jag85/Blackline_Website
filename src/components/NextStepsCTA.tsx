@@ -5,10 +5,14 @@ import AnimateOnScroll from "./AnimateOnScroll";
 interface NextStep {
   title: string;
   description: string;
+  /** Internal path (e.g. "/services") OR full external URL ("https://...") */
   href: string;
   cta: string;
   primary?: boolean;
 }
+
+const isExternalHref = (href: string) =>
+  href.startsWith("http://") || href.startsWith("https://");
 
 interface NextStepsCTAProps {
   eyebrow?: string;
@@ -67,24 +71,34 @@ export default function NextStepsCTA({
               : "md:grid-cols-3"
           }`}
         >
-          {steps.map((step, i) => (
+          {steps.map((step, i) => {
+            const external = isExternalHref(step.href);
+            const cardClass = `group block h-full p-8 rounded-lg border-2 transition-all ${
+              step.primary
+                ? isDark
+                  ? "border-white bg-white text-black hover:bg-gray-100"
+                  : "border-black bg-black text-white hover:bg-gray-800"
+                : isDark
+                ? "border-gray-800 hover:border-white"
+                : "border-gray-200 bg-white hover:border-black hover:shadow-md"
+            }`;
+            const Wrapper: React.ElementType = external ? "a" : Link;
+            const wrapperProps = external
+              ? {
+                  href: step.href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: cardClass,
+                }
+              : { href: step.href, className: cardClass };
+
+            return (
             <AnimateOnScroll
               key={step.href}
               variant="fade-up"
               delay={i * 100}
             >
-              <Link
-                href={step.href}
-                className={`group block h-full p-8 rounded-lg border-2 transition-all ${
-                  step.primary
-                    ? isDark
-                      ? "border-white bg-white text-black hover:bg-gray-100"
-                      : "border-black bg-black text-white hover:bg-gray-800"
-                    : isDark
-                    ? "border-gray-800 hover:border-white"
-                    : "border-gray-200 bg-white hover:border-black hover:shadow-md"
-                }`}
-              >
+              <Wrapper {...wrapperProps}>
                 <h3
                   className={`text-lg font-bold mb-3 ${
                     step.primary
@@ -125,9 +139,10 @@ export default function NextStepsCTA({
                   {step.cta}
                   <ArrowRight size={16} />
                 </span>
-              </Link>
+              </Wrapper>
             </AnimateOnScroll>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

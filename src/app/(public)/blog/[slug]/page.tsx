@@ -11,7 +11,7 @@ import JsonLd from "@/components/JsonLd";
 import { getPostBySlug } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
 import { articleSchema, breadcrumbSchema } from "@/lib/schema";
-import { SITE_NAME } from "@/lib/site";
+import { SITE_NAME, BOOKING_URL } from "@/lib/site";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -150,13 +150,15 @@ export default async function BlogPostPage({ params }: PageProps) {
               Subscribe via the footer, or book a strategy session to put these
               ideas into practice.
             </p>
-            <Link
-              href="/contact"
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-white text-black text-sm font-medium px-8 py-4 rounded hover:bg-gray-100 transition-colors"
             >
               Book a Session
               <ArrowRight size={16} />
-            </Link>
+            </a>
           </div>
         </section>
       </article>

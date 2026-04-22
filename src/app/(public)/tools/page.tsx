@@ -5,6 +5,7 @@ import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
+import { BOOKING_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
   title: "Free Tools",
@@ -116,8 +117,8 @@ export default function ToolsPage() {
             title: "Book a Strategy Session",
             description:
               "Walk through your results and build a plan to fix your bottleneck.",
-            href: "/contact",
-            cta: "Get in Touch",
+            href: BOOKING_URL,
+            cta: "Book Now",
             primary: true,
           },
           {

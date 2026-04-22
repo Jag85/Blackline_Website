@@ -3,6 +3,7 @@ import Image from "next/image";
 import Hero from "@/components/Hero";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { Target, TrendingUp, Zap, ArrowRight } from "lucide-react";
+import { BOOKING_URL } from "@/lib/site";
 
 const pillars = [
   {
@@ -150,17 +151,18 @@ export default function Home() {
               Ready to move forward?
             </h2>
             <p className="text-gray-400 leading-relaxed mb-10">
-              Book your first session or tell us about your business.
-              We&apos;ll respond within 24 hours with a recommended starting
-              point.
+              Pick a time that works for you and we&apos;ll walk through your
+              business and the right next step — no prep required.
             </p>
-            <Link
-              href="/contact"
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-white text-black text-sm font-medium px-8 py-4 rounded hover:bg-gray-100 transition-colors"
             >
-              Get in Touch
+              Book a Session
               <ArrowRight size={16} />
-            </Link>
+            </a>
           </AnimateOnScroll>
         </div>
       </section>

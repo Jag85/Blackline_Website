@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
+import { BOOKING_URL } from "@/lib/site";
 
 export default function Hero() {
   return (
@@ -36,13 +37,15 @@ export default function Hero() {
               growth.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/contact"
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-8 py-4 rounded hover:bg-gray-800 transition-colors"
               >
                 Book Your Session
                 <ArrowRight size={16} />
-              </Link>
+              </a>
               <Link
                 href="/services"
                 className="inline-flex items-center justify-center gap-2 border border-gray-300 text-sm font-medium px-8 py-4 rounded hover:border-gray-400 transition-colors"

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { BOOKING_URL } from "@/lib/site";
 
 const navLinks = [
   { label: "About", href: "/about" },
@@ -79,12 +80,14 @@ export default function Header() {
           >
             Contact
           </Link>
-          <Link
-            href="/contact"
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-black text-white text-sm font-medium px-6 py-2.5 rounded hover:bg-gray-800 transition-colors"
           >
             Book a Session
-          </Link>
+          </a>
         </nav>
 
         {/* Mobile toggle */}
@@ -134,13 +137,15 @@ export default function Header() {
           >
             Contact
           </Link>
-          <Link
-            href="/contact"
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="block bg-black text-white text-center text-sm font-medium px-6 py-3 rounded hover:bg-gray-800"
             onClick={() => setMobileOpen(false)}
           >
             Book a Session
-          </Link>
+          </a>
         </div>
       )}
     </header>

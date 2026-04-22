@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   ArrowRight,
   Star,
@@ -10,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
+import { BOOKING_URL } from "@/lib/site";
 
 interface Tier {
   name: string;
@@ -219,8 +219,10 @@ function PricingCard({ tier }: { tier: Tier }) {
       </ul>
 
       {/* CTA */}
-      <Link
-        href="/contact"
+      <a
+        href={BOOKING_URL}
+        target="_blank"
+        rel="noopener noreferrer"
         className={`w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3.5 rounded-lg transition-colors ${
           isFeatured
             ? "bg-white text-black hover:bg-gray-100"
@@ -229,7 +231,7 @@ function PricingCard({ tier }: { tier: Tier }) {
       >
         {tier.cta}
         <ArrowRight size={14} />
-      </Link>
+      </a>
     </div>
   );
 }

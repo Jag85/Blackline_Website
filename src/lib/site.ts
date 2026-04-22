@@ -28,6 +28,14 @@ export const BUSINESS = {
   linkedin: "https://www.linkedin.com/company/blackline-strategy-partners",
 } as const;
 
+/**
+ * Direct Calendly booking URL. Used by every "Book a Session" / "Book Now"
+ * CTA across the site so visitors go straight to the calendar instead of
+ * filtering through the contact form. The /contact form is kept for
+ * non-booking inquiries (e.g. general questions).
+ */
+export const BOOKING_URL = "https://calendly.com/jarrellagreen/30min";
+
 /** Build an absolute URL from a path. */
 export function absoluteUrl(path: string = "/"): string {
   const p = path.startsWith("/") ? path : `/${path}`;

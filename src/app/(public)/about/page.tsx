@@ -4,6 +4,7 @@ import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
+import { BOOKING_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
   title: "About",
@@ -58,9 +59,9 @@ export default function AboutPage() {
           {
             title: "Book a Session",
             description:
-              "Tell us about your business and we'll recommend a starting point.",
-            href: "/contact",
-            cta: "Get in Touch",
+              "Pick a time on the calendar — we'll discuss your business and the right starting point.",
+            href: BOOKING_URL,
+            cta: "Book Now",
           },
         ]}
       />

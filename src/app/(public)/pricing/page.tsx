@@ -1,18 +1,101 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Pricing from "@/components/Pricing";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, SITE_URL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Pricing | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Pricing",
   description:
     "Transparent pricing for strategy sessions and monthly advisory retainers. Start at $75 for a Founder Bottleneck Session.",
+  path: "/pricing",
+});
+
+// Aggregated Offer Catalog: lets Google understand the full price spectrum
+// at once and is eligible for richer pricing snippets in SERPs.
+const offerCatalog = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  name: "Blackline Strategy Partners — Services & Pricing",
+  url: absoluteUrl("/pricing"),
+  provider: { "@id": `${SITE_URL}/#organization` },
+  itemListElement: [
+    {
+      "@type": "Offer",
+      name: "Founder Bottleneck Session",
+      description:
+        "60-minute diagnostic. Launch special $75 (April & May), standard $125.",
+      price: "75",
+      priceCurrency: "USD",
+      url: absoluteUrl("/services"),
+    },
+    {
+      "@type": "Offer",
+      name: "30-Day Growth Strategy",
+      description:
+        "60–75 minute session producing a 30-day execution plan with prioritized actions.",
+      price: "150",
+      priceCurrency: "USD",
+      url: absoluteUrl("/services"),
+    },
+    {
+      "@type": "Offer",
+      name: "Growth Roadmap Session",
+      description:
+        "90-minute deep dive into business model, offer clarity, customer acquisition, and multi-month strategy.",
+      price: "350",
+      priceCurrency: "USD",
+      url: absoluteUrl("/services"),
+    },
+    {
+      "@type": "Offer",
+      name: "Entry Retainer",
+      description:
+        "Monthly advisory: 2 strategy calls per month plus light async support.",
+      price: "500",
+      priceCurrency: "USD",
+      url: absoluteUrl("/pricing"),
+    },
+    {
+      "@type": "Offer",
+      name: "Core Retainer",
+      description:
+        "Monthly advisory: 2–3 strategy sessions, continuous strategy refinement, priority access.",
+      price: "1000",
+      priceCurrency: "USD",
+      url: absoluteUrl("/pricing"),
+    },
+    {
+      "@type": "Offer",
+      name: "Fractional CSO",
+      description:
+        "High-touch monthly engagement: weekly calls, deep involvement in decisions, strategic partner role.",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        minPrice: "1500",
+        maxPrice: "2500",
+        priceCurrency: "USD",
+      },
+      url: absoluteUrl("/pricing"),
+    },
+  ],
 };
 
 export default function PricingPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Pricing", path: "/pricing" },
+          ]),
+          offerCatalog,
+        ]}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

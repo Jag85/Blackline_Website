@@ -1,17 +1,26 @@
-import type { Metadata } from "next";
 import About from "@/components/About";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "About | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "About",
   description:
     "Learn how Blackline Strategy Partners delivers clarity, strategy, and momentum for founders and business leaders.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

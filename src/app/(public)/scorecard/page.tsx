@@ -1,17 +1,27 @@
-import type { Metadata } from "next";
 import FocusScorecard from "@/components/tools/FocusScorecard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "FOCUS Founder Scorecard | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "FOCUS Founder Scorecard",
   description:
-    "Take the FOCUS Founder Scorecard to identify your primary bottleneck and unlock clarity on what to fix next.",
-};
+    "Take the FOCUS Founder Scorecard \u2014 a free diagnostic to identify your primary bottleneck and unlock clarity on what to fix next.",
+  path: "/scorecard",
+});
 
 export default function ScorecardPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Tools", path: "/tools" },
+          { name: "FOCUS Founder Scorecard", path: "/scorecard" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

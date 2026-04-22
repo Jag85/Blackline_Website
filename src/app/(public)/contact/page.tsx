@@ -1,18 +1,27 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Contact from "@/components/Contact";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Contact | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Contact",
   description:
     "Book your strategy session or get in touch with Blackline Strategy Partners. We respond within 24 hours.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

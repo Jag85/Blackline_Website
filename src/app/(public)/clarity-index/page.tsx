@@ -1,17 +1,27 @@
-import type { Metadata } from "next";
 import FounderClarityIndex from "@/components/tools/FounderClarityIndex";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Founder Clarity Index | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Founder Clarity Index",
   description:
-    "Measure your strategic clarity across the dimensions that matter most for founders.",
-};
+    "A free assessment that measures your strategic clarity across the dimensions that matter most for founders.",
+  path: "/clarity-index",
+});
 
 export default function ClarityIndexPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Tools", path: "/tools" },
+          { name: "Founder Clarity Index", path: "/clarity-index" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

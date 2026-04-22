@@ -1,14 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Target, TrendingUp, Compass } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Free Tools | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Free Tools",
   description:
     "Free strategic tools and diagnostics for founders. Identify bottlenecks, sharpen your strategy, and measure your clarity.",
-};
+  path: "/tools",
+});
 
 const tools = [
   {
@@ -40,6 +43,12 @@ const tools = [
 export default function ToolsPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Tools", path: "/tools" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

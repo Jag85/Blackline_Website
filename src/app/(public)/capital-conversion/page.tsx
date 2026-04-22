@@ -1,17 +1,27 @@
-import type { Metadata } from "next";
 import CapitalConversionConvo from "@/components/tools/CapitalConversionConvo";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Capital Conversion Convo | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Capital Conversion Convo",
   description:
-    "An interactive walkthrough to sharpen your capital conversion strategy and unlock revenue clarity.",
-};
+    "A free diagnostic for founders: understand why investor conversations stall and what to change before the next pitch.",
+  path: "/capital-conversion",
+});
 
 export default function CapitalConversionPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Tools", path: "/tools" },
+          { name: "Capital Conversion Convo", path: "/capital-conversion" },
+        ])}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

@@ -7,8 +7,11 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import JsonLd from "@/components/JsonLd";
 import { getPostBySlug } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
+import { articleSchema, breadcrumbSchema } from "@/lib/schema";
+import { SITE_NAME } from "@/lib/site";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,16 +24,32 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return { title: "Post not found | Blackline" };
+  if (!post) return { title: "Post not found", robots: { index: false } };
+
+  const imageUrl =
+    post.featuredImageId &&
+    getImageUrl(post.featuredImageId, { width: 1200, quality: 85 });
+  const path = `/blog/${post.slug}`;
+
   return {
-    title: `${post.title} | Blackline Strategy Partners`,
+    title: post.title,
     description: post.excerpt,
+    alternates: { canonical: path },
     openGraph: {
+      type: "article",
       title: post.title,
       description: post.excerpt,
-      images: post.featuredImageId
-        ? [getImageUrl(post.featuredImageId, { width: 1200 }) || ""]
-        : [],
+      url: path,
+      siteName: SITE_NAME,
+      publishedTime: post.publishedAt || undefined,
+      modifiedTime: post.$updatedAt,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: imageUrl ? [imageUrl] : undefined,
     },
   };
 }
@@ -48,6 +67,24 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="pt-20">
+      <JsonLd
+        data={[
+          articleSchema({
+            title: post.title,
+            description: post.excerpt,
+            slug: post.slug,
+            imageUrl: imgUrl,
+            publishedAt: post.publishedAt,
+            updatedAt: post.$updatedAt,
+            authorName: post.authorEmail,
+          }),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
       <article>
         <header className="bg-gray-50 py-16 md:py-24">
           <div className="max-w-3xl mx-auto px-6">

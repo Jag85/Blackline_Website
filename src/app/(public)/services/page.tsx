@@ -1,19 +1,62 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Services from "@/components/Services";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import JsonLd from "@/components/JsonLd";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Services | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Services",
   description:
     "From diagnostic sessions to fractional CSO advisory, explore Blackline's strategic consulting services for founders.",
-};
+  path: "/services",
+});
+
+const SERVICE_OFFERS = [
+  {
+    name: "Founder Bottleneck Session",
+    description:
+      "60-minute diagnostic to identify the primary constraint holding your business back, with immediate clarity on what to fix.",
+    url: "/services",
+    price: "75",
+  },
+  {
+    name: "30-Day Growth Strategy",
+    description:
+      "60–75 minute session that produces a clear 30-day execution plan with prioritized actions and a strategic focus roadmap.",
+    url: "/services",
+    price: "150",
+  },
+  {
+    name: "Growth Roadmap Session",
+    description:
+      "90-minute deep dive into business model, offer clarity, customer acquisition strategy, and multi-month direction.",
+    url: "/services",
+    price: "350",
+  },
+  {
+    name: "Monthly Advisory Retainer",
+    description:
+      "Ongoing strategic partnership: regular sessions, continuous refinement, and priority access. Available at Entry, Core, and Fractional CSO tiers.",
+    url: "/pricing",
+    priceDescription: "Monthly retainers from $500 to $2,500/month USD",
+  },
+];
 
 export default function ServicesPage() {
   return (
     <div className="pt-20">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+          ]),
+          ...SERVICE_OFFERS.map((s) => serviceSchema(s)),
+        ]}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

@@ -1,17 +1,21 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import JsonLd from "@/components/JsonLd";
 import { listPublishedPosts } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
+import { buildPageMetadata } from "@/lib/pageMetadata";
+import { breadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, SITE_NAME } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Blog | Blackline Strategy Partners",
+export const metadata = buildPageMetadata({
+  title: "Blog",
   description:
     "Strategy insights, founder lessons, and growth essays from the Blackline team.",
-};
+  path: "/blog",
+});
 
 // Always render at request time so newly published posts show up immediately
 export const dynamic = "force-dynamic";
@@ -19,8 +23,35 @@ export const dynamic = "force-dynamic";
 export default async function BlogPage() {
   const posts = await listPublishedPosts();
 
+  // Blog/CollectionPage schema lets Google understand this is a blog hub
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: `${SITE_NAME} — Blog`,
+    description:
+      "Strategy insights, founder lessons, and growth essays from Blackline Strategy Partners.",
+    url: absoluteUrl("/blog"),
+    blogPost: posts.slice(0, 20).map((p) => ({
+      "@type": "BlogPosting",
+      headline: p.title,
+      description: p.excerpt,
+      url: absoluteUrl(`/blog/${p.slug}`),
+      datePublished: p.publishedAt || p.$createdAt,
+      dateModified: p.$updatedAt,
+    })),
+  };
+
   return (
     <div className="pt-20">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+          ]),
+          blogSchema,
+        ]}
+      />
       <div className="bg-gray-50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <AnimateOnScroll variant="fade-up">

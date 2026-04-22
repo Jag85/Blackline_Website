@@ -51,9 +51,9 @@ export default function ScorecardPage() {
         description="Use your scorecard insights to take the next step toward growth."
         steps={[
           {
-            title: "Book a Strategy Session",
+            title: "Book a Growth Roadmap Session",
             description:
-              "Walk through your results with a strategist and build a plan to fix your bottleneck.",
+              "Walk through your results with a strategist and walk away with a 30-day plan to fix your bottleneck.",
             href: "/contact",
             cta: "Book a Session",
             primary: true,

@@ -51,9 +51,9 @@ export default function ClarityIndexPage() {
         description="Now that you've measured your clarity, build a plan to sharpen it."
         steps={[
           {
-            title: "Get a 30-Day Growth Strategy",
+            title: "Book a Growth Roadmap Session",
             description:
-              "Walk away with a clear execution plan and prioritized actions for the next month.",
+              "90 minutes that produces a full 30-day execution plan, business model deep dive, and a written summary you keep.",
             href: "/contact",
             cta: "Book a Session",
             primary: true,

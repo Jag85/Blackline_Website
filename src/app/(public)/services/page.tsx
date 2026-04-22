@@ -16,32 +16,34 @@ export const metadata = buildPageMetadata({
 
 const SERVICE_OFFERS = [
   {
-    name: "Founder Bottleneck Session",
+    name: "Strategy Session",
     description:
-      "60-minute diagnostic to identify the primary constraint holding your business back, with immediate clarity on what to fix.",
+      "60-minute strategy session that identifies your primary constraint and the highest-leverage direction to take next. Best entry point for first-time clients.",
     url: "/services",
-    price: "75",
-  },
-  {
-    name: "30-Day Growth Strategy",
-    description:
-      "60–75 minute session that produces a clear 30-day execution plan with prioritized actions and a strategic focus roadmap.",
-    url: "/services",
-    price: "150",
+    price: "297",
   },
   {
     name: "Growth Roadmap Session",
     description:
-      "90-minute deep dive into business model, offer clarity, customer acquisition strategy, and multi-month direction.",
+      "90-minute deep dive that produces a full 30-day execution plan, business model breakdown, and a written summary you keep.",
     url: "/services",
-    price: "350",
+    price: "997",
   },
   {
-    name: "Monthly Advisory Retainer",
+    name: "Core Retainer",
     description:
-      "Ongoing strategic partnership: regular sessions, continuous refinement, and priority access. Available at Entry, Core, and Fractional CSO tiers.",
+      "Monthly advisory: 2\u20133 strategy sessions per month with async support between them. 3-month minimum.",
     url: "/pricing",
-    priceDescription: "Monthly retainers from $500 to $2,500/month USD",
+    price: "1500",
+    priceDescription: "$1,500/month USD, 3-month minimum",
+  },
+  {
+    name: "Fractional CSO",
+    description:
+      "High-touch embedded partnership with weekly calls and deep involvement in decisions. Requires a Growth Roadmap Session as a prerequisite.",
+    url: "/pricing",
+    price: "2500",
+    priceDescription: "$2,500/month USD",
   },
 ];
 

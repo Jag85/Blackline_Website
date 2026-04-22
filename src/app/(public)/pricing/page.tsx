@@ -10,7 +10,7 @@ import { absoluteUrl, SITE_URL } from "@/lib/site";
 export const metadata = buildPageMetadata({
   title: "Pricing",
   description:
-    "Transparent pricing for strategy sessions and monthly advisory retainers. Start at $75 for a Founder Bottleneck Session.",
+    "Transparent pricing for strategy sessions and monthly advisory retainers. Start at $297 for a Strategy Session, or $997 for a Growth Roadmap Session.",
   path: "/pricing",
 });
 
@@ -25,19 +25,10 @@ const offerCatalog = {
   itemListElement: [
     {
       "@type": "Offer",
-      name: "Founder Bottleneck Session",
+      name: "Strategy Session",
       description:
-        "60-minute diagnostic. Launch special $75 (April & May), standard $125.",
-      price: "75",
-      priceCurrency: "USD",
-      url: absoluteUrl("/services"),
-    },
-    {
-      "@type": "Offer",
-      name: "30-Day Growth Strategy",
-      description:
-        "60–75 minute session producing a 30-day execution plan with prioritized actions.",
-      price: "150",
+        "60-minute diagnostic that identifies your primary constraint and the highest-leverage direction to take next.",
+      price: "297",
       priceCurrency: "USD",
       url: absoluteUrl("/services"),
     },
@@ -45,40 +36,32 @@ const offerCatalog = {
       "@type": "Offer",
       name: "Growth Roadmap Session",
       description:
-        "90-minute deep dive into business model, offer clarity, customer acquisition, and multi-month strategy.",
-      price: "350",
+        "90-minute deep dive that produces a full 30-day execution plan, business model breakdown, and a written summary you keep.",
+      price: "997",
       priceCurrency: "USD",
       url: absoluteUrl("/services"),
     },
     {
       "@type": "Offer",
-      name: "Entry Retainer",
-      description:
-        "Monthly advisory: 2 strategy calls per month plus light async support.",
-      price: "500",
-      priceCurrency: "USD",
-      url: absoluteUrl("/pricing"),
-    },
-    {
-      "@type": "Offer",
       name: "Core Retainer",
       description:
-        "Monthly advisory: 2–3 strategy sessions, continuous strategy refinement, priority access.",
-      price: "1000",
+        "Monthly advisory: 2–3 strategy sessions per month plus async support. 3-month minimum.",
+      price: "1500",
       priceCurrency: "USD",
       url: absoluteUrl("/pricing"),
+      eligibleDuration: {
+        "@type": "QuantitativeValue",
+        minValue: 3,
+        unitCode: "MON",
+      },
     },
     {
       "@type": "Offer",
       name: "Fractional CSO",
       description:
-        "High-touch monthly engagement: weekly calls, deep involvement in decisions, strategic partner role.",
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        minPrice: "1500",
-        maxPrice: "2500",
-        priceCurrency: "USD",
-      },
+        "High-touch embedded partnership: weekly calls, deep involvement in decisions, strategic partner role. Requires Growth Roadmap Session as a prerequisite.",
+      price: "2500",
+      priceCurrency: "USD",
       url: absoluteUrl("/pricing"),
     },
   ],

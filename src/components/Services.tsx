@@ -4,53 +4,54 @@ import AnimateOnScroll from "./AnimateOnScroll";
 
 const services = [
   {
-    name: "Founder Bottleneck Session",
-    tagline: "Diagnostic + Quick Clarity",
+    name: "Strategy Session",
+    tagline: "Diagnostic + Direction · $297",
     description:
-      "Your entry point to strategic clarity. In 60 minutes, we diagnose your primary constraint and give you immediate direction on what to fix.",
+      "A focused 60-minute session to identify your primary constraint and the highest-leverage direction to take next. Best entry point for first-time clients.",
     includes: [
-      "FOCUS diagnostic review",
+      "60-minute strategy session",
       "Identify primary constraint",
-      "Immediate clarity on what to fix",
       "High-level strategic direction",
-    ],
-  },
-  {
-    name: "30-Day Growth Strategy",
-    tagline: "Strategy Build",
-    description:
-      "Go beyond diagnosis. Walk away with a clear 30-day execution plan with prioritized actions and a strategic focus roadmap.",
-    includes: [
-      "Everything in the Bottleneck Session",
-      "Clear 30-day execution plan",
-      "Prioritized actions (not fluff)",
-      "Strategic focus roadmap",
+      "Best for first-time clients",
     ],
   },
   {
     name: "Growth Roadmap Session",
-    tagline: "Deep Strategy & Positioning",
+    tagline: "Deep Strategy + 30-Day Plan · $997",
     description:
-      "A comprehensive 90-minute deep dive into your business model, offer clarity, customer acquisition strategy, and multi-month direction.",
+      "A comprehensive 90-minute engagement that combines a business model deep dive with a written, actionable 30-day plan you keep. The most common starting point.",
     includes: [
-      "Deep dive into business model",
-      "Offer clarity + pricing adjustments",
-      "Customer acquisition strategy",
-      "Systems + bottleneck analysis",
-      "Multi-month strategic direction",
+      "90-minute deep dive",
+      "Full 30-day execution plan",
+      "Business model deep dive",
+      "Written summary you keep",
+      "Includes diagnostic + bottleneck analysis",
     ],
   },
   {
-    name: "Monthly Advisory",
-    tagline: "Fractional CSO",
+    name: "Core Retainer",
+    tagline: "Monthly Advisory · $1,500/mo",
     description:
-      "Ongoing strategic partnership with regular strategy sessions, continuous refinement, and priority access. Your fractional Chief Strategy Officer.",
+      "Ongoing strategic advisory with regular sessions, continuous refinement, and async support between sessions. Three-month minimum to compound results.",
     includes: [
-      "Regular strategy sessions",
+      "2\u20133 strategy sessions per month",
+      "Async support (voice, text, email)",
       "Continuous strategy refinement",
-      "Business model + growth guidance",
-      "Async support (voice/text/email)",
-      "Priority access",
+      "Priority access between sessions",
+      "3-month minimum",
+    ],
+  },
+  {
+    name: "Fractional CSO",
+    tagline: "High-Touch Partnership · $2,500/mo",
+    description:
+      "An embedded strategic partner role with weekly calls and deep involvement in your decisions. Requires a Growth Roadmap Session as a prerequisite.",
+    includes: [
+      "Weekly strategy calls",
+      "Deep involvement in decisions",
+      "Strategic partner role",
+      "Offer, funnel, and growth strategy",
+      "Requires Growth Roadmap as prerequisite",
     ],
   },
 ];

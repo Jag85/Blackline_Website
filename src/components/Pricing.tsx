@@ -4,86 +4,58 @@ import AnimateOnScroll from "./AnimateOnScroll";
 
 const tiers = [
   {
-    name: "Founder Bottleneck Session",
-    subtitle: "Diagnostic + Quick Clarity",
-    price: "$75",
-    priceNote: "Launch special (April & May)",
-    standardPrice: "$125",
+    name: "Strategy Session",
+    subtitle: "Diagnostic + Direction",
+    price: "$297",
     duration: "60 minutes",
     featured: false,
     features: [
-      "FOCUS diagnostic review",
-      "Identify primary constraint",
-      "Immediate clarity on what to fix",
-      "High-level direction",
-    ],
-  },
-  {
-    name: "30-Day Growth Strategy",
-    subtitle: "Strategy Build",
-    price: "$150",
-    priceNote: null,
-    standardPrice: null,
-    duration: "60-75 minutes",
-    featured: false,
-    features: [
-      "Everything in Tier 1",
-      "Clear 30-day execution plan",
-      "Prioritized actions",
-      "Strategic focus roadmap",
+      "60-minute strategy session",
+      "Identify your primary constraint",
+      "High-level strategic direction",
+      "Best for first-time clients",
     ],
   },
   {
     name: "Growth Roadmap Session",
-    subtitle: "Deep Strategy & Positioning",
-    price: "$350",
-    priceNote: null,
-    standardPrice: null,
+    subtitle: "Deep Strategy + 30-Day Plan",
+    price: "$997",
     duration: "90 minutes",
     featured: true,
     features: [
-      "Deep dive into business model",
-      "Offer clarity + pricing adjustments",
-      "Customer acquisition strategy",
-      "Systems + bottleneck analysis",
-      "Multi-month direction",
+      "Full 30-day execution plan",
+      "Business model deep dive",
+      "Written summary you keep",
+      "Includes diagnostic + bottleneck analysis",
+      "Best path forward for most founders",
     ],
   },
 ];
 
 const retainers = [
   {
-    name: "Entry Retainer",
-    price: "$500",
-    period: "/month",
-    features: [
-      "2 strategy calls/month (60 min)",
-      "Light async support",
-      "Ongoing bottleneck diagnosis",
-    ],
-  },
-  {
     name: "Core Retainer",
-    price: "$1,000",
+    price: "$1,500",
     period: "/month",
+    minimum: "3-month minimum",
     recommended: true,
     features: [
-      "2-3 strategy sessions/month",
+      "2\u20133 strategy sessions per month",
+      "Async support (voice, text, email)",
       "Continuous strategy refinement",
-      "Business model + growth guidance",
-      "Priority access",
-      "Async support",
+      "Priority access between sessions",
     ],
   },
   {
     name: "Fractional CSO",
-    price: "$1,500-$2,500",
+    price: "$2,500",
     period: "/month",
+    minimum: "Requires Growth Roadmap as prerequisite",
     features: [
-      "Weekly calls",
+      "Weekly strategy calls",
       "Deep involvement in decisions",
-      "Offer, funnel & growth strategy",
       "Strategic partner role",
+      "Offer, funnel, and growth strategy",
     ],
   },
 ];
@@ -113,7 +85,7 @@ export default function Pricing() {
             One-Time Sessions
           </h3>
         </AnimateOnScroll>
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
+        <div className="grid md:grid-cols-2 gap-6 mb-20 max-w-4xl mx-auto md:mx-0">
           {tiers.map((tier, i) => (
             <AnimateOnScroll key={tier.name} variant="fade-up" delay={i * 150}>
               <div
@@ -134,22 +106,11 @@ export default function Pricing() {
                 <h4 className="text-lg font-bold text-black mb-4">
                   {tier.name}
                 </h4>
-                <div className="mb-1">
+                <div className="mb-4">
                   <span className="text-4xl font-bold text-black">
                     {tier.price}
                   </span>
                 </div>
-                {tier.priceNote && (
-                  <p className="text-xs text-green-700 font-medium mb-1">
-                    {tier.priceNote}
-                  </p>
-                )}
-                {tier.standardPrice && (
-                  <p className="text-xs text-gray-400 mb-4">
-                    Standard: {tier.standardPrice}
-                  </p>
-                )}
-                {!tier.priceNote && <div className="mb-4" />}
                 <p className="text-sm text-gray-500 mb-6">{tier.duration}</p>
                 <ul className="space-y-3 mb-8 flex-1">
                   {tier.features.map((f) => (
@@ -181,7 +142,7 @@ export default function Pricing() {
             Monthly Advisory
           </h3>
         </AnimateOnScroll>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto md:mx-0">
           {retainers.map((r, i) => (
             <AnimateOnScroll key={r.name} variant="fade-up" delay={i * 150}>
               <div
@@ -198,12 +159,13 @@ export default function Pricing() {
                   </div>
                 )}
                 <h4 className="text-lg font-bold text-black mb-4">{r.name}</h4>
-                <div className="mb-6">
+                <div className="mb-1">
                   <span className="text-4xl font-bold text-black">
                     {r.price}
                   </span>
                   <span className="text-gray-500 text-sm">{r.period}</span>
                 </div>
+                <p className="text-xs text-gray-500 mb-6 mt-1">{r.minimum}</p>
                 <ul className="space-y-3 mb-8 flex-1">
                   {r.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm">

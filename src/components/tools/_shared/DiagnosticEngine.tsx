@@ -153,19 +153,20 @@ export default function DiagnosticEngine<C extends string>({
 
   const handleEmailToSelf = () => {
     const r = config.results[primary];
+    const scoreLines = config.categoryOrder
+      .map((c) => `  ${config.categories[c].label}: ${scores[c]}/100`)
+      .join("\n");
+
     const body = `${r.headline.toUpperCase()}
 
-${r.subline ? r.subline(intake.firstName || "Founder") : ""}
+${config.scoreLabel}: ${overallScore}/100
 
-THE ISSUE
-${r.meaning}
+CATEGORY SCORES
+${scoreLines}
 
-WHAT TO DO NEXT
-${r.next}
+The full breakdown \u2014 what this is costing you, the consequences, and your exact next steps \u2014 is delivered in your Growth Roadmap Session.
 
----
-
-Book a strategy session: ${config.bookingUrl}`;
+Book your session: ${config.bookingUrl}`;
     window.location.href = `mailto:?subject=${encodeURIComponent(
       `My ${config.intro.headline} Results`
     )}&body=${encodeURIComponent(body)}`;
@@ -297,12 +298,11 @@ Book a strategy session: ${config.bookingUrl}`;
     );
   }
 
-  /* Result */
+  /* Result — free version: pillar scores + bottleneck label only.
+     Full breakdown (meaning, consequences, cost analysis, next steps) is
+     intentionally gated behind the paid Growth Roadmap Session. */
   const r = config.results[primary];
   const name = intake.firstName || "Founder";
-  const subline =
-    r.subline?.(name) ||
-    `${name}, your diagnostic indicates that ${r.tag.toLowerCase()} is your primary constraint right now.`;
 
   return (
     <div className="bg-white p-8 md:p-12 rounded-lg border border-gray-200 shadow-sm">
@@ -321,7 +321,8 @@ Book a strategy session: ${config.bookingUrl}`;
           {r.headline}
         </h2>
         <p className="text-sm md:text-base text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
-          {subline}
+          {name}, your top constraint is identified above. The full breakdown
+          is delivered in your Growth Roadmap Session.
         </p>
       </div>
 
@@ -333,43 +334,18 @@ Book a strategy session: ${config.bookingUrl}`;
         categories={config.categories}
       />
 
-      {/* Meaning */}
-      <div className="mb-10">
-        <h3 className="text-lg font-bold text-black mb-3">What This Means</h3>
-        <p className="text-gray-700 leading-relaxed">{r.meaning}</p>
-      </div>
-
-      {/* Bullets */}
-      {r.bullets.length > 0 && (
-        <div className="mb-10">
-          <h3 className="text-lg font-bold text-black mb-4">
-            How This Tends to Show Up
-          </h3>
-          <ul className="space-y-3">
-            {r.bullets.map((b, i) => (
-              <li key={i} className="flex gap-3 text-gray-700 leading-relaxed">
-                <span className="text-black mt-1 shrink-0">→</span>
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Next */}
-      <div className="bg-gray-50 p-6 md:p-8 rounded-lg mb-10">
-        <h3 className="text-lg font-bold text-black mb-3">What to Do Next</h3>
-        <p className="text-gray-700 leading-relaxed">{r.next}</p>
-      </div>
-
-      {/* CTA */}
+      {/* CTA — paid breakdown sells inside the Growth Roadmap Session */}
       <div className="bg-black text-white p-6 md:p-8 rounded-lg mb-8 text-center">
-        <h3 className="text-xl md:text-2xl font-bold mb-3">
-          Ready to Break Through This?
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+          Get the Full Breakdown
+        </p>
+        <h3 className="text-xl md:text-2xl font-bold mb-3 max-w-xl mx-auto leading-snug">
+          Your full results &mdash; what this is costing you and your exact next
+          steps &mdash; are delivered in your Growth Roadmap Session.
         </h3>
         <p className="text-gray-300 mb-6 max-w-xl mx-auto leading-relaxed">
-          Book a strategy session and walk away with a clear plan to address
-          your primary constraint.
+          90 minutes. Full 30-day plan, business model deep dive, and a written
+          summary you keep.
         </p>
         <a
           href={config.bookingUrl}
@@ -378,7 +354,7 @@ Book a strategy session: ${config.bookingUrl}`;
           className="inline-flex items-center justify-center gap-2 bg-white text-black text-sm font-medium px-8 py-4 rounded hover:bg-gray-100 transition-colors"
         >
           <Calendar size={16} />
-          Book Your Strategy Session
+          Book Now
         </a>
       </div>
 

@@ -33,10 +33,10 @@ export async function GET() {
 
 ## Services
 
-- [Founder Bottleneck Session](${absoluteUrl("/services")}): 60-minute diagnostic — $75 launch special, $125 standard.
-- [30-Day Growth Strategy](${absoluteUrl("/services")}): 60–75 minute session — $150. Walk away with a clear 30-day execution plan.
-- [Growth Roadmap Session](${absoluteUrl("/services")}): 90-minute deep dive — $350. Business model, offer, customer acquisition, multi-month direction.
-- [Monthly Advisory](${absoluteUrl("/pricing")}): Ongoing retainers from $500 (Entry) to $1,000 (Core, recommended) to $1,500–$2,500 (Fractional CSO).
+- [Strategy Session](${absoluteUrl("/services")}): 60-minute strategy session — $297. Identifies your primary constraint and the highest-leverage direction to take next. Best entry point for first-time clients.
+- [Growth Roadmap Session](${absoluteUrl("/services")}): 90-minute deep dive — $997. Full 30-day execution plan, business model breakdown, and a written summary you keep. Most common starting point.
+- [Core Retainer](${absoluteUrl("/pricing")}): Monthly advisory — $1,500/month, 3-month minimum. 2–3 strategy sessions per month with async support between them.
+- [Fractional CSO](${absoluteUrl("/pricing")}): High-touch embedded partnership — $2,500/month. Weekly calls, deep involvement in decisions. Requires Growth Roadmap Session as a prerequisite.
 
 ## Free Tools
 

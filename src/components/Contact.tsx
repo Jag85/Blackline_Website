@@ -124,16 +124,18 @@ export default function Contact() {
                       className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors bg-white"
                     >
                       <option value="">Select a service</option>
-                      <option value="Founder Bottleneck Session">
-                        Founder Bottleneck Session ($75)
-                      </option>
-                      <option value="30-Day Growth Strategy">
-                        30-Day Growth Strategy ($150)
+                      <option value="Strategy Session">
+                        Strategy Session ($297)
                       </option>
                       <option value="Growth Roadmap Session">
-                        Growth Roadmap Session ($350)
+                        Growth Roadmap Session ($997)
                       </option>
-                      <option value="Monthly Advisory">Monthly Advisory</option>
+                      <option value="Core Retainer">
+                        Core Retainer ($1,500/mo)
+                      </option>
+                      <option value="Fractional CSO">
+                        Fractional CSO ($2,500/mo)
+                      </option>
                       <option value="Not sure yet">Not sure yet</option>
                     </select>
                   </div>

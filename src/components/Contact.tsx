@@ -134,7 +134,7 @@ export default function Contact() {
                         Core Retainer ($1,500/mo)
                       </option>
                       <option value="Fractional CSO">
-                        Fractional CSO ($2,500/mo)
+                        Fractional CSO ($5,000/mo)
                       </option>
                       <option value="Not sure yet">Not sure yet</option>
                     </select>

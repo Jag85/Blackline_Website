@@ -60,7 +60,7 @@ const offerCatalog = {
       name: "Fractional CSO",
       description:
         "High-touch embedded partnership: weekly calls, deep involvement in decisions, strategic partner role. Requires Growth Roadmap Session as a prerequisite.",
-      price: "2500",
+      price: "5000",
       priceCurrency: "USD",
       url: absoluteUrl("/pricing"),
     },

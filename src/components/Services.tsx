@@ -43,7 +43,7 @@ const services = [
   },
   {
     name: "Fractional CSO",
-    tagline: "High-Touch Partnership · $2,500/mo",
+    tagline: "High-Touch Partnership · $5,000/mo",
     description:
       "An embedded strategic partner role with weekly calls and deep involvement in your decisions. Requires a Growth Roadmap Session as a prerequisite.",
     includes: [

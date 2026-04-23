@@ -87,7 +87,7 @@ const retainerTiers: Tier[] = [
   {
     name: "Fractional CSO",
     tagline: "High-Touch Partnership",
-    price: "$2,500",
+    price: "$5,000",
     cadence: "/month",
     meta: "Requires Growth Roadmap as prerequisite",
     icon: Briefcase,

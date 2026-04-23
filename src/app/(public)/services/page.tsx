@@ -43,8 +43,8 @@ const SERVICE_OFFERS = [
     description:
       "High-touch embedded partnership with weekly calls and deep involvement in decisions. Requires a Growth Roadmap Session as a prerequisite.",
     url: "/pricing",
-    price: "2500",
-    priceDescription: "$2,500/month USD",
+    price: "5000",
+    priceDescription: "$5,000/month USD",
   },
 ];
 

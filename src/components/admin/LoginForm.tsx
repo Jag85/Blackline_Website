@@ -27,7 +27,7 @@ export default function LoginForm({ from }: { from: string }) {
           required
           autoComplete="email"
           className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors"
-          placeholder="you@blacklinestrategy.com"
+          placeholder="you@blacklinestrategypartners.com"
         />
       </div>
       <div>

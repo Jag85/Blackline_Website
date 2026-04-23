@@ -19,7 +19,7 @@ export const SITE_TAGLINE = "Clarity. Strategy. Momentum.";
 export const BUSINESS = {
   name: "Blackline Strategy Partners, Inc.",
   legalName: "Blackline Strategy Partners, Inc.",
-  email: "info@blacklinestrategy.com",
+  email: "info@blacklinestrategypartners.com",
   founder: "Jarrell Green",
   city: "Houston",
   region: "TX",

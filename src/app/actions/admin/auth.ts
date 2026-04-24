@@ -2,7 +2,11 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Client, Account } from "node-appwrite";
+// Use the universal `appwrite` SDK (not `node-appwrite`) for session
+// creation. The server SDK does not return the session `secret` field
+// in its response when called without an API key, but the universal
+// SDK does — and we need that secret to persist the session in a cookie.
+import { Client as AppwriteClient, Account as AppwriteAccount } from "appwrite";
 import {
   APPWRITE_ENDPOINT,
   APPWRITE_PROJECT_ID,
@@ -35,11 +39,11 @@ export async function loginAction(
     return { ok: false, message: "Email and password are required." };
   }
 
-  // Use a fresh client (no session, no API key) to create the session.
-  const client = new Client()
+  // Universal SDK — works server-side via fetch and returns session.secret.
+  const client = new AppwriteClient()
     .setEndpoint(APPWRITE_ENDPOINT)
     .setProject(APPWRITE_PROJECT_ID);
-  const account = new Account(client);
+  const account = new AppwriteAccount(client);
 
   let session;
   try {
@@ -56,21 +60,15 @@ export async function loginAction(
     return { ok: false, message };
   }
 
-  // Diagnostic: log what fields we got back from Appwrite. Some Appwrite
-  // configurations return the Session object without a `secret` field
-  // when called from node-appwrite without an API key — in that case
-  // we cannot persist a session and need to fall back to a different flow.
-  console.log("[login] session response keys:", Object.keys(session || {}));
-  console.log(
-    "[login] session.secret length:",
-    typeof session?.secret === "string" ? session.secret.length : "missing"
-  );
-
   if (!session?.secret || session.secret.length === 0) {
+    console.error(
+      "[login] session created but secret missing. Keys:",
+      Object.keys(session || {})
+    );
     return {
       ok: false,
       message:
-        "Sign-in succeeded but Appwrite did not return a session secret. This usually means the project is configured to require a JWT or the Web platform is missing in Appwrite Settings → Platforms. Add a Web platform with your site URL and retry.",
+        "Sign-in succeeded but Appwrite did not return a session secret. Make sure a Web platform is added in Appwrite (Overview → Add platform → Web app) with your site's hostname.",
     };
   }
 

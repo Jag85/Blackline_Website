@@ -1,13 +1,28 @@
-import { Inbox } from "lucide-react";
+import { Inbox, Mail, Trash2 } from "lucide-react";
+import { format } from "date-fns";
 import { listContactsResult } from "@/lib/appwrite/contacts";
 import AdminErrorBanner from "@/components/admin/AdminErrorBanner";
+import ContactStatusActions from "@/components/admin/ContactStatusActions";
 import type { ContactSubmission } from "@/lib/appwrite/types";
 
-/**
- * Diagnostic step 2: data fetch + error banner are back, but we deliberately
- * do NOT import ContactRow yet. If this loads, the bug is in ContactRow.
- */
 export const dynamic = "force-dynamic";
+
+function safeFormat(dateStr: string | undefined, pattern: string): string {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return format(d, pattern);
+  } catch {
+    return "—";
+  }
+}
+
+const statusStyles: Record<string, string> = {
+  new: "bg-black text-white",
+  read: "bg-gray-200 text-gray-800",
+  responded: "bg-green-100 text-green-800",
+};
 
 export default async function AdminContactsPage() {
   let contacts: ContactSubmission[] = [];
@@ -36,39 +51,97 @@ export default async function AdminContactsPage() {
 
       {error && <AdminErrorBanner message={error} />}
 
-      <div className="bg-white border border-gray-200 rounded-lg p-16 text-center">
-        <Inbox size={32} className="text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-600">
-          {error
-            ? "Could not load contact submissions."
-            : contacts.length === 0
-            ? "No contact submissions yet."
-            : `${contacts.length} contact submission(s) found (row rendering temporarily disabled for debugging).`}
-        </p>
-      </div>
+      {contacts.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-lg p-16 text-center">
+          <Inbox size={32} className="text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-600">
+            {error
+              ? "Could not load contact submissions."
+              : "No contact submissions yet."}
+          </p>
+          {!error && (
+            <p className="text-sm text-gray-500 mt-2">
+              Submissions from the contact form will appear here.
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {contacts.map((c) => {
+            const status = String(c?.status || "new");
+            const styleClass = statusStyles[status] || statusStyles.new;
+            return (
+              <div
+                key={c.$id}
+                className="bg-white border border-gray-200 rounded-lg p-6"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-3 mb-1 flex-wrap">
+                      <span
+                        className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded ${styleClass}`}
+                      >
+                        {status}
+                      </span>
+                      <h3 className="text-base font-bold text-black">
+                        {c?.name || "(no name)"}
+                      </h3>
+                    </div>
+                    <a
+                      href={`mailto:${c?.email || ""}`}
+                      className="text-sm text-gray-600 hover:text-black break-all"
+                    >
+                      {c?.email || "(no email)"}
+                    </a>
+                  </div>
+                  <p className="text-xs text-gray-500 shrink-0">
+                    {safeFormat(c?.$createdAt, "MMM d, yyyy 'at' h:mm a")}
+                  </p>
+                </div>
 
-      {/* Diagnostic step 2: ContactRow rendering disabled.
-          If this page loads, the bug is in ContactRow's SSR pass. */}
-      {contacts.length > 0 && (
-        <details className="bg-gray-50 rounded p-4 text-xs font-mono">
-          <summary className="cursor-pointer text-gray-700">
-            Raw data ({contacts.length} doc{contacts.length === 1 ? "" : "s"})
-          </summary>
-          <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all">
-            {JSON.stringify(
-              contacts.map((c) => ({
-                $id: c?.$id,
-                name: c?.name,
-                email: c?.email,
-                status: c?.status,
-                $createdAt: c?.$createdAt,
-              })),
-              null,
-              2
-            )}
-          </pre>
-        </details>
+                {c?.service && (
+                  <p className="text-xs text-gray-500 mb-3">
+                    <span className="font-semibold uppercase tracking-wider mr-2">
+                      Interested in:
+                    </span>
+                    {c.service}
+                  </p>
+                )}
+
+                {c?.message && (
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded mb-4">
+                    {c.message}
+                  </p>
+                )}
+
+                <div className="flex items-center justify-between pt-2 flex-wrap gap-3">
+                  <ContactStatusActions
+                    id={c.$id}
+                    currentStatus={status as "new" | "read" | "responded"}
+                  />
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`mailto:${c?.email || ""}?subject=${encodeURIComponent("Re: your inquiry")}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded border border-gray-300 text-gray-700 hover:border-black transition-colors"
+                    >
+                      <Mail size={12} />
+                      Reply
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
+
+      {/* Lightweight delete control rendered as a separate row of actions
+          via the same client component above keeps SSR simple. */}
+      <p className="text-xs text-gray-500 flex items-center gap-2 pt-4">
+        <Trash2 size={12} />
+        Use the status controls inside each card to mark as read or
+        responded.
+      </p>
     </div>
   );
 }

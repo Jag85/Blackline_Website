@@ -1,10 +1,23 @@
 import { Users } from "lucide-react";
+import { format } from "date-fns";
 import { listSubscribersResult } from "@/lib/appwrite/subscribers";
 import AdminErrorBanner from "@/components/admin/AdminErrorBanner";
+import SubscribersToolbar from "@/components/admin/SubscribersToolbar";
+import SubscriberDeleteButton from "@/components/admin/SubscriberDeleteButton";
 import type { Subscriber } from "@/lib/appwrite/types";
 
-/** Diagnostic step 2: same approach as contacts/page.tsx. */
 export const dynamic = "force-dynamic";
+
+function safeFormat(dateStr: string | undefined, pattern: string): string {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return format(d, pattern);
+  } catch {
+    return "—";
+  }
+}
 
 export default async function AdminSubscribersPage() {
   let subscribers: Subscriber[] = [];
@@ -22,6 +35,15 @@ export default async function AdminSubscribersPage() {
 
   const activeCount = subscribers.filter((s) => s?.status === "active").length;
 
+  // Plain serializable data for CSV export (no Date objects)
+  const exportRows = subscribers.map((s) => ({
+    email: s?.email || "",
+    status: s?.status || "",
+    subscribedAt: s?.$createdAt
+      ? new Date(s.$createdAt).toISOString().split("T")[0] + "T00:00:00.000Z"
+      : "",
+  }));
+
   return (
     <div className="space-y-8">
       <div>
@@ -33,35 +55,69 @@ export default async function AdminSubscribersPage() {
 
       {error && <AdminErrorBanner message={error} />}
 
-      <div className="bg-white border border-gray-200 rounded-lg p-16 text-center">
-        <Users size={32} className="text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-600">
-          {error
-            ? "Could not load subscribers."
-            : subscribers.length === 0
-            ? "No subscribers yet."
-            : `${subscribers.length} subscriber(s) found (table rendering temporarily disabled for debugging).`}
-        </p>
-      </div>
-
-      {subscribers.length > 0 && (
-        <details className="bg-gray-50 rounded p-4 text-xs font-mono">
-          <summary className="cursor-pointer text-gray-700">
-            Raw data ({subscribers.length} doc{subscribers.length === 1 ? "" : "s"})
-          </summary>
-          <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all">
-            {JSON.stringify(
-              subscribers.map((s) => ({
-                $id: s?.$id,
-                email: s?.email,
-                status: s?.status,
-                $createdAt: s?.$createdAt,
-              })),
-              null,
-              2
-            )}
-          </pre>
-        </details>
+      {subscribers.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-lg p-16 text-center">
+          <Users size={32} className="text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-600">
+            {error ? "Could not load subscribers." : "No subscribers yet."}
+          </p>
+          {!error && (
+            <p className="text-sm text-gray-500 mt-2">
+              Newsletter subscribers from the footer form will appear here.
+            </p>
+          )}
+        </div>
+      ) : (
+        <>
+          <SubscribersToolbar rows={exportRows} />
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Email
+                  </th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 w-28">
+                    Status
+                  </th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 w-40 hidden md:table-cell">
+                    Subscribed
+                  </th>
+                  <th className="px-6 py-3 w-20"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {subscribers.map((s) => (
+                  <tr key={s.$id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-black break-all">
+                      {s?.email || "(no email)"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded ${
+                          s?.status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        {s?.status || "—"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 hidden md:table-cell">
+                      {safeFormat(s?.$createdAt, "MMM d, yyyy")}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <SubscriberDeleteButton
+                        id={s.$id}
+                        email={s?.email || ""}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );

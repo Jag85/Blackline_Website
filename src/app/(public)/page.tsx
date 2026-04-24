@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import Hero from "@/components/Hero";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import BestFitClients from "@/components/BestFitClients";
+import Testimonials from "@/components/Testimonials";
 import { Target, TrendingUp, Zap, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
 
@@ -101,6 +103,12 @@ export default function Home() {
           </div>
         </div>
       </AnimateOnScroll>
+
+      {/* Who we work with */}
+      <BestFitClients />
+
+      {/* Social proof */}
+      <Testimonials />
 
       {/* Services teaser */}
       <section className="py-24 md:py-32 bg-gray-50">

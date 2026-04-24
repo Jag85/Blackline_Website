@@ -2,12 +2,32 @@ import { Inbox } from "lucide-react";
 import { listContactsResult } from "@/lib/appwrite/contacts";
 import ContactRow from "@/components/admin/ContactRow";
 import AdminErrorBanner from "@/components/admin/AdminErrorBanner";
+import type { ContactSubmission } from "@/lib/appwrite/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminContactsPage() {
-  const { contacts, error } = await listContactsResult();
-  const newCount = contacts.filter((c) => c.status === "new").length;
+  let contacts: ContactSubmission[] = [];
+  let error: string | null = null;
+
+  // Top-level guard: if anything in the data path throws (including the
+  // import resolution or destructuring), surface the message inline
+  // instead of falling through to Next.js's generic server-error page.
+  try {
+    const result = await listContactsResult();
+    contacts = Array.isArray(result?.contacts) ? result.contacts : [];
+    error = result?.error ?? null;
+  } catch (e) {
+    error = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+    console.error("[contacts page] top-level error:", e);
+  }
+
+  let newCount = 0;
+  try {
+    newCount = contacts.filter((c) => c?.status === "new").length;
+  } catch {
+    /* leave at 0 */
+  }
 
   return (
     <div className="space-y-8">
@@ -38,9 +58,25 @@ export default async function AdminContactsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {contacts.map((contact) => (
-            <ContactRow key={contact.$id} contact={contact} />
-          ))}
+          {contacts.map((contact) => {
+            // Per-row guard: a single bad document shouldn't take down
+            // the whole page.
+            try {
+              return <ContactRow key={contact.$id} contact={contact} />;
+            } catch (rowErr) {
+              console.error("[contacts page] row render failed:", rowErr);
+              return (
+                <div
+                  key={contact?.$id || Math.random()}
+                  className="bg-red-50 border border-red-200 rounded p-4 text-sm text-red-800"
+                >
+                  Could not render this contact (
+                  {rowErr instanceof Error ? rowErr.message : "unknown error"}
+                  ).
+                </div>
+              );
+            }
+          })}
         </div>
       )}
     </div>

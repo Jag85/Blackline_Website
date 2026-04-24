@@ -5,34 +5,28 @@
  */
 
 export const APPWRITE_ENDPOINT =
-  process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
+  process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ||
+  "https://nyc.cloud.appwrite.io/v1";
 
 export const APPWRITE_PROJECT_ID =
-  process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "";
+  process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "69eadb9d001d191c0b2d";
 
 export const APPWRITE_DATABASE_ID =
-  process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || "";
+  process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || "69eaddb9003bb9a80d9b";
 
 /**
- * Collection IDs. If you used Appwrite's auto-generated IDs (20-char hex
- * strings) instead of custom slugs, set these env vars in Netlify to
- * override the defaults below. The defaults assume you typed in custom
- * collection IDs that match the slug.
+ * Hardcoded collection + bucket IDs from the Blackline Appwrite project.
+ * These are the auto-generated 20-char IDs Appwrite assigned when each
+ * resource was created.
  */
 export const COLLECTIONS = {
-  POSTS:
-    process.env.NEXT_PUBLIC_APPWRITE_POSTS_COLLECTION_ID || "posts",
-  CONTACT_SUBMISSIONS:
-    process.env.NEXT_PUBLIC_APPWRITE_CONTACTS_COLLECTION_ID ||
-    "contact_submissions",
-  SUBSCRIBERS:
-    process.env.NEXT_PUBLIC_APPWRITE_SUBSCRIBERS_COLLECTION_ID ||
-    "subscribers",
+  POSTS: "69eadde20023e9f7e1ce",
+  CONTACT_SUBMISSIONS: "69eade02001e33b3f657",
+  SUBSCRIBERS: "69eadeb400062e7bfcbb",
 } as const;
 
 export const STORAGE_BUCKETS = {
-  BLOG_IMAGES:
-    process.env.NEXT_PUBLIC_APPWRITE_BLOG_IMAGES_BUCKET_ID || "blog-images",
+  BLOG_IMAGES: "69eae254001ef3bbc2de",
 } as const;
 
 /**

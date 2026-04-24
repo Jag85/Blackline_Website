@@ -26,11 +26,13 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand + Newsletter spans wider */}
           <div className="lg:col-span-2">
+            {/* invert turns the dark-on-white PNG into light-on-dark so it
+                blends with the dark footer */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo-white.svg"
+              src="/logo.png"
               alt="Blackline Strategy Partners"
-              className="h-14 w-auto mb-4"
+              className="h-14 w-auto mb-4 invert"
             />
             <p className="text-sm leading-relaxed mb-8">
               Clarity. Strategy. Momentum.

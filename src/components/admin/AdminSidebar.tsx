@@ -32,7 +32,11 @@ export default function AdminSidebar({ userEmail }: { userEmail: string }) {
       <div className="p-6 border-b border-gray-800">
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-white.svg" alt="Blackline" className="h-10 w-auto" />
+          <img
+            src="/logo.png"
+            alt="Blackline"
+            className="h-10 w-auto invert"
+          />
         </Link>
         <p className="text-xs uppercase tracking-widest text-gray-500 mt-3">
           Admin

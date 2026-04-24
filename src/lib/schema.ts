@@ -26,7 +26,7 @@ export function organizationSchema() {
     url: SITE_URL,
     logo: {
       "@type": "ImageObject",
-      url: absoluteUrl("/logo.svg"),
+      url: absoluteUrl("/logo.png"),
     },
     image: absoluteUrl("/opengraph-image"),
     description: SITE_DESCRIPTION,

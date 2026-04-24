@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
           <div className="text-center mb-8">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.svg"
+              src="/logo.png"
               alt="Blackline"
               className="h-12 w-auto mx-auto mb-6"
             />

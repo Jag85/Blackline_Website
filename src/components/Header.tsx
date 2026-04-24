@@ -29,7 +29,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.svg"
+            src="/logo.png"
             alt="Blackline Strategy Partners"
             className="h-14 md:h-16 w-auto"
           />

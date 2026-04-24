@@ -13,27 +13,32 @@ interface Testimonial {
 }
 
 /**
- * Replace these with real testimonials. Keep quote length short (1–3
- * sentences) for visual balance across the three cards.
+ * Placeholder testimonials with realistic-sounding founder names.
+ * These are NOT real customers — replace each entry with an actual
+ * testimonial (with permission) before any customer-facing launch.
+ *
+ * To swap one out: edit the quote / name / role fields below.
+ * Keep quote length short (1–3 sentences) for visual balance across
+ * the three cards.
  */
 const testimonials: Testimonial[] = [
   {
     quote:
-      "The Growth Roadmap Session cut through six months of indecision in 90 minutes. I left with a 30-day plan I actually executed.",
-    name: "Sample Founder",
-    role: "Mortgage Broker Owner",
+      "The Growth Roadmap Session cut through six months of indecision in 90 minutes. I walked out with a 30-day plan I actually executed — and it worked.",
+    name: "Marcus Reeves",
+    role: "Founder, Pinecrest Mortgage Group",
   },
   {
     quote:
-      "Blackline named the bottleneck I had been working around for a year. Once we fixed it, my pipeline doubled within a quarter.",
-    name: "Sample Founder",
-    role: "Small Agency Founder",
+      "Blackline named the exact bottleneck I'd been working around for a year. Within a quarter of fixing it, our qualified pipeline more than doubled.",
+    name: "Lauren Chen",
+    role: "Founder & CEO, Northbeam Creative",
   },
   {
     quote:
-      "Working with Blackline as a fractional CSO is the highest-leverage relationship in my business. Every decision moves faster.",
-    name: "Sample Founder",
-    role: "Education Founder",
+      "Having Blackline as our fractional CSO is the highest-leverage relationship in the business. Every strategic call moves faster — and lands better.",
+    name: "Andre Sullivan",
+    role: "Founder, Sullivan Learning Co.",
   },
 ];
 

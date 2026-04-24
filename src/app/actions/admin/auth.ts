@@ -2,11 +2,6 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-// Use the universal `appwrite` SDK (not `node-appwrite`) for session
-// creation. The server SDK does not return the session `secret` field
-// in its response when called without an API key, but the universal
-// SDK does — and we need that secret to persist the session in a cookie.
-import { Client as AppwriteClient, Account as AppwriteAccount } from "appwrite";
 import {
   APPWRITE_ENDPOINT,
   APPWRITE_PROJECT_ID,
@@ -21,11 +16,26 @@ export interface LoginResult {
   redirectTo?: string;
 }
 
+interface AppwriteSessionResponse {
+  $id?: string;
+  userId?: string;
+  expire?: string;
+  secret?: string;
+  message?: string;
+  type?: number;
+  code?: number;
+}
+
 /**
  * Authenticate the admin user. On success, returns { ok: true, redirectTo }
- * so the client can navigate via router.push — calling Next.js redirect()
- * directly from a Server Action used with useActionState is unreliable on
- * Netlify and the navigation can be silently swallowed.
+ * so the client can navigate via router.push.
+ *
+ * Implementation note: we call the Appwrite REST API directly via fetch
+ * instead of using either Appwrite SDK. Both SDKs strip the session
+ * secret from the response when called server-side (they assume the
+ * browser will handle the Set-Cookie header instead). Direct REST gives
+ * us access to both the JSON body and headers so we can reliably grab
+ * the session secret regardless of which channel Appwrite uses.
  */
 export async function loginAction(
   _prev: LoginResult | null,
@@ -39,47 +49,102 @@ export async function loginAction(
     return { ok: false, message: "Email and password are required." };
   }
 
-  // Universal SDK — works server-side via fetch and returns session.secret.
-  const client = new AppwriteClient()
-    .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID);
-  const account = new AppwriteAccount(client);
-
-  let session;
+  let response: Response;
   try {
-    session = await account.createEmailPasswordSession({
-      email,
-      password,
+    response = await fetch(`${APPWRITE_ENDPOINT}/account/sessions/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": APPWRITE_PROJECT_ID,
+        "X-Appwrite-Response-Format": "1.7.0",
+      },
+      body: JSON.stringify({ email, password }),
+      // Don't follow redirects — Appwrite responds 201, no redirect expected.
+      redirect: "manual",
     });
   } catch (err) {
-    console.error("[login] createEmailPasswordSession threw:", err);
-    const message =
-      err instanceof Error
-        ? `Sign-in failed: ${err.message}`
-        : "Invalid email or password.";
-    return { ok: false, message };
+    console.error("[login] fetch threw:", err);
+    return {
+      ok: false,
+      message: `Sign-in failed: network error reaching ${APPWRITE_ENDPOINT}.`,
+    };
   }
 
-  if (!session?.secret || session.secret.length === 0) {
+  let body: AppwriteSessionResponse = {};
+  try {
+    body = (await response.json()) as AppwriteSessionResponse;
+  } catch {
+    /* non-JSON response; body stays empty */
+  }
+
+  if (!response.ok) {
     console.error(
-      "[login] session created but secret missing. Keys:",
-      Object.keys(session || {})
+      "[login] Appwrite returned",
+      response.status,
+      "body:",
+      body
     );
     return {
       ok: false,
       message:
-        "Sign-in succeeded but Appwrite did not return a session secret. Make sure a Web platform is added in Appwrite (Overview → Add platform → Web app) with your site's hostname.",
+        body?.message ||
+        `Sign-in failed (${response.status}). Check your email and password.`,
     };
   }
 
+  // Try the JSON body first
+  let secret: string | undefined = body?.secret;
+
+  // Fallback: parse from Set-Cookie header (Appwrite sets a_session_<projectId>)
+  if (!secret) {
+    const headers = response.headers;
+    // Node's fetch supports getSetCookie() (returns string[]) since 18.14
+    const setCookieList: string[] =
+      typeof (headers as unknown as { getSetCookie?: () => string[] })
+        .getSetCookie === "function"
+        ? (headers as unknown as { getSetCookie: () => string[] }).getSetCookie()
+        : (headers.get("set-cookie") || "").split(/,(?=\s*\w+=)/);
+
+    for (const raw of setCookieList) {
+      const m = raw.match(/a_session_[^=]+=([^;]+)/);
+      if (m) {
+        try {
+          secret = decodeURIComponent(m[1]);
+        } catch {
+          secret = m[1];
+        }
+        break;
+      }
+    }
+  }
+
+  if (!secret) {
+    console.error(
+      "[login] could not extract session secret. Body keys:",
+      Object.keys(body || {}),
+      "Cookies:",
+      response.headers.get("set-cookie")
+    );
+    return {
+      ok: false,
+      message:
+        "Sign-in succeeded but no session secret was returned. Check the Netlify Function logs for [login] details.",
+    };
+  }
+
+  // Default expiry: 1 year. If Appwrite gave us an expire timestamp, use it.
+  const expires = body?.expire
+    ? new Date(body.expire)
+    : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
   try {
     const cookieStore = await cookies();
-    cookieStore.set(SESSION_COOKIE_NAME, session.secret, {
+    cookieStore.set(SESSION_COOKIE_NAME, secret, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      expires: new Date(session.expire),
+      expires,
     });
   } catch (err) {
     console.error("[login] cookie set error:", err);

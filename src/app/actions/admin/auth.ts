@@ -48,12 +48,30 @@ export async function loginAction(
       password,
     });
   } catch (err) {
-    console.error("loginAction error:", err);
+    console.error("[login] createEmailPasswordSession threw:", err);
     const message =
       err instanceof Error
         ? `Sign-in failed: ${err.message}`
         : "Invalid email or password.";
     return { ok: false, message };
+  }
+
+  // Diagnostic: log what fields we got back from Appwrite. Some Appwrite
+  // configurations return the Session object without a `secret` field
+  // when called from node-appwrite without an API key — in that case
+  // we cannot persist a session and need to fall back to a different flow.
+  console.log("[login] session response keys:", Object.keys(session || {}));
+  console.log(
+    "[login] session.secret length:",
+    typeof session?.secret === "string" ? session.secret.length : "missing"
+  );
+
+  if (!session?.secret || session.secret.length === 0) {
+    return {
+      ok: false,
+      message:
+        "Sign-in succeeded but Appwrite did not return a session secret. This usually means the project is configured to require a JWT or the Web platform is missing in Appwrite Settings → Platforms. Add a Web platform with your site URL and retry.",
+    };
   }
 
   try {
@@ -66,7 +84,7 @@ export async function loginAction(
       expires: new Date(session.expire),
     });
   } catch (err) {
-    console.error("loginAction cookie error:", err);
+    console.error("[login] cookie set error:", err);
     return {
       ok: false,
       message: "Authenticated, but failed to set session cookie. Please retry.",

@@ -18,7 +18,13 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const session = request.cookies.get(SESSION_COOKIE_NAME);
 
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+  // Public admin paths (no auth required for these routes)
+  const publicAdminPaths = ["/admin/login", "/admin/debug"];
+
+  if (
+    pathname.startsWith("/admin") &&
+    !publicAdminPaths.includes(pathname)
+  ) {
     if (!session?.value) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";

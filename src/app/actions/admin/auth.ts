@@ -13,8 +13,16 @@ import { createSessionClient } from "@/lib/appwrite/server";
 export interface LoginResult {
   ok: boolean;
   message?: string;
+  /** When ok=true, the path to navigate to. Client does the push. */
+  redirectTo?: string;
 }
 
+/**
+ * Authenticate the admin user. On success, returns { ok: true, redirectTo }
+ * so the client can navigate via router.push — calling Next.js redirect()
+ * directly from a Server Action used with useActionState is unreliable on
+ * Netlify and the navigation can be silently swallowed.
+ */
 export async function loginAction(
   _prev: LoginResult | null,
   formData: FormData
@@ -27,7 +35,7 @@ export async function loginAction(
     return { ok: false, message: "Email and password are required." };
   }
 
-  // Use a fresh client (no session, no API key) to create the session
+  // Use a fresh client (no session, no API key) to create the session.
   const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
     .setProject(APPWRITE_PROJECT_ID);
@@ -41,19 +49,31 @@ export async function loginAction(
     });
   } catch (err) {
     console.error("loginAction error:", err);
-    return { ok: false, message: "Invalid email or password." };
+    const message =
+      err instanceof Error
+        ? `Sign-in failed: ${err.message}`
+        : "Invalid email or password.";
+    return { ok: false, message };
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, session.secret, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(session.expire),
-  });
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE_NAME, session.secret, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      expires: new Date(session.expire),
+    });
+  } catch (err) {
+    console.error("loginAction cookie error:", err);
+    return {
+      ok: false,
+      message: "Authenticated, but failed to set session cookie. Please retry.",
+    };
+  }
 
-  redirect(from);
+  return { ok: true, redirectTo: from };
 }
 
 export async function logoutAction() {

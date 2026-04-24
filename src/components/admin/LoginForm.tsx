@@ -1,14 +1,27 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { loginAction, type LoginResult } from "@/app/actions/admin/auth";
 
 export default function LoginForm({ from }: { from: string }) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState<
     LoginResult | null,
     FormData
   >(loginAction, null);
+
+  // Server action returns { ok: true, redirectTo } on success; we navigate
+  // here on the client to ensure the redirect actually fires (calling
+  // Next.js redirect() inside the action can be silently swallowed by the
+  // Netlify adapter in some configurations).
+  useEffect(() => {
+    if (state?.ok && state.redirectTo) {
+      router.push(state.redirectTo);
+      router.refresh();
+    }
+  }, [state, router]);
 
   return (
     <form action={formAction} className="space-y-5">
@@ -51,13 +64,18 @@ export default function LoginForm({ from }: { from: string }) {
           {state.message}
         </p>
       )}
+      {state?.ok && (
+        <p className="text-sm text-green-700" role="status">
+          Signed in. Loading dashboard…
+        </p>
+      )}
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || Boolean(state?.ok)}
         className="w-full inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-6 py-3.5 rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {pending ? "Signing in..." : "Sign In"}
-        {!pending && <ArrowRight size={16} />}
+        {pending ? "Signing in…" : state?.ok ? "Redirecting…" : "Sign In"}
+        {!pending && !state?.ok && <ArrowRight size={16} />}
       </button>
     </form>
   );

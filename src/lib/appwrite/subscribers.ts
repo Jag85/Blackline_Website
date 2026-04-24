@@ -9,8 +9,8 @@ export async function addSubscriber(email: string): Promise<{
   reason?: "duplicate" | "error";
   subscriber?: Subscriber;
 }> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const existing = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.SUBSCRIBERS,
@@ -30,14 +30,14 @@ export async function addSubscriber(email: string): Promise<{
     );
     return { ok: true, subscriber: doc as unknown as Subscriber };
   } catch (err) {
-    console.error("addSubscriber error:", err);
+    console.error("[subscribers] addSubscriber error:", err);
     return { ok: false, reason: "error" };
   }
 }
 
 export async function listSubscribers(): Promise<Subscriber[]> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const res = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.SUBSCRIBERS,
@@ -45,7 +45,7 @@ export async function listSubscribers(): Promise<Subscriber[]> {
     );
     return res.documents as unknown as Subscriber[];
   } catch (err) {
-    console.error("listSubscribers error:", err);
+    console.error("[subscribers] listSubscribers error:", err);
     return [];
   }
 }

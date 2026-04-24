@@ -31,8 +31,8 @@ export async function createContact(
 }
 
 export async function listContacts(): Promise<ContactSubmission[]> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const res = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.CONTACT_SUBMISSIONS,
@@ -40,7 +40,7 @@ export async function listContacts(): Promise<ContactSubmission[]> {
     );
     return res.documents as unknown as ContactSubmission[];
   } catch (err) {
-    console.error("listContacts error:", err);
+    console.error("[contacts] listContacts error:", err);
     return [];
   }
 }

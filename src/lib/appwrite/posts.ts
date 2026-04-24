@@ -18,8 +18,8 @@ interface PostInput {
  * Public: list published posts ordered by publishedAt desc.
  */
 export async function listPublishedPosts(): Promise<BlogPost[]> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const res = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.POSTS,
@@ -27,7 +27,7 @@ export async function listPublishedPosts(): Promise<BlogPost[]> {
     );
     return res.documents as unknown as BlogPost[];
   } catch (err) {
-    console.error("listPublishedPosts error:", err);
+    console.error("[posts] listPublishedPosts error:", err);
     return [];
   }
 }
@@ -36,8 +36,8 @@ export async function listPublishedPosts(): Promise<BlogPost[]> {
  * Public: get a published post by slug.
  */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const res = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.POSTS,
@@ -45,7 +45,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     );
     return (res.documents[0] as unknown as BlogPost) || null;
   } catch (err) {
-    console.error("getPostBySlug error:", err);
+    console.error("[posts] getPostBySlug error:", err);
     return null;
   }
 }
@@ -54,8 +54,8 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
  * Admin: list ALL posts (drafts + published) ordered by updatedAt desc.
  */
 export async function listAllPosts(): Promise<BlogPost[]> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const res = await databases.listDocuments(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.POSTS,
@@ -63,7 +63,7 @@ export async function listAllPosts(): Promise<BlogPost[]> {
     );
     return res.documents as unknown as BlogPost[];
   } catch (err) {
-    console.error("listAllPosts error:", err);
+    console.error("[posts] listAllPosts error:", err);
     return [];
   }
 }
@@ -72,8 +72,8 @@ export async function listAllPosts(): Promise<BlogPost[]> {
  * Admin: get a single post by document id (for edit page).
  */
 export async function getPostById(id: string): Promise<BlogPost | null> {
-  const { databases } = createAdminClient();
   try {
+    const { databases } = createAdminClient();
     const doc = await databases.getDocument(
       APPWRITE_DATABASE_ID,
       COLLECTIONS.POSTS,
@@ -81,7 +81,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
     );
     return doc as unknown as BlogPost;
   } catch (err) {
-    console.error("getPostById error:", err);
+    console.error("[posts] getPostById error:", err);
     return null;
   }
 }

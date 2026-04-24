@@ -50,7 +50,7 @@ const SERVICE_OFFERS = [
 
 export default function ServicesPage() {
   return (
-    <div className="pt-20">
+    <div className="pt-28 md:pt-32">
       <JsonLd
         data={[
           breadcrumbSchema([

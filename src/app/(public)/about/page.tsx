@@ -15,7 +15,7 @@ export const metadata = buildPageMetadata({
 
 export default function AboutPage() {
   return (
-    <div className="pt-20">
+    <div className="pt-28 md:pt-32">
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },

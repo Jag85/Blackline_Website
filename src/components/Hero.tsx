@@ -6,7 +6,7 @@ import { BOOKING_URL } from "@/lib/site";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-to-br from-gray-50 to-white pt-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center bg-gradient-to-br from-gray-50 to-white pt-28 md:pt-32 overflow-hidden">
       {/* Subtle grid pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"

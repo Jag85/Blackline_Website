@@ -25,13 +25,13 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-28 md:h-32 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
             alt="Blackline Strategy Partners"
-            className="h-14 md:h-16 w-auto"
+            className="h-20 md:h-24 w-auto"
           />
         </Link>
 

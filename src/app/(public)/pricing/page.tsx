@@ -69,7 +69,7 @@ const offerCatalog = {
 
 export default function PricingPage() {
   return (
-    <div className="pt-20">
+    <div className="pt-28 md:pt-32">
       <JsonLd
         data={[
           breadcrumbSchema([

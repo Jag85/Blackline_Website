@@ -31,6 +31,18 @@ export async function createContact(
 }
 
 export async function listContacts(): Promise<ContactSubmission[]> {
+  return (await listContactsResult()).contacts;
+}
+
+/**
+ * Variant that surfaces both the data and any error so the page can
+ * render an inline diagnostic message in production (where Next.js
+ * strips error.message to avoid info leaks).
+ */
+export async function listContactsResult(): Promise<{
+  contacts: ContactSubmission[];
+  error: string | null;
+}> {
   try {
     const { databases } = createAdminClient();
     const res = await databases.listDocuments(
@@ -38,10 +50,13 @@ export async function listContacts(): Promise<ContactSubmission[]> {
       COLLECTIONS.CONTACT_SUBMISSIONS,
       [Query.orderDesc("$createdAt"), Query.limit(200)]
     );
-    return res.documents as unknown as ContactSubmission[];
+    const docs = (res?.documents ?? []) as unknown as ContactSubmission[];
+    return { contacts: docs, error: null };
   } catch (err) {
     console.error("[contacts] listContacts error:", err);
-    return [];
+    const message =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return { contacts: [], error: message };
   }
 }
 

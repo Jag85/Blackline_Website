@@ -18,13 +18,34 @@ const statusStyles: Record<ContactStatus, string> = {
   responded: "bg-green-100 text-green-800",
 };
 
+const STATUS_VALUES: ContactStatus[] = ["new", "read", "responded"];
+
+function safeFormat(dateStr: string | undefined, pattern: string): string {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return format(d, pattern);
+  } catch {
+    return "—";
+  }
+}
+
+function normalizeStatus(s: unknown): ContactStatus {
+  return STATUS_VALUES.includes(s as ContactStatus)
+    ? (s as ContactStatus)
+    : "new";
+}
+
 export default function ContactRow({
   contact,
 }: {
   contact: ContactSubmission;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [status, setStatus] = useState<ContactStatus>(contact.status);
+  const [status, setStatus] = useState<ContactStatus>(
+    normalizeStatus(contact.status)
+  );
   const [isPending, startTransition] = useTransition();
 
   const handleStatusChange = (next: ContactStatus) => {
@@ -62,12 +83,14 @@ export default function ContactRow({
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-black truncate">
-            {contact.name}
+            {contact.name || "(no name)"}
           </p>
-          <p className="text-xs text-gray-500 truncate">{contact.email}</p>
+          <p className="text-xs text-gray-500 truncate">
+            {contact.email || "(no email)"}
+          </p>
         </div>
         <p className="text-xs text-gray-500 hidden md:block shrink-0">
-          {format(new Date(contact.$createdAt), "MMM d, yyyy")}
+          {safeFormat(contact.$createdAt, "MMM d, yyyy")}
         </p>
         {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
@@ -88,10 +111,7 @@ export default function ContactRow({
                 Submitted
               </p>
               <p className="text-gray-800">
-                {format(
-                  new Date(contact.$createdAt),
-                  "MMM d, yyyy 'at' h:mm a"
-                )}
+                {safeFormat(contact.$createdAt, "MMM d, yyyy 'at' h:mm a")}
               </p>
             </div>
           </div>

@@ -1,11 +1,12 @@
 import { Users } from "lucide-react";
-import { listSubscribers } from "@/lib/appwrite/subscribers";
+import { listSubscribersResult } from "@/lib/appwrite/subscribers";
 import SubscribersTable from "@/components/admin/SubscribersTable";
+import AdminErrorBanner from "@/components/admin/AdminErrorBanner";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSubscribersPage() {
-  const subscribers = await listSubscribers();
+  const { subscribers, error } = await listSubscribersResult();
   const activeCount = subscribers.filter((s) => s.status === "active").length;
 
   return (
@@ -17,13 +18,21 @@ export default async function AdminSubscribersPage() {
         </p>
       </div>
 
+      {error && <AdminErrorBanner message={error} />}
+
       {subscribers.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-lg p-16 text-center">
           <Users size={32} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-600">No subscribers yet.</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Newsletter subscribers from the footer form will appear here.
+          <p className="text-gray-600">
+            {error
+              ? "Could not load subscribers."
+              : "No subscribers yet."}
           </p>
+          {!error && (
+            <p className="text-sm text-gray-500 mt-2">
+              Newsletter subscribers from the footer form will appear here.
+            </p>
+          )}
         </div>
       ) : (
         <SubscribersTable subscribers={subscribers} />

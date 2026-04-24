@@ -6,6 +6,17 @@ import { Trash2, Download } from "lucide-react";
 import { deleteSubscriberAction } from "@/app/actions/admin/contacts";
 import type { Subscriber } from "@/lib/appwrite/types";
 
+function safeFormat(dateStr: string | undefined, pattern: string): string {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return format(d, pattern);
+  } catch {
+    return "—";
+  }
+}
+
 export default function SubscribersTable({
   subscribers,
 }: {
@@ -21,12 +32,17 @@ export default function SubscribersTable({
   };
 
   const handleExportCSV = () => {
+    const safeIso = (dateStr: string | undefined): string => {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      return Number.isNaN(d.getTime()) ? "" : d.toISOString();
+    };
     const rows = [
       ["email", "status", "subscribed_at"],
       ...subscribers.map((s) => [
-        s.email,
-        s.status,
-        new Date(s.$createdAt).toISOString(),
+        s.email || "",
+        s.status || "",
+        safeIso(s.$createdAt),
       ]),
     ];
     const csv = rows
@@ -91,7 +107,7 @@ export default function SubscribersTable({
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500 hidden md:table-cell">
-                  {format(new Date(s.$createdAt), "MMM d, yyyy")}
+                  {safeFormat(s.$createdAt, "MMM d, yyyy")}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button

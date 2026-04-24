@@ -36,6 +36,13 @@ export async function addSubscriber(email: string): Promise<{
 }
 
 export async function listSubscribers(): Promise<Subscriber[]> {
+  return (await listSubscribersResult()).subscribers;
+}
+
+export async function listSubscribersResult(): Promise<{
+  subscribers: Subscriber[];
+  error: string | null;
+}> {
   try {
     const { databases } = createAdminClient();
     const res = await databases.listDocuments(
@@ -43,10 +50,13 @@ export async function listSubscribers(): Promise<Subscriber[]> {
       COLLECTIONS.SUBSCRIBERS,
       [Query.orderDesc("$createdAt"), Query.limit(500)]
     );
-    return res.documents as unknown as Subscriber[];
+    const docs = (res?.documents ?? []) as unknown as Subscriber[];
+    return { subscribers: docs, error: null };
   } catch (err) {
     console.error("[subscribers] listSubscribers error:", err);
-    return [];
+    const message =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return { subscribers: [], error: message };
   }
 }
 

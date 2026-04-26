@@ -29,12 +29,28 @@ export const BUSINESS = {
 } as const;
 
 /**
- * Direct Calendly booking URL. Used by every "Book a Session" / "Book Now"
- * CTA across the site so visitors go straight to the calendar instead of
- * filtering through the contact form. The /contact form is kept for
- * non-booking inquiries (e.g. general questions).
+ * Default booking URL for generic "Book a Session" CTAs (Header, Hero,
+ * Footer, NextStepsCTA cards that don't name a specific tier, etc.).
+ * Sends visitors straight to the calendar instead of through the
+ * contact form. The /contact form is kept for non-booking inquiries.
  */
 export const BOOKING_URL = "https://cal.com/blacklinestrategypartners";
+
+/**
+ * Stripe Checkout links — one per paid tier. Used by:
+ *  - Pricing page tier cards (each tier's "Book Now" / "Get Started")
+ *  - Tool result CTAs that specifically promote the Growth Roadmap
+ *    Session (FOCUS Scorecard, Clarity Index, Capital Conversion)
+ *
+ * Update these here only — Pricing.tsx and DiagnosticEngine.tsx
+ * import them so a single edit flows everywhere.
+ */
+export const STRIPE_CHECKOUT = {
+  STRATEGY_SESSION: "https://buy.stripe.com/dRm3cx85Zevh6MOfMY18c00",
+  GROWTH_ROADMAP: "https://buy.stripe.com/dRm7sN4TN0Er6MOcAM18c01",
+  CORE_RETAINER: "https://buy.stripe.com/fZu5kF4TN3QD9Z0eIU18c04",
+  FRACTIONAL_CSO: "https://buy.stripe.com/eVq3cxgCv1IvgnobwI18c02",
+} as const;
 
 /** Build an absolute URL from a path. */
 export function absoluteUrl(path: string = "/"): string {

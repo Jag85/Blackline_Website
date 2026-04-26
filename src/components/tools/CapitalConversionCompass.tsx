@@ -2,7 +2,7 @@
 
 import DiagnosticEngine from "./_shared/DiagnosticEngine";
 import type { DiagnosticConfig } from "./_shared/types";
-import { BOOKING_URL } from "@/lib/site";
+import { STRIPE_CHECKOUT } from "@/lib/site";
 
 type CccCategory =
   | "positioning"
@@ -76,7 +76,9 @@ const config: DiagnosticConfig<CccCategory> = {
   },
   scoreLabel: "Conversion Readiness",
   primaryLabel: "Primary Conversion Gap",
-  bookingUrl: BOOKING_URL,
+  // Tool result CTA copy specifically promotes the Growth Roadmap Session,
+  // so send users straight to that Stripe checkout.
+  bookingUrl: STRIPE_CHECKOUT.GROWTH_ROADMAP,
   categoryOrder: ["positioning", "audience", "offer", "trust", "stage"],
   categories: {
     positioning: { label: "Positioning Misalignment", abbr: "Position" },

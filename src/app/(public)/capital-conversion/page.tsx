@@ -4,7 +4,7 @@ import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
-import { BOOKING_URL } from "@/lib/site";
+import { STRIPE_CHECKOUT } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
   title: "Capital Conversion Compass",
@@ -56,7 +56,7 @@ export default function CapitalConversionPage() {
             title: "Book a Growth Roadmap",
             description:
               "Take a deep dive into your business model, offer, and customer acquisition strategy.",
-            href: BOOKING_URL,
+            href: STRIPE_CHECKOUT.GROWTH_ROADMAP,
             cta: "Book a Session",
             primary: true,
           },

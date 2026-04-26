@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
-import { BOOKING_URL } from "@/lib/site";
+import { STRIPE_CHECKOUT } from "@/lib/site";
 
 interface Tier {
   name: string;
@@ -30,6 +30,8 @@ interface Tier {
   features: string[];
   /** CTA button label */
   cta: string;
+  /** Direct Stripe Checkout URL for this tier */
+  checkoutUrl: string;
 }
 
 const oneTimeTiers: Tier[] = [
@@ -46,6 +48,7 @@ const oneTimeTiers: Tier[] = [
       "Best for first-time clients",
     ],
     cta: "Book Now",
+    checkoutUrl: STRIPE_CHECKOUT.STRATEGY_SESSION,
   },
   {
     name: "Growth Roadmap Session",
@@ -63,6 +66,7 @@ const oneTimeTiers: Tier[] = [
       "Best path forward for most founders",
     ],
     cta: "Book Now",
+    checkoutUrl: STRIPE_CHECKOUT.GROWTH_ROADMAP,
   },
 ];
 
@@ -83,6 +87,7 @@ const retainerTiers: Tier[] = [
       "Priority access between sessions",
     ],
     cta: "Get Started",
+    checkoutUrl: STRIPE_CHECKOUT.CORE_RETAINER,
   },
   {
     name: "Fractional CSO",
@@ -98,6 +103,7 @@ const retainerTiers: Tier[] = [
       "Offer, funnel, and growth strategy",
     ],
     cta: "Get Started",
+    checkoutUrl: STRIPE_CHECKOUT.FRACTIONAL_CSO,
   },
 ];
 
@@ -218,9 +224,9 @@ function PricingCard({ tier }: { tier: Tier }) {
         ))}
       </ul>
 
-      {/* CTA */}
+      {/* CTA — direct Stripe Checkout for this tier */}
       <a
-        href={BOOKING_URL}
+        href={tier.checkoutUrl}
         target="_blank"
         rel="noopener noreferrer"
         className={`w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3.5 rounded-lg transition-colors ${

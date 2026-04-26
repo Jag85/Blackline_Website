@@ -2,6 +2,7 @@
 
 import DiagnosticEngine from "./_shared/DiagnosticEngine";
 import type { DiagnosticConfig } from "./_shared/types";
+import { BOOKING_URL } from "@/lib/site";
 
 type FciCategory = "clarity" | "direction" | "focus" | "execution";
 
@@ -69,7 +70,7 @@ const config: DiagnosticConfig<FciCategory> = {
   },
   scoreLabel: "Clarity Score",
   primaryLabel: "Primary Constraint",
-  bookingUrl: "https://calendly.com/jarrellagreen/30min",
+  bookingUrl: BOOKING_URL,
   categoryOrder: ["clarity", "direction", "focus", "execution"],
   categories: {
     clarity: { label: "Clarity Gap", abbr: "Clarity" },

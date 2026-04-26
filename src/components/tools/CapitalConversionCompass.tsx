@@ -2,6 +2,7 @@
 
 import DiagnosticEngine from "./_shared/DiagnosticEngine";
 import type { DiagnosticConfig } from "./_shared/types";
+import { BOOKING_URL } from "@/lib/site";
 
 type CccCategory =
   | "positioning"
@@ -75,7 +76,7 @@ const config: DiagnosticConfig<CccCategory> = {
   },
   scoreLabel: "Conversion Readiness",
   primaryLabel: "Primary Conversion Gap",
-  bookingUrl: "https://calendly.com/jarrellagreen/30min",
+  bookingUrl: BOOKING_URL,
   categoryOrder: ["positioning", "audience", "offer", "trust", "stage"],
   categories: {
     positioning: { label: "Positioning Misalignment", abbr: "Position" },

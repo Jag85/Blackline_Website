@@ -2,6 +2,7 @@
 
 import DiagnosticEngine from "./_shared/DiagnosticEngine";
 import type { DiagnosticConfig } from "./_shared/types";
+import { BOOKING_URL } from "@/lib/site";
 
 type FocusCategory =
   | "vision"
@@ -82,7 +83,7 @@ const config: DiagnosticConfig<FocusCategory> = {
   },
   scoreLabel: "Scorecard Score",
   primaryLabel: "Primary Bottleneck",
-  bookingUrl: "https://calendly.com/jarrellagreen/30min",
+  bookingUrl: BOOKING_URL,
   categoryOrder: ["vision", "offer", "acquisition", "economics", "systems"],
   categories: {
     vision: { label: "Founder Vision", abbr: "Vision" },

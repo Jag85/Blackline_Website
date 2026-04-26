@@ -34,7 +34,7 @@ export const BUSINESS = {
  * filtering through the contact form. The /contact form is kept for
  * non-booking inquiries (e.g. general questions).
  */
-export const BOOKING_URL = "https://calendly.com/jarrellagreen/30min";
+export const BOOKING_URL = "https://cal.com/blacklinestrategypartners";
 
 /** Build an absolute URL from a path. */
 export function absoluteUrl(path: string = "/"): string {

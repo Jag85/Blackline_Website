@@ -127,7 +127,7 @@ export default function Footer() {
             <h4 className="text-white text-sm font-semibold uppercase tracking-wider mb-4">
               Get in Touch
             </h4>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-4 text-sm">
               <a
                 href={`mailto:${BUSINESS.email}`}
                 className="flex items-center gap-2 hover:text-white transition-colors break-all"
@@ -135,15 +135,22 @@ export default function Footer() {
                 <Mail size={16} className="shrink-0" />
                 {BUSINESS.email}
               </a>
-              <a
-                href={BUSINESS.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-white transition-colors"
-              >
-                <LinkedInIcon size={16} />
-                LinkedIn
-              </a>
+
+              {/* Social icons */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+                  Follow
+                </p>
+                <a
+                  href={BUSINESS.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Blackline Strategy Partners on LinkedIn"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-700 text-gray-300 hover:bg-white hover:text-black hover:border-white transition-colors"
+                >
+                  <LinkedInIcon size={16} />
+                </a>
+              </div>
             </div>
           </div>
         </div>

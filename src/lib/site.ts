@@ -24,8 +24,7 @@ export const BUSINESS = {
   city: "Houston",
   region: "TX",
   country: "US",
-  /** Update with the real LinkedIn URL when available */
-  linkedin: "https://www.linkedin.com/company/blackline-strategy-partners",
+  linkedin: "https://www.linkedin.com/company/blackline-strategy-partners/",
 } as const;
 
 /**

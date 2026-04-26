@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
 import { listPublishedPosts } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
+import type { BlogPost } from "@/lib/appwrite/types";
 
 /**
  * Async server component. Fetches the 3 most recent published posts
@@ -13,7 +14,7 @@ import { getImageUrl } from "@/lib/appwrite/storage";
  * the home page doesn't show an awkward empty block.
  */
 export default async function BlogTeaser() {
-  let posts;
+  let posts: BlogPost[] = [];
   try {
     const all = await listPublishedPosts();
     posts = all.slice(0, 3);

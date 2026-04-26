@@ -60,6 +60,44 @@ export async function listContactsResult(): Promise<{
   }
 }
 
+/**
+ * Paginated variant for the admin contacts page.
+ */
+export async function listContactsPage({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}): Promise<{
+  contacts: ContactSubmission[];
+  total: number;
+  error: string | null;
+}> {
+  try {
+    const { databases } = createAdminClient();
+    const res = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      COLLECTIONS.CONTACT_SUBMISSIONS,
+      [
+        Query.orderDesc("$createdAt"),
+        Query.limit(pageSize),
+        Query.offset((page - 1) * pageSize),
+      ]
+    );
+    return {
+      contacts: (res?.documents ?? []) as unknown as ContactSubmission[],
+      total: res?.total ?? 0,
+      error: null,
+    };
+  } catch (err) {
+    console.error("[contacts] listContactsPage error:", err);
+    const message =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return { contacts: [], total: 0, error: message };
+  }
+}
+
 export async function updateContactStatus(
   id: string,
   status: ContactStatus

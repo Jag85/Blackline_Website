@@ -4,11 +4,14 @@ import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import JsonLd from "@/components/JsonLd";
-import { listPublishedPosts } from "@/lib/appwrite/posts";
+import Pagination, { parsePageParam } from "@/components/Pagination";
+import { listPublishedPostsPage } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, SITE_NAME } from "@/lib/site";
+
+const PAGE_SIZE = 9;
 
 export const metadata = buildPageMetadata({
   title: "Blog",
@@ -20,8 +23,17 @@ export const metadata = buildPageMetadata({
 // Always render at request time so newly published posts show up immediately
 export const dynamic = "force-dynamic";
 
-export default async function BlogPage() {
-  const posts = await listPublishedPosts();
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function BlogPage({ searchParams }: PageProps) {
+  const { page: pageParam } = await searchParams;
+  const page = parsePageParam(pageParam);
+  const { posts, total } = await listPublishedPostsPage({
+    page,
+    pageSize: PAGE_SIZE,
+  });
 
   // Blog/CollectionPage schema lets Google understand this is a blog hub
   const blogSchema = {
@@ -136,6 +148,13 @@ export default async function BlogPage() {
               })}
             </div>
           )}
+
+          <Pagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            total={total}
+            basePath="/blog"
+          />
         </div>
       </section>
     </div>

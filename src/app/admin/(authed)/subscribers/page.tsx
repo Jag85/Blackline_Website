@@ -1,12 +1,15 @@
 import { Users } from "lucide-react";
 import { format } from "date-fns";
-import { listSubscribersResult } from "@/lib/appwrite/subscribers";
+import { listSubscribersPage } from "@/lib/appwrite/subscribers";
 import AdminErrorBanner from "@/components/admin/AdminErrorBanner";
 import SubscribersToolbar from "@/components/admin/SubscribersToolbar";
 import SubscriberDeleteButton from "@/components/admin/SubscriberDeleteButton";
+import Pagination, { parsePageParam } from "@/components/Pagination";
 import type { Subscriber } from "@/lib/appwrite/types";
 
 export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 50;
 
 function safeFormat(dateStr: string | undefined, pattern: string): string {
   if (!dateStr) return "—";
@@ -19,23 +22,33 @@ function safeFormat(dateStr: string | undefined, pattern: string): string {
   }
 }
 
-export default async function AdminSubscribersPage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminSubscribersPage({ searchParams }: PageProps) {
+  const { page: pageParam } = await searchParams;
+  const page = parsePageParam(pageParam);
+
   let subscribers: Subscriber[] = [];
+  let total = 0;
   let error: string | null = null;
 
   try {
-    const result = await listSubscribersResult();
+    const result = await listSubscribersPage({ page, pageSize: PAGE_SIZE });
     subscribers = Array.isArray(result?.subscribers)
       ? result.subscribers
       : [];
+    total = result?.total ?? 0;
     error = result?.error ?? null;
   } catch (e) {
     error = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
   }
 
-  const activeCount = subscribers.filter((s) => s?.status === "active").length;
+  const activeOnPage = subscribers.filter((s) => s?.status === "active").length;
 
-  // Plain serializable data for CSV export (no Date objects)
+  // Plain serializable data for CSV export (current page only — for a
+  // full export we'd need a separate "export all" path)
   const exportRows = subscribers.map((s) => ({
     email: s?.email || "",
     status: s?.status || "",
@@ -49,7 +62,7 @@ export default async function AdminSubscribersPage() {
       <div>
         <h1 className="text-3xl font-bold text-black mb-1">Subscribers</h1>
         <p className="text-gray-600 text-sm">
-          {activeCount} active · {subscribers.length} total
+          {total} total · {activeOnPage} active on this page
         </p>
       </div>
 
@@ -117,6 +130,13 @@ export default async function AdminSubscribersPage() {
               </tbody>
             </table>
           </div>
+
+          <Pagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            total={total}
+            basePath="/admin/subscribers"
+          />
         </>
       )}
     </div>

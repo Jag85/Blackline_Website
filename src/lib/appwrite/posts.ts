@@ -33,6 +33,39 @@ export async function listPublishedPosts(): Promise<BlogPost[]> {
 }
 
 /**
+ * Paginated variant of listPublishedPosts. Returns the requested page +
+ * the total document count so the UI can render page numbers.
+ */
+export async function listPublishedPostsPage({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}): Promise<{ posts: BlogPost[]; total: number }> {
+  try {
+    const { databases } = createAdminClient();
+    const res = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      COLLECTIONS.POSTS,
+      [
+        Query.equal("published", true),
+        Query.orderDesc("publishedAt"),
+        Query.limit(pageSize),
+        Query.offset((page - 1) * pageSize),
+      ]
+    );
+    return {
+      posts: (res?.documents ?? []) as unknown as BlogPost[],
+      total: res?.total ?? 0,
+    };
+  } catch (err) {
+    console.error("[posts] listPublishedPostsPage error:", err);
+    return { posts: [], total: 0 };
+  }
+}
+
+/**
  * Public: get a published post by slug.
  */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -65,6 +98,40 @@ export async function listAllPosts(): Promise<BlogPost[]> {
   } catch (err) {
     console.error("[posts] listAllPosts error:", err);
     return [];
+  }
+}
+
+/**
+ * Paginated variant of listAllPosts (for the admin posts page).
+ */
+export async function listAllPostsPage({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}): Promise<{ posts: BlogPost[]; total: number; error: string | null }> {
+  try {
+    const { databases } = createAdminClient();
+    const res = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      COLLECTIONS.POSTS,
+      [
+        Query.orderDesc("$updatedAt"),
+        Query.limit(pageSize),
+        Query.offset((page - 1) * pageSize),
+      ]
+    );
+    return {
+      posts: (res?.documents ?? []) as unknown as BlogPost[],
+      total: res?.total ?? 0,
+      error: null,
+    };
+  } catch (err) {
+    console.error("[posts] listAllPostsPage error:", err);
+    const message =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return { posts: [], total: 0, error: message };
   }
 }
 

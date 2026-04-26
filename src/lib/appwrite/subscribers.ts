@@ -60,6 +60,44 @@ export async function listSubscribersResult(): Promise<{
   }
 }
 
+/**
+ * Paginated variant for the admin subscribers page.
+ */
+export async function listSubscribersPage({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}): Promise<{
+  subscribers: Subscriber[];
+  total: number;
+  error: string | null;
+}> {
+  try {
+    const { databases } = createAdminClient();
+    const res = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      COLLECTIONS.SUBSCRIBERS,
+      [
+        Query.orderDesc("$createdAt"),
+        Query.limit(pageSize),
+        Query.offset((page - 1) * pageSize),
+      ]
+    );
+    return {
+      subscribers: (res?.documents ?? []) as unknown as Subscriber[],
+      total: res?.total ?? 0,
+      error: null,
+    };
+  } catch (err) {
+    console.error("[subscribers] listSubscribersPage error:", err);
+    const message =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return { subscribers: [], total: 0, error: message };
+  }
+}
+
 export async function deleteSubscriber(id: string): Promise<void> {
   const { databases } = createAdminClient();
   await databases.deleteDocument(

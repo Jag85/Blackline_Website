@@ -4,8 +4,13 @@ import Hero from "@/components/Hero";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import BestFitClients from "@/components/BestFitClients";
 import Testimonials from "@/components/Testimonials";
+import BlogTeaser from "@/components/BlogTeaser";
 import { Target, TrendingUp, Zap, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
+
+// BlogTeaser fetches the latest published posts from Appwrite at request
+// time, so the home page must render dynamically.
+export const dynamic = "force-dynamic";
 
 const pillars = [
   {
@@ -28,7 +33,7 @@ const pillars = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       <Hero />
@@ -150,6 +155,9 @@ export default function Home() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      {/* From our blog — async server component; renders nothing if no posts */}
+      <BlogTeaser />
 
       {/* CTA section */}
       <section className="py-24 md:py-32 bg-black text-white">

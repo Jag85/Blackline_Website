@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { uploadContentImageAction } from "@/app/actions/admin/posts";
+import type { MDXEditorMethods } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 
 /**
@@ -63,6 +64,18 @@ export default function MarkdownEditor({
 }: MarkdownEditorProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Ref into the underlying MDXEditor so we can push fresh markdown into
+  // its Lexical state when the value changes from outside the editor
+  // (paste interceptor, drag-drop, image upload). MDXEditor's `markdown`
+  // prop is only consumed at mount time — without this ref, external
+  // updates would update parent state but the editor surface would stay
+  // visually stale.
+  const editorRef = useRef<MDXEditorMethods | null>(null);
+  // Tracks the last markdown the editor itself emitted, so the sync
+  // effect below can tell "this update originated inside the editor"
+  // (do nothing — Lexical already has it) from "this update came from
+  // outside" (push it in via setMarkdown).
+  const lastEmittedRef = useRef(value);
 
   const onChangeRef = useRef(onChange);
   const valueRef = useRef(value);
@@ -70,6 +83,24 @@ export default function MarkdownEditor({
     onChangeRef.current = onChange;
     valueRef.current = value;
   });
+
+  // Push external value changes into the editor's Lexical state.
+  useEffect(() => {
+    if (value !== lastEmittedRef.current && editorRef.current) {
+      editorRef.current.setMarkdown(value);
+      lastEmittedRef.current = value;
+    }
+  }, [value]);
+
+  /** onChange wrapper that records what the editor emitted before
+   *  bubbling it up — keeps the sync effect from echoing back. */
+  const handleEditorChange = useCallback(
+    (md: string) => {
+      lastEmittedRef.current = md;
+      onChangeRef.current(md);
+    },
+    []
+  );
 
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -324,8 +355,9 @@ export default function MarkdownEditor({
         } transition-shadow`}
       >
         <Editor
+          editorRef={editorRef}
           markdown={value}
-          onChange={onChange}
+          onChange={handleEditorChange}
           imageUploadHandler={editorImageUpload}
         />
       </div>

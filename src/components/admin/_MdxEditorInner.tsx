@@ -31,12 +31,21 @@ import {
   ListsToggle,
   UndoRedo,
   Separator,
+  type MDXEditorMethods,
 } from "@mdxeditor/editor";
+import type { RefObject } from "react";
 
 interface InnerProps {
   markdown: string;
   onChange: (md: string) => void;
   imageUploadHandler: (file: File) => Promise<string>;
+  /**
+   * Ref forwarded from the parent. Passed as a regular prop (not via
+   * React's `ref` attribute) because `next/dynamic` doesn't forward
+   * refs by default — wiring it as a named prop is simpler than
+   * setting up a ref-forwarding wrapper.
+   */
+  editorRef?: RefObject<MDXEditorMethods | null>;
 }
 
 /**
@@ -69,9 +78,11 @@ export default function MdxEditorInner({
   markdown,
   onChange,
   imageUploadHandler,
+  editorRef,
 }: InnerProps) {
   return (
     <MDXEditor
+      ref={editorRef}
       markdown={markdown}
       onChange={onChange}
       // Apply the same `prose` classes the public blog post page uses

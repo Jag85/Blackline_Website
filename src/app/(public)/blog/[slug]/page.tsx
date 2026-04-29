@@ -136,13 +136,21 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         <section className="py-12 md:py-16 bg-white">
           <div className="max-w-3xl mx-auto px-6">
-            <AnimateOnScroll variant="fade-up">
-              <div className="prose prose-lg prose-neutral max-w-none prose-headings:font-bold prose-headings:text-black prose-a:text-black prose-a:underline-offset-4 prose-strong:text-black prose-blockquote:border-l-black prose-blockquote:text-gray-700">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {post.content}
-                </ReactMarkdown>
-              </div>
-            </AnimateOnScroll>
+            {/*
+              Body content is intentionally NOT wrapped in <AnimateOnScroll>.
+              That wrapper starts at opacity-0 and only fades in when an
+              IntersectionObserver reports the element is 15% visible — for
+              tall posts (>5000px), that threshold can be borderline, and
+              if hydration or the observer fails for any reason the post
+              body stays permanently invisible despite being in the DOM.
+              The content is the whole point of the page; it must render
+              unconditionally.
+            */}
+            <div className="prose prose-lg prose-neutral max-w-none prose-headings:font-bold prose-headings:text-black prose-a:text-black prose-a:underline-offset-4 prose-strong:text-black prose-blockquote:border-l-black prose-blockquote:text-gray-700">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {post.content}
+              </ReactMarkdown>
+            </div>
           </div>
         </section>
 

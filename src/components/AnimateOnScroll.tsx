@@ -43,6 +43,18 @@ export default function AnimateOnScroll({
     const el = ref.current;
     if (!el) return;
 
+    // Fail-safe: if for any reason the IntersectionObserver never fires
+    // (no JS, observer not supported, the element is taller than the
+    // viewport's intersection threshold can ever reach, etc.), reveal
+    // the content after a short timeout. Hidden content is a much worse
+    // failure mode than a missed animation.
+    const fallback = window.setTimeout(() => setIsVisible(true), 1500);
+
+    if (typeof IntersectionObserver === "undefined") {
+      // Let the fallback timeout reveal it instead of double-setting state.
+      return () => window.clearTimeout(fallback);
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -50,11 +62,19 @@ export default function AnimateOnScroll({
           observer.unobserve(el);
         }
       },
-      { threshold: 0.15 }
+      // threshold: 0 fires as soon as ANY part of the element enters the
+      // viewport — important for tall elements (e.g. long blog post
+      // bodies) where 15% of the element might never fit on screen at
+      // once. rootMargin pulls the trigger line up slightly so the
+      // animation feels intentional rather than abrupt.
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   const { hidden, visible } = variantStyles[variant];

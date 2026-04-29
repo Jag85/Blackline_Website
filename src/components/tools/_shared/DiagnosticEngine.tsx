@@ -11,6 +11,7 @@ import {
 import RadioOption from "../RadioOption";
 import IntakeForm from "./IntakeForm";
 import ScorecardGrid from "./ScorecardGrid";
+import NumberTicker from "@/components/motion/NumberTicker";
 import type { DiagnosticConfig, IntakeData } from "./types";
 import {
   submitLeadAction,
@@ -392,8 +393,8 @@ Book your session: ${config.bookingUrl}`;
         <span className="inline-block bg-black text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded mb-4">
           {r.tag}
         </span>
-        <div className="text-6xl md:text-7xl font-bold text-black mb-1 leading-none">
-          {overallScore}
+        <div className="text-6xl md:text-7xl font-bold text-black mb-1 leading-none tabular-nums">
+          <NumberTicker value={overallScore} duration={2} />
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-6">
           {config.scoreLabel}

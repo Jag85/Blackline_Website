@@ -13,6 +13,7 @@
     "@uiw/react-md-editor": "^4.1.0",
     "appwrite": "^24.2.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
     "marked": "^18.0.2",
     "next": "16.2.3",

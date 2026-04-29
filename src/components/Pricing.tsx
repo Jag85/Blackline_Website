@@ -9,6 +9,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import AnimateOnScroll from "./AnimateOnScroll";
+import BorderBeam from "./motion/BorderBeam";
+import MagneticButton from "./motion/MagneticButton";
 import { STRIPE_CHECKOUT } from "@/lib/site";
 
 interface Tier {
@@ -120,6 +122,19 @@ function PricingCard({ tier }: { tier: Tier }) {
           : "bg-white border border-gray-200 hover:shadow-md"
       }`}
     >
+      {/* Rotating border beam on featured tiers — pulls the eye to the
+          recommended option without an aggressive color shift. The
+          accent gold is used as the beam color so it stays on-brand. */}
+      {isFeatured && (
+        <BorderBeam
+          size={28}
+          duration={10}
+          borderRadius="0.75rem"
+          colorFrom="#c8a961"
+          colorTo="#ffffff"
+        />
+      )}
+
       {/* Top accent bar on featured */}
       {isFeatured && (
         <div
@@ -224,20 +239,31 @@ function PricingCard({ tier }: { tier: Tier }) {
         ))}
       </ul>
 
-      {/* CTA — direct Stripe Checkout for this tier */}
-      <a
-        href={tier.checkoutUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3.5 rounded-lg transition-colors ${
-          isFeatured
-            ? "bg-white text-black hover:bg-gray-100"
-            : "bg-black text-white hover:bg-gray-800"
-        }`}
-      >
-        {tier.cta}
-        <ArrowRight size={14} />
-      </a>
+      {/* CTA — direct Stripe Checkout for this tier. Featured tiers
+          get the magnetic-pull button to reinforce the recommended
+          path; non-featured stays as a normal button. */}
+      {isFeatured ? (
+        <MagneticButton
+          href={tier.checkoutUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          strength={0.25}
+          className="w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3.5 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors"
+        >
+          {tier.cta}
+          <ArrowRight size={14} />
+        </MagneticButton>
+      ) : (
+        <a
+          href={tier.checkoutUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3.5 rounded-lg bg-black text-white hover:bg-gray-800 transition-colors"
+        >
+          {tier.cta}
+          <ArrowRight size={14} />
+        </a>
+      )}
     </div>
   );
 }

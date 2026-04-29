@@ -1,10 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
 import Hero from "@/components/Hero";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import BestFitClients from "@/components/BestFitClients";
 import Testimonials from "@/components/Testimonials";
 import BlogTeaser from "@/components/BlogTeaser";
+import StatsStrip from "@/components/StatsStrip";
+import IndustryMarquee from "@/components/IndustryMarquee";
+import Tilt3D from "@/components/motion/Tilt3D";
+import GridBackground from "@/components/motion/GridBackground";
+import MagneticButton from "@/components/motion/MagneticButton";
 import { Target, TrendingUp, Zap, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
 
@@ -38,6 +42,10 @@ export default async function Home() {
     <>
       <Hero />
 
+      {/* Sectors served — continuous marquee right under the hero so the
+          first thing below the fold tells visitors who we work with. */}
+      <IndustryMarquee />
+
       {/* About teaser */}
       <section className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -57,6 +65,9 @@ export default async function Home() {
             </div>
           </AnimateOnScroll>
 
+          {/* Pillar cards: 3D tilt on hover + numbered, with the
+              hover state already wired (border + icon flip from the
+              original design). The 3D tilt is intentionally subtle. */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {pillars.map((pillar, i) => (
               <AnimateOnScroll
@@ -64,17 +75,24 @@ export default async function Home() {
                 variant="fade-up"
                 delay={i * 150}
               >
-                <div className="group p-8 border border-gray-200 rounded-lg hover:border-black transition-colors h-full">
-                  <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mb-6 group-hover:bg-black group-hover:text-white transition-colors">
-                    <pillar.icon size={24} />
+                <Tilt3D max={5} className="h-full">
+                  <div className="group relative p-8 border border-gray-200 rounded-lg hover:border-black transition-colors h-full bg-white">
+                    {/* Number watermark — large, low-opacity numeral
+                        that grounds the card visually. */}
+                    <span className="absolute top-4 right-6 text-6xl font-bold text-gray-100 select-none pointer-events-none">
+                      0{i + 1}
+                    </span>
+                    <div className="relative w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mb-6 group-hover:bg-black group-hover:text-white transition-colors">
+                      <pillar.icon size={24} />
+                    </div>
+                    <h3 className="relative text-xl font-semibold text-black mb-3">
+                      {pillar.title}
+                    </h3>
+                    <p className="relative text-gray-600 text-sm leading-relaxed">
+                      {pillar.description}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold text-black mb-3">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {pillar.description}
-                  </p>
-                </div>
+                </Tilt3D>
               </AnimateOnScroll>
             ))}
           </div>
@@ -91,23 +109,32 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Full-width image divider */}
-      <AnimateOnScroll variant="fade-in">
-        <div className="relative h-[300px] md:h-[400px] overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80&auto=format&fit=crop"
-            alt="Modern office space"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-white text-2xl md:text-4xl font-bold tracking-tight text-center px-6">
-              Your next chapter starts with one conversation.
+      {/* Typography pull-quote panel — replaces the previous generic
+          Unsplash image divider with something brand-native. The grid
+          texture + black canvas signals seriousness; the quote does
+          the heavy emotional lift. */}
+      <section className="relative py-28 md:py-40 bg-black text-white overflow-hidden">
+        <GridBackground size={100} opacity={0.06} color="#fff" fadeEdges />
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <AnimateOnScroll variant="fade-up">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-8">
+              The Premise
             </p>
-          </div>
+            <p className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.15]">
+              Most founders don&apos;t need more advice.
+              <br />
+              <span className="text-gray-400">
+                They need someone to name the actual constraint —
+              </span>
+              <br />
+              and the courage to act on it.
+            </p>
+          </AnimateOnScroll>
         </div>
-      </AnimateOnScroll>
+      </section>
+
+      {/* Stats — count-up animation, dark surface for visual rhythm */}
+      <StatsStrip />
 
       {/* Who we work with */}
       <BestFitClients />
@@ -159,9 +186,10 @@ export default async function Home() {
       {/* From our blog — async server component; renders nothing if no posts */}
       <BlogTeaser />
 
-      {/* CTA section */}
-      <section className="py-24 md:py-32 bg-black text-white">
-        <div className="max-w-3xl mx-auto px-6 text-center">
+      {/* CTA section — magnetic button + grid background */}
+      <section className="relative py-24 md:py-32 bg-black text-white overflow-hidden">
+        <GridBackground size={80} opacity={0.06} color="#fff" fadeEdges />
+        <div className="relative max-w-3xl mx-auto px-6 text-center">
           <AnimateOnScroll variant="fade-in">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to move forward?
@@ -170,15 +198,16 @@ export default async function Home() {
               Pick a time that works for you and we&apos;ll walk through your
               business and the right next step — no prep required.
             </p>
-            <a
+            <MagneticButton
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
+              strength={0.25}
               className="inline-flex items-center justify-center gap-2 bg-white text-black text-sm font-medium px-8 py-4 rounded hover:bg-gray-100 transition-colors"
             >
               Book a Session
               <ArrowRight size={16} />
-            </a>
+            </MagneticButton>
           </AnimateOnScroll>
         </div>
       </section>

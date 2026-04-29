@@ -50,9 +50,13 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+              className="group relative text-sm font-medium text-gray-600 hover:text-black transition-colors"
             >
               {link.label}
+              {/* Animated underline — draws in from the left on hover.
+                  Pure CSS scaleX with transform-origin so it reverses
+                  cleanly when the cursor leaves. */}
+              <span className="pointer-events-none absolute -bottom-1 left-0 right-0 h-px bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
             </Link>
           ))}
 
@@ -112,9 +116,10 @@ export default function Header() {
 
           <Link
             href="/contact"
-            className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+            className="group relative text-sm font-medium text-gray-600 hover:text-black transition-colors"
           >
             Contact
+            <span className="pointer-events-none absolute -bottom-1 left-0 right-0 h-px bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
           </Link>
           <a
             href={BOOKING_URL}

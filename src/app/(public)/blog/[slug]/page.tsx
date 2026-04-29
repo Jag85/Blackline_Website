@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import ScrollProgress from "@/components/motion/ScrollProgress";
 import JsonLd from "@/components/JsonLd";
 import { getPostBySlug } from "@/lib/appwrite/posts";
 import { getImageUrl } from "@/lib/appwrite/storage";
@@ -72,6 +73,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="pt-28 md:pt-32">
+      {/* Reading-progress bar pinned to the top of the viewport.
+          Useful on long-form posts; ignored everywhere else. */}
+      <ScrollProgress />
       <JsonLd
         data={[
           articleSchema({

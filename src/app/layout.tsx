@@ -26,6 +26,18 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   alternates: {
     canonical: "/",
+    // Feed auto-discovery: feed readers (Feedly, Inoreader, NetNewsWire,
+    // Reeder, etc.) scan the page <head> for these. Both formats are
+    // served because subscribers split roughly evenly across them and
+    // the marginal cost of generating both is trivial.
+    types: {
+      "application/rss+xml": [
+        { url: "/feed.xml", title: `${SITE_NAME} — Blog (RSS)` },
+      ],
+      "application/feed+json": [
+        { url: "/feed.json", title: `${SITE_NAME} — Blog (JSON Feed)` },
+      ],
+    },
   },
   openGraph: {
     type: "website",

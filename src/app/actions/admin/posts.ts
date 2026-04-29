@@ -130,6 +130,14 @@ export async function createPostAction(
     revalidatePath(`/blog/${fields.slug}`);
     revalidatePath("/admin");
     revalidatePath("/admin/posts");
+    // Feeds + sitemap so subscribers / search engines see the new post
+    // on the next fetch (force-dynamic gives them fresh anyway, but
+    // explicit invalidation evicts any CDN cache in front).
+    revalidatePath("/feed.xml");
+    revalidatePath("/feed.json");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/llms.txt");
+    revalidatePath("/llms-full.txt");
     redirect(`/admin/posts/${post.$id}/edit?created=1`);
   } catch (err) {
     if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
@@ -196,6 +204,11 @@ export async function updatePostAction(
     revalidatePath(`/blog/${existing.slug}`);
     revalidatePath("/admin");
     revalidatePath("/admin/posts");
+    revalidatePath("/feed.xml");
+    revalidatePath("/feed.json");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/llms.txt");
+    revalidatePath("/llms-full.txt");
     return { ok: true, message: "Post saved.", postId };
   } catch (err) {
     console.error("updatePostAction error:", err);
@@ -220,6 +233,11 @@ export async function deletePostAction(postId: string): Promise<void> {
   if (post) revalidatePath(`/blog/${post.slug}`);
   revalidatePath("/admin");
   revalidatePath("/admin/posts");
+  revalidatePath("/feed.xml");
+  revalidatePath("/feed.json");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/llms.txt");
+  revalidatePath("/llms-full.txt");
   redirect("/admin/posts");
 }
 

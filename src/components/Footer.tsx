@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Mail, Rss } from "lucide-react";
 import SubscribeForm from "./SubscribeForm";
 import { BUSINESS } from "@/lib/site";
 import { LOCATION_LIST } from "@/lib/locations";
@@ -160,15 +160,25 @@ export default function Footer() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
                   Follow
                 </p>
-                <a
-                  href={BUSINESS.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Blackline Strategy Partners on LinkedIn"
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-700 text-gray-300 hover:bg-white hover:text-black hover:border-white transition-colors"
-                >
-                  <LinkedInIcon size={16} />
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={BUSINESS.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Blackline Strategy Partners on LinkedIn"
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-700 text-gray-300 hover:bg-white hover:text-black hover:border-white transition-colors"
+                  >
+                    <LinkedInIcon size={16} />
+                  </a>
+                  <a
+                    href="/feed.xml"
+                    aria-label="Subscribe to the Blackline blog via RSS"
+                    title="RSS feed"
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-700 text-gray-300 hover:bg-white hover:text-black hover:border-white transition-colors"
+                  >
+                    <Rss size={16} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>

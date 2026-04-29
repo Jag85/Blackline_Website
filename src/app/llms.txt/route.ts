@@ -1,5 +1,6 @@
 import { listPublishedPosts } from "@/lib/appwrite/posts";
 import { absoluteUrl } from "@/lib/site";
+import { LOCATION_LIST } from "@/lib/locations";
 
 // Always render at request time so newly published posts appear in /llms.txt.
 export const dynamic = "force-dynamic";
@@ -15,11 +16,14 @@ export async function GET() {
   try {
     const published = await listPublishedPosts();
     if (published.length > 0) {
+      // Don't append `.md` to the URL — the site doesn't serve a `.md`
+      // variant and the spec only allows that suffix when you actually do.
+      // Following clients would 404 on every link.
       posts = published
         .slice(0, 50)
         .map(
           (p) =>
-            `- [${p.title}](${absoluteUrl(`/blog/${p.slug}`)}.md): ${p.excerpt}`
+            `- [${p.title}](${absoluteUrl(`/blog/${p.slug}`)}): ${p.excerpt}`
         )
         .join("\n");
     }
@@ -51,6 +55,15 @@ export async function GET() {
 - [Contact](${absoluteUrl("/contact")}): Book a strategy session or send an inquiry.
 - [Tools](${absoluteUrl("/tools")}): All free strategic tools.
 - [Blog](${absoluteUrl("/blog")}): Strategy essays and founder lessons.
+
+## Texas Locations
+
+${LOCATION_LIST.map(
+  (l) =>
+    `- [${l.city} Business Strategy Consultant](${absoluteUrl(
+      `/${l.urlSlug}`
+    )}): ${l.metaDescription}`
+).join("\n")}
 
 ${posts ? `## Recent Blog Posts\n\n${posts}\n` : ""}
 ## Optional

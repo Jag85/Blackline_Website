@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
+import { LOCATION_LIST } from "@/lib/locations";
 
 const navLinks = [
   { label: "About", href: "/about" },
@@ -19,9 +20,17 @@ const toolLinks = [
   { label: "Founder Clarity Index", href: "/clarity-index" },
 ];
 
+// Driven from the same data source as the location pages + sitemap, so
+// adding a new city in `lib/locations.ts` automatically wires the nav.
+const locationLinks = LOCATION_LIST.map((l) => ({
+  label: `${l.city}, ${l.stateAbbr}`,
+  href: `/${l.urlSlug}`,
+}));
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [locationsOpen, setLocationsOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
@@ -61,6 +70,33 @@ export default function Header() {
               <div className="absolute top-full right-0 pt-3 w-64">
                 <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2">
                   {toolLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Locations dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setLocationsOpen(true)}
+            onMouseLeave={() => setLocationsOpen(false)}
+          >
+            <button className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-black transition-colors">
+              Locations
+              <ChevronDown size={14} />
+            </button>
+            {locationsOpen && (
+              <div className="absolute top-full right-0 pt-3 w-56">
+                <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2">
+                  {locationLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -119,6 +155,22 @@ export default function Header() {
               Tools
             </p>
             {toolLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block py-1.5 text-base font-medium text-gray-700 hover:text-black"
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="pt-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+              Locations
+            </p>
+            {locationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

@@ -10,6 +10,7 @@ import {
   BUSINESS,
   absoluteUrl,
 } from "./site";
+import type { LocationData } from "./locations";
 
 /**
  * The org/business knowledge graph. Used site-wide via the public layout.
@@ -42,8 +43,35 @@ export function organizationSchema() {
       addressRegion: BUSINESS.region,
       addressCountry: BUSINESS.country,
     },
+    // Centroid for Houston HQ. Anchors the org in Google's local graph
+    // even though we operate as a service-area business (no street).
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: BUSINESS.geo.latitude,
+      longitude: BUSINESS.geo.longitude,
+    },
+    // Standard business hours in Central Time. Posted hours signal an
+    // active operation to Google's local-trust signals; sessions are
+    // booked via cal.com regardless.
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+        ],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
     areaServed: [
       { "@type": "City", name: "Houston" },
+      { "@type": "City", name: "Austin" },
+      { "@type": "City", name: "Dallas" },
+      { "@type": "City", name: "San Antonio" },
       { "@type": "State", name: "Texas" },
       { "@type": "Country", name: "United States" },
     ],
@@ -56,8 +84,84 @@ export function organizationSchema() {
       "Bottleneck diagnosis",
       "Capital strategy",
     ],
+    // sameAs is the canonical place for verified third-party profiles.
+    // Add Crunchbase, Clutch, Google Business Profile, etc. as they
+    // come online — each one strengthens the entity graph.
     sameAs: [BUSINESS.linkedin],
     priceRange: "$$",
+  };
+}
+
+/**
+ * LocalBusiness schema for an individual location landing page. Each city
+ * page emits one of these alongside the org schema (Google reconciles them
+ * via parentOrganization). Service-area businesses with no public street
+ * address should omit `address.streetAddress` and rely on `areaServed` —
+ * which is exactly the shape Google documents for SAB markup.
+ */
+export function localBusinessSchema(loc: LocationData) {
+  const pageUrl = absoluteUrl(`/${loc.urlSlug}`);
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "@id": `${pageUrl}#localbusiness`,
+    name: `${BUSINESS.name} — ${loc.city}`,
+    description: loc.metaDescription,
+    url: pageUrl,
+    image: absoluteUrl("/opengraph-image"),
+    parentOrganization: { "@id": `${SITE_URL}/#organization` },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: loc.city,
+      addressRegion: loc.stateAbbr,
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: loc.geo.latitude,
+      longitude: loc.geo.longitude,
+    },
+    areaServed: [
+      { "@type": "City", name: loc.city },
+      ...loc.serviceAreas.map((name) => ({ "@type": "Place", name })),
+    ],
+    knowsAbout: loc.industries,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+        ],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
+    email: BUSINESS.email,
+    priceRange: "$$",
+    sameAs: [BUSINESS.linkedin],
+  };
+}
+
+/**
+ * FAQPage schema for a list of question/answer pairs. Used by the
+ * location pages to expose their inline FAQ block to rich-result eligibility.
+ */
+export function faqSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+      },
+    })),
   };
 }
 

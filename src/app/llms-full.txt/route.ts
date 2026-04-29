@@ -35,7 +35,7 @@ ${p.content}
 
 > Strategic consulting firm helping founders and business leaders cut through noise, identify bottlenecks, and build clear paths to growth. Based in Houston, TX.
 
-This document contains all published blog content from blacklinestrategy.com in a single file for LLM ingestion. Pricing, service details, and tool descriptions live at the URLs referenced in [/llms.txt](${absoluteUrl("/llms.txt")}).
+This document contains all published blog content from blacklinestrategypartners.com in a single file for LLM ingestion. Pricing, service details, and tool descriptions live at the URLs referenced in [/llms.txt](${absoluteUrl("/llms.txt")}).
 
 # Blog Posts
 

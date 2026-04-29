@@ -1,0 +1,34 @@
+# Netlify configuration.
+#
+# The Next.js Runtime detects build/publish settings automatically — these
+# redirects exist purely to enforce the canonical apex domain for SEO.
+
+# www → apex (301, permanent). Sends both http and https www to the canonical
+# apex over https. `force = true` overrides any matching static file so even
+# `/_next/...` assets follow the redirect.
+[[redirects]]
+  from = "https://www.blacklinestrategypartners.com/*"
+  to = "https://blacklinestrategypartners.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.blacklinestrategypartners.com/*"
+  to = "https://blacklinestrategypartners.com/:splat"
+  status = 301
+  force = true
+
+# Legacy short-domain capture: blacklinestrategy.com (without "partners")
+# may have been used during early branding. Permanently redirect any traffic
+# there to the canonical. Comment these out if the short domain isn't owned.
+[[redirects]]
+  from = "https://blacklinestrategy.com/*"
+  to = "https://blacklinestrategypartners.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.blacklinestrategy.com/*"
+  to = "https://blacklinestrategypartners.com/:splat"
+  status = 301
+  force = true

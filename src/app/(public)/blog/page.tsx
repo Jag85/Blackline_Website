@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -13,18 +14,33 @@ import { absoluteUrl, SITE_NAME } from "@/lib/site";
 
 const PAGE_SIZE = 9;
 
-export const metadata = buildPageMetadata({
-  title: "Blog",
-  description:
-    "Strategy insights, founder lessons, and growth essays from the Blackline team.",
-  path: "/blog",
-});
-
 // Always render at request time so newly published posts show up immediately
 export const dynamic = "force-dynamic";
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
+}
+
+/**
+ * Per-page metadata so paginated variants get a self-referential canonical
+ * instead of all pointing at /blog. Without this, Google sees /blog?page=2
+ * as a duplicate of /blog and may drop deeper posts from the index since
+ * they're only reachable via paginated pages. Page-1 still canonicalizes
+ * to the bare /blog URL (no `?page=1`) so we don't fragment link equity.
+ */
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { page: pageParam } = await searchParams;
+  const page = parsePageParam(pageParam);
+  const path = page > 1 ? `/blog?page=${page}` : "/blog";
+  const title = page > 1 ? `Blog (Page ${page})` : "Blog";
+  return buildPageMetadata({
+    title,
+    description:
+      "Strategy insights, founder lessons, and growth essays from the Blackline team.",
+    path,
+  });
 }
 
 export default async function BlogPage({ searchParams }: PageProps) {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import SubscribeForm from "./SubscribeForm";
 import { BUSINESS } from "@/lib/site";
+import { LOCATION_LIST } from "@/lib/locations";
 
 // LinkedIn glyph (lucide-react in this project doesn't ship Linkedin)
 function LinkedInIcon({ size = 16 }: { size?: number }) {
@@ -119,6 +120,24 @@ export default function Footer() {
                   Founder Clarity Index
                 </Link>
               </li>
+            </ul>
+
+            {/* Texas locations — crawlable from every page (internal-link
+                equity) and improves local-pack signals over time. */}
+            <h4 className="text-white text-sm font-semibold uppercase tracking-wider mt-8 mb-4">
+              Texas Locations
+            </h4>
+            <ul className="space-y-2 text-sm">
+              {LOCATION_LIST.map((l) => (
+                <li key={l.urlSlug}>
+                  <Link
+                    href={`/${l.urlSlug}`}
+                    className="hover:text-white transition-colors"
+                  >
+                    {l.city}, {l.stateAbbr}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

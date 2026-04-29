@@ -3,9 +3,27 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
-import { uploadContentImageAction } from "@/app/actions/admin/posts";
+import { uploadFeaturedImage } from "@/lib/appwrite/client";
+import {
+  APPWRITE_ENDPOINT,
+  APPWRITE_PROJECT_ID,
+  STORAGE_BUCKETS,
+} from "@/lib/appwrite/config";
 import type { MDXEditorMethods } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
+
+/** Hard cap on inline image size — matches the featured-image cap. */
+const MAX_INLINE_BYTES = 45 * 1024 * 1024;
+
+/**
+ * Build the public preview URL for a just-uploaded file. Inlined here
+ * instead of imported from `lib/appwrite/storage` because that module
+ * dynamically imports `./server` (which has `server-only`), and that
+ * contaminates the client bundle even though the import is lazy.
+ */
+function buildImageUrl(fileId: string): string {
+  return `${APPWRITE_ENDPOINT}/storage/buckets/${STORAGE_BUCKETS.BLOG_IMAGES}/files/${fileId}/view?project=${APPWRITE_PROJECT_ID}`;
+}
 
 /**
  * MDXEditor is a heavy client-only editor that pulls in lexical and a
@@ -124,16 +142,29 @@ export default function MarkdownEditor({
   const uploadAndInsert = useCallback(
     async (file: File): Promise<string | null> => {
       setUploadError(null);
+
+      // Size guard up front — Appwrite's default per-file limit is 50 MB,
+      // so cap at 45 MB to leave a little headroom.
+      if (file.size > MAX_INLINE_BYTES) {
+        const mb = (file.size / 1024 / 1024).toFixed(1);
+        setUploadError(
+          `${file.name || "Image"} is ${mb} MB — exceeds the 45 MB limit.`
+        );
+        return null;
+      }
+
       setUploading(true);
       try {
-        const fd = new FormData();
-        fd.append("image", file, file.name || "image");
-        const result = await uploadContentImageAction(fd);
-        if (!result.ok || !result.url) {
-          setUploadError(result.message || "Upload failed.");
+        // Direct browser → Appwrite upload, same path the featured-image
+        // uploader uses. Bypasses Netlify's 6 MB function limit entirely
+        // so inline images can be the full 45 MB without the post save
+        // ever carrying the file bytes.
+        const result = await uploadFeaturedImage(file);
+        if (!result.ok) {
+          setUploadError(result.error || "Upload failed.");
           return null;
         }
-        return result.url;
+        return buildImageUrl(result.id);
       } catch (err) {
         setUploadError(
           err instanceof Error ? err.message : "Unknown upload error."

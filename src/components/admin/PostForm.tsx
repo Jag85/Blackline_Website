@@ -490,7 +490,8 @@ export default function PostForm({
             <h3 className="font-bold text-black mb-4">Featured Image</h3>
             <FeaturedImageUploader
               initialImageUrl={initialImageUrl || null}
-              fileFieldName="image"
+              initialImageId={post?.featuredImageId || null}
+              fileIdFieldName="featuredImageId"
               removeFieldName="removeImage"
             />
           </div>

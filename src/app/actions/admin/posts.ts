@@ -94,7 +94,13 @@ async function extractPostFields(formData: FormData): Promise<{
   excerpt: string;
   content: string;
   published: boolean;
-  imageFile: File | null;
+  /**
+   * File ID of an image uploaded directly from the browser to Appwrite
+   * Storage. Empty string means "no new upload" — the server should
+   * keep the post's existing featuredImageId (if any) unchanged unless
+   * `removeImage` is also set.
+   */
+  featuredImageId: string;
   removeImage: boolean;
   metaTitle: string;
   metaDescription: string;
@@ -121,9 +127,11 @@ async function extractPostFields(formData: FormData): Promise<{
       ? false
       : currentPublished;
   const removeImage = formData.get("removeImage") === "on";
-  const rawImage = formData.get("image");
-  const imageFile =
-    rawImage instanceof File && rawImage.size > 0 ? rawImage : null;
+  // Featured image was uploaded directly from the browser to Appwrite
+  // (see FeaturedImageUploader). The form just carries the resulting
+  // file ID so we never push image bytes through the server action and
+  // hit Netlify's 6 MB function payload limit.
+  const featuredImageId = String(formData.get("featuredImageId") || "").trim();
   // SEO overrides — trimmed; downstream code stores `null` when blank
   // so the public page falls back to title/excerpt cleanly.
   const metaTitle = String(formData.get("metaTitle") || "").trim();
@@ -134,7 +142,7 @@ async function extractPostFields(formData: FormData): Promise<{
     excerpt,
     content,
     published,
-    imageFile,
+    featuredImageId,
     removeImage,
     metaTitle,
     metaDescription,
@@ -166,28 +174,10 @@ export async function createPostAction(
     };
   }
 
-  let featuredImageId: string | null = null;
-  if (fields.imageFile) {
-    // Hard cap on featured image size. Netlify Functions reject any
-    // synchronous request with a body over 6 MB BEFORE it reaches the
-    // action, with no recoverable error — the client just sees a hang
-    // and the optimistic UI stays flipped to "Published". Capping at
-    // 5 MB leaves headroom for the rest of the form payload (post body,
-    // metadata, slug, etc.) under that ceiling.
-    const MAX_FEATURED_BYTES = 5 * 1024 * 1024;
-    if (fields.imageFile.size > MAX_FEATURED_BYTES) {
-      const mb = (fields.imageFile.size / 1024 / 1024).toFixed(1);
-      return {
-        ok: false,
-        message: `Featured image is ${mb} MB — exceeds the 5 MB limit. Compress it (try Squoosh / TinyPNG) or convert PNG → WebP and try again.`,
-      };
-    }
-    const upload = await uploadImageServer(fields.imageFile);
-    if ("error" in upload) {
-      return { ok: false, message: `Image upload failed: ${upload.error}` };
-    }
-    featuredImageId = upload.id;
-  }
+  // Featured image was already uploaded directly to Appwrite from the
+  // browser (see FeaturedImageUploader). We just record its ID on the
+  // post — no upload happens here, no payload limit applies.
+  const featuredImageId = fields.featuredImageId || null;
 
   try {
     const post = await createPost({
@@ -269,25 +259,17 @@ export async function updatePostAction(
     featuredImageId = null;
   }
 
-  if (fields.imageFile) {
-    // Same 5 MB ceiling as createPostAction — see the comment there
-    // for why (Netlify 6 MB function payload limit).
-    const MAX_FEATURED_BYTES = 5 * 1024 * 1024;
-    if (fields.imageFile.size > MAX_FEATURED_BYTES) {
-      const mb = (fields.imageFile.size / 1024 / 1024).toFixed(1);
-      return {
-        ok: false,
-        message: `Featured image is ${mb} MB — exceeds the 5 MB limit. Compress it (try Squoosh / TinyPNG) or convert PNG → WebP and try again.`,
-      };
-    }
-    if (existing.featuredImageId) {
+  if (fields.featuredImageId) {
+    // The browser already uploaded a new image directly to Appwrite
+    // and put its ID in the form (see FeaturedImageUploader). Delete
+    // the old image (if any) and swap in the new one.
+    if (
+      existing.featuredImageId &&
+      existing.featuredImageId !== fields.featuredImageId
+    ) {
       await deleteImageServer(existing.featuredImageId);
     }
-    const upload = await uploadImageServer(fields.imageFile);
-    if ("error" in upload) {
-      return { ok: false, message: `Image upload failed: ${upload.error}` };
-    }
-    featuredImageId = upload.id;
+    featuredImageId = fields.featuredImageId;
   }
 
   try {

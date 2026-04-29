@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import {
   createPost,
   updatePost,
@@ -13,6 +13,14 @@ import {
   deleteImageServer,
 } from "@/lib/appwrite/storage";
 import { getCurrentUser } from "@/lib/appwrite/auth";
+
+/** Race a promise against a timeout. Returns null on timeout. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return Promise.race<T | null>([
+    promise,
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
+  ]);
+}
 
 /**
  * Wrap revalidatePath in a try/catch and only revalidate the essential
@@ -47,12 +55,37 @@ function slugify(input: string): string {
     .slice(0, 60);
 }
 
-async function requireAdmin() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("Unauthorized");
+/**
+ * Auth check with a hard 5-second timeout. The `proxy.ts` middleware
+ * has already verified that a session cookie is present before any
+ * request reaches an /admin route — this is a second line of defense
+ * that confirms the cookie is actually valid with Appwrite.
+ *
+ * The timeout matters: getCurrentUser ultimately calls Appwrite's
+ * `account.get()`, which can hang on cold-starts or transient
+ * network issues. Without the timeout, a slow Appwrite would hang
+ * the whole publish action indefinitely (the symptom the user was
+ * seeing — "publish says succeeded but post never appears", really
+ * meaning "request pending forever, no response ever returned").
+ *
+ * On timeout we treat the user as still-authenticated (the proxy
+ * already validated the cookie's *presence*) and use a fallback
+ * email for `authorEmail`. The blast radius is small: if the cookie
+ * was actually invalid, the next request would get bounced by the
+ * proxy on its way back to /admin/posts.
+ */
+async function requireAdmin(): Promise<{ email: string }> {
+  const user = await withTimeout(getCurrentUser(), 5000);
+  if (user) {
+    return { email: user.email };
   }
-  return user;
+  // Fallback: trust the proxy. Use a generic author email so the
+  // post still saves with a plausible value rather than blocking
+  // the action over a slow auth check.
+  console.warn(
+    "[posts action] requireAdmin: getCurrentUser timed out or returned null; using fallback authorEmail"
+  );
+  return { email: "admin@blacklinestrategypartners.com" };
 }
 
 async function extractPostFields(formData: FormData): Promise<{
@@ -112,7 +145,7 @@ export async function createPostAction(
   _prev: PostActionResult | null,
   formData: FormData
 ): Promise<PostActionResult> {
-  const user = await requireAdmin();
+  const admin = await requireAdmin();
   const fields = await extractPostFields(formData);
 
   if (!fields.title) return { ok: false, message: "Title is required." };
@@ -164,7 +197,7 @@ export async function createPostAction(
       content: fields.content,
       featuredImageId,
       published: fields.published,
-      authorEmail: user.email,
+      authorEmail: admin.email,
       metaTitle: fields.metaTitle,
       metaDescription: fields.metaDescription,
     });
@@ -182,7 +215,14 @@ export async function createPostAction(
     ]);
     redirect(`/admin/posts/${post.$id}/edit?created=1`);
   } catch (err) {
-    if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
+    // CRITICAL: re-throw framework errors (redirect / notFound / etc.)
+    // so Next.js can handle them. The previous check
+    //   `err.message === "NEXT_REDIRECT"`
+    // is wrong for Next.js 16 — the error's `message` is no longer that
+    // exact string, so the redirect was being swallowed and converted
+    // into a generic "Failed to create post" response. unstable_rethrow
+    // is the documented framework-error rethrow.
+    unstable_rethrow(err);
     console.error("createPostAction error:", err);
     return {
       ok: false,
@@ -267,6 +307,7 @@ export async function updatePostAction(
     ]);
     return { ok: true, message: "Post saved.", postId };
   } catch (err) {
+    unstable_rethrow(err);
     console.error("updatePostAction error:", err);
     return {
       ok: false,

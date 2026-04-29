@@ -187,3 +187,78 @@ export async function deletePostAction(postId: string): Promise<void> {
   revalidatePath("/admin/posts");
   redirect("/admin/posts");
 }
+
+export interface ContentImageUploadResult {
+  ok: boolean;
+  /** Public URL for the uploaded image (suitable for `![alt](url)` markdown). */
+  url?: string;
+  /** Filename as uploaded — used as the markdown `alt` text. */
+  filename?: string;
+  message?: string;
+}
+
+/**
+ * Inline-content image upload. Used by the markdown editor for the
+ * "Upload image" button, drag-drop onto the editor, and paste-image
+ * from the clipboard (e.g. screenshots).
+ *
+ * Returns a public Appwrite preview URL the editor inserts as
+ * `![filename](url)` at the caret. The image lives in the same
+ * `blog-images` bucket as the featured-image uploader so it stays
+ * accessible at the same hostname (which `next.config.ts` already
+ * allows) and gets served via Appwrite's image preview/transform.
+ *
+ * Defense in depth: enforces admin auth, file-type allowlist, and
+ * a 5 MB size cap before touching storage.
+ */
+export async function uploadContentImageAction(
+  formData: FormData
+): Promise<ContentImageUploadResult> {
+  try {
+    await requireAdmin();
+  } catch {
+    return { ok: false, message: "Not authorized." };
+  }
+
+  const raw = formData.get("image");
+  if (!(raw instanceof File) || raw.size === 0) {
+    return { ok: false, message: "No file provided." };
+  }
+
+  const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
+  if (!ALLOWED.includes(raw.type)) {
+    return {
+      ok: false,
+      message: `Unsupported file type: ${raw.type || "unknown"}.`,
+    };
+  }
+
+  const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+  if (raw.size > MAX_BYTES) {
+    return {
+      ok: false,
+      message: `Image is too large (${(raw.size / 1024 / 1024).toFixed(
+        1
+      )} MB). Max 5 MB.`,
+    };
+  }
+
+  const upload = await uploadImageServer(raw);
+  if ("error" in upload) {
+    return { ok: false, message: `Upload failed: ${upload.error}` };
+  }
+
+  // Build a public preview URL. Importing here (not at module top) keeps
+  // this server action's import graph tight.
+  const { getImageUrl } = await import("@/lib/appwrite/storage");
+  const url = getImageUrl(upload.id, { width: 1600, quality: 85 });
+  if (!url) {
+    return { ok: false, message: "Could not construct image URL." };
+  }
+
+  return {
+    ok: true,
+    url,
+    filename: raw.name || "image",
+  };
+}

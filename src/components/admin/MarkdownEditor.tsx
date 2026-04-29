@@ -1,7 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ImagePlus, Loader2 } from "lucide-react";
+import { uploadContentImageAction } from "@/app/actions/admin/posts";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
@@ -19,21 +21,36 @@ interface MarkdownEditorProps {
   height?: number;
 }
 
+/** Filename → markdown-safe alt text (no brackets/parens that break syntax). */
+function altFromFilename(name: string): string {
+  return (
+    name
+      .replace(/\.[^.]+$/, "") // drop extension
+      .replace(/[-_]+/g, " ") // dashes/underscores → spaces
+      .replace(/[\[\]()<>]/g, "") // strip markdown-fragile chars
+      .trim() || "image"
+  );
+}
+
 /**
- * Markdown editor with a "paste preserves structure" behavior similar to
- * Ghost. When the clipboard contains HTML — i.e. you copied from Google
- * Docs, Notion, Word, or a web page — we intercept the paste, convert
- * the HTML to GitHub-Flavored Markdown via turndown, and insert that at
- * the caret instead of the default plain-text fallback.
+ * Markdown editor with two power-user behaviors layered on top of
+ * @uiw/react-md-editor:
  *
- * This keeps the source-of-truth in markdown (which `react-markdown +
- * remark-gfm` renders on /blog/[slug]) while giving authors the "paste
- * and it just looks right" feel they're used to from rich-text CMSes.
+ *  1. Paste preserves structure. When the clipboard contains HTML
+ *     (Google Docs, Notion, Word, web pages), it's converted to
+ *     GitHub-Flavored Markdown via turndown + turndown-plugin-gfm
+ *     and inserted at the caret. Plain-text pastes fall through to
+ *     the editor's default behavior.
  *
- * Headings, bold/italic, links, lists, blockquotes, fenced code blocks,
- * GFM tables, strikethrough, and task lists all carry through. Plain-
- * text pastes fall through to the editor's default behavior so quick
- * snippet pasting still feels native.
+ *  2. Inline image upload. An "Upload image" button, drag-drop onto
+ *     the editor, and paste-image from the clipboard (screenshots)
+ *     all funnel through the same server action that pushes the file
+ *     into Appwrite Storage and inserts `![alt](url)` markdown at
+ *     the caret. Loading + error states are surfaced inline.
+ *
+ * The source-of-truth content stays markdown — `react-markdown +
+ * remark-gfm` renders the post on /blog/[slug] — so authors can
+ * still hand-edit the content later without fighting an HTML blob.
  */
 export default function MarkdownEditor({
   value,
@@ -41,17 +58,113 @@ export default function MarkdownEditor({
   height = 500,
 }: MarkdownEditorProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // Stable ref to the latest onChange so the paste listener (bound once
-  // when the textarea appears) always calls the current callback.
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Stable refs so async callbacks always see the latest props/state
+  // without re-binding the textarea listeners on every render.
   const onChangeRef = useRef(onChange);
+  const valueRef = useRef(value);
   useEffect(() => {
     onChangeRef.current = onChange;
-  }, [onChange]);
+    valueRef.current = value;
+  });
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // ---------------------------------------------------------------------------
+  // Insertion helpers
+  // ---------------------------------------------------------------------------
 
   /**
-   * Convert a chunk of HTML to GFM markdown. Async so turndown loads
-   * lazily — it's only needed on the first paste, not on initial render.
+   * Find the editor's underlying textarea (it lazy-mounts via next/dynamic
+   * so this can return null on first render — callers handle that).
    */
+  const getTextarea = useCallback((): HTMLTextAreaElement | null => {
+    return wrapperRef.current?.querySelector("textarea") ?? null;
+  }, []);
+
+  /**
+   * Splice `text` into the current value at the textarea's caret position
+   * (or append, if the textarea isn't mounted yet). Caret is restored to
+   * the end of the inserted block on the next animation frame.
+   */
+  const insertAtCaret = useCallback(
+    (text: string) => {
+      if (!text) return;
+      const textarea = getTextarea();
+      const current = valueRef.current ?? "";
+
+      if (!textarea) {
+        // No textarea yet (editor hasn't mounted) — append with a leading
+        // newline so the inserted block doesn't collide with prior content.
+        const sep = current.length > 0 && !current.endsWith("\n") ? "\n\n" : "";
+        onChangeRef.current(current + sep + text);
+        return;
+      }
+
+      const start = textarea.selectionStart ?? current.length;
+      const end = textarea.selectionEnd ?? current.length;
+      const before = current.slice(0, start);
+      const after = current.slice(end);
+      const next = before + text + after;
+      onChangeRef.current(next);
+
+      const caret = start + text.length;
+      requestAnimationFrame(() => {
+        textarea.focus();
+        textarea.setSelectionRange(caret, caret);
+      });
+    },
+    [getTextarea]
+  );
+
+  // ---------------------------------------------------------------------------
+  // Upload pipeline (shared by button / drag / paste)
+  // ---------------------------------------------------------------------------
+
+  const uploadAndInsert = useCallback(
+    async (file: File) => {
+      setUploadError(null);
+      setUploading(true);
+      try {
+        const fd = new FormData();
+        fd.append("image", file, file.name || "image");
+        const result = await uploadContentImageAction(fd);
+        if (!result.ok || !result.url) {
+          setUploadError(result.message || "Upload failed.");
+          return;
+        }
+        const alt = altFromFilename(result.filename || file.name || "image");
+        // Wrap with newlines so the image renders on its own line
+        // regardless of where the caret was.
+        insertAtCaret(`\n\n![${alt}](${result.url})\n\n`);
+      } catch (err) {
+        setUploadError(
+          err instanceof Error ? err.message : "Unknown upload error."
+        );
+      } finally {
+        setUploading(false);
+      }
+    },
+    [insertAtCaret]
+  );
+
+  /** Sequentially upload a list of files (paste/drop can include several). */
+  const uploadFiles = useCallback(
+    async (files: FileList | File[]) => {
+      const list = Array.from(files).filter((f) => f.type.startsWith("image/"));
+      for (const f of list) {
+        await uploadAndInsert(f);
+      }
+    },
+    [uploadAndInsert]
+  );
+
+  // ---------------------------------------------------------------------------
+  // HTML → Markdown (turndown), used by the paste handler
+  // ---------------------------------------------------------------------------
+
   const htmlToMarkdown = useCallback(async (html: string): Promise<string> => {
     const [{ default: TurndownService }, gfmModule] = await Promise.all([
       import("turndown"),
@@ -59,41 +172,35 @@ export default function MarkdownEditor({
     ]);
 
     const turndown = new TurndownService({
-      headingStyle: "atx", // # H1, ## H2 (the format remark-gfm renders cleanest)
-      codeBlockStyle: "fenced", // ``` blocks instead of indented
+      headingStyle: "atx",
+      codeBlockStyle: "fenced",
       bulletListMarker: "-",
       emDelimiter: "_",
       hr: "---",
     });
-    // GFM plugin adds: tables, strikethrough, task lists.
     turndown.use(gfmModule.gfm);
 
-    // Source-specific noise that produces ugly markdown if left in.
     const cleaned = html
-      // Google Docs wraps content in an <b> with id="docs-internal-guid-..."
-      // which turndown otherwise emits as bare ** on every paragraph.
       .replace(/<b[^>]*id="docs-internal-guid-[^"]*"[^>]*>/gi, "")
       .replace(/<\/b>(?=\s*$|\s*<)/gi, "")
-      // MS Word / Outlook artifacts
       .replace(/<o:p>[\s\S]*?<\/o:p>/gi, "")
       .replace(/<\/?xml[^>]*>/gi, "")
       .replace(/<!\[if[^\]]*\][^]*?<!\[endif\]>/gi, "")
-      // HTML comments (often present in Notion / Word exports)
       .replace(/<!--[\s\S]*?-->/g, "");
 
     return turndown.turndown(cleaned).trim();
   }, []);
 
-  // Bind a `paste` listener directly to the underlying <textarea>. We can't
-  // use React's onPaste on the wrapper alone because the editor's preview
-  // pane shouldn't intercept pastes — only the edit textarea should.
+  // ---------------------------------------------------------------------------
+  // Paste listener (HTML preservation + image-from-clipboard)
+  // ---------------------------------------------------------------------------
+
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    let detachHandler: (() => void) | null = null;
+    let detach: (() => void) | null = null;
 
-    /** Attach the paste listener to the textarea once it exists. */
     const attach = () => {
       const textarea = wrapper.querySelector(
         "textarea"
@@ -103,11 +210,26 @@ export default function MarkdownEditor({
       const handler = async (e: ClipboardEvent) => {
         const cb = e.clipboardData;
         if (!cb) return;
-        const html = cb.getData("text/html");
-        // No HTML on the clipboard → let the editor handle the paste itself.
-        if (!html || html.trim().length === 0) return;
 
-        // We have structural HTML to preserve — take over.
+        // 1) Image on the clipboard (screenshot, "copy image", etc.) —
+        //    upload + insert as markdown image.
+        const fileList: File[] = [];
+        for (const item of Array.from(cb.items)) {
+          if (item.kind === "file" && item.type.startsWith("image/")) {
+            const file = item.getAsFile();
+            if (file) fileList.push(file);
+          }
+        }
+        if (fileList.length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          await uploadFiles(fileList);
+          return;
+        }
+
+        // 2) Structured HTML on the clipboard — convert to markdown.
+        const html = cb.getData("text/html");
+        if (!html || html.trim().length === 0) return;
         e.preventDefault();
         e.stopPropagation();
 
@@ -115,38 +237,22 @@ export default function MarkdownEditor({
         try {
           markdown = await htmlToMarkdown(html);
         } catch (err) {
-          console.error("[MarkdownEditor] HTML→MD failed; falling back to plain text:", err);
+          console.error(
+            "[MarkdownEditor] HTML→MD failed; falling back to plain text:",
+            err
+          );
           markdown = cb.getData("text/plain");
         }
-        if (!markdown) return;
-
-        const start = textarea.selectionStart ?? textarea.value.length;
-        const end = textarea.selectionEnd ?? textarea.value.length;
-        const next =
-          textarea.value.slice(0, start) + markdown + textarea.value.slice(end);
-
-        // Push the new content up to the parent. MDEditor is controlled, so
-        // it'll re-render with the new value on the next React tick.
-        onChangeRef.current(next);
-
-        // Restore caret to the end of the inserted block on the next frame
-        // (after MDEditor has re-rendered the textarea).
-        const caret = start + markdown.length;
-        requestAnimationFrame(() => {
-          textarea.focus();
-          textarea.setSelectionRange(caret, caret);
-        });
+        if (markdown) insertAtCaret(markdown);
       };
 
       textarea.addEventListener("paste", handler);
-      detachHandler = () => textarea.removeEventListener("paste", handler);
+      detach = () => textarea.removeEventListener("paste", handler);
       return true;
     };
 
-    if (attach()) return () => detachHandler?.();
+    if (attach()) return () => detach?.();
 
-    // Editor lazy-loads via next/dynamic — the textarea won't be in the DOM
-    // on first effect run. Watch for it to appear, then attach once.
     const observer = new MutationObserver(() => {
       if (attach()) observer.disconnect();
     });
@@ -154,22 +260,105 @@ export default function MarkdownEditor({
 
     return () => {
       observer.disconnect();
-      detachHandler?.();
+      detach?.();
     };
-  }, [htmlToMarkdown]);
+  }, [htmlToMarkdown, insertAtCaret, uploadFiles]);
+
+  // ---------------------------------------------------------------------------
+  // Drag & drop
+  // ---------------------------------------------------------------------------
+
+  const [dragOver, setDragOver] = useState(false);
+
+  const onDragOver = (e: React.DragEvent) => {
+    if (e.dataTransfer?.types.includes("Files")) {
+      e.preventDefault();
+      setDragOver(true);
+    }
+  };
+  const onDragLeave = () => setDragOver(false);
+  const onDrop = async (e: React.DragEvent) => {
+    if (!e.dataTransfer?.files || e.dataTransfer.files.length === 0) return;
+    e.preventDefault();
+    setDragOver(false);
+    await uploadFiles(e.dataTransfer.files);
+  };
+
+  // ---------------------------------------------------------------------------
+  // Button + file picker
+  // ---------------------------------------------------------------------------
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    await uploadFiles(files);
+    // Reset so picking the same file twice still triggers onChange
+    e.target.value = "";
+  };
 
   return (
-    <div data-color-mode="light" ref={wrapperRef}>
-      <MDEditor
-        value={value}
-        onChange={(v) => onChange(v || "")}
-        height={height}
-        preview="live"
-      />
-      <p className="text-xs text-gray-500 mt-2">
-        Tip: paste from Google Docs, Notion, Word, or any webpage —
-        headings, lists, tables, links, and bold/italic come through as
-        markdown automatically.
+    <div>
+      {/* Toolbar */}
+      <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 border border-gray-300 px-3 py-1.5 rounded hover:border-black hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {uploading ? (
+            <>
+              <Loader2 size={12} className="animate-spin" />
+              Uploading…
+            </>
+          ) : (
+            <>
+              <ImagePlus size={12} />
+              Upload image
+            </>
+          )}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          multiple
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        {uploadError && (
+          <p className="text-xs text-red-600" role="status">
+            {uploadError}
+          </p>
+        )}
+      </div>
+
+      {/* Editor */}
+      <div
+        ref={wrapperRef}
+        data-color-mode="light"
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+        className={
+          dragOver
+            ? "ring-2 ring-black ring-offset-2 rounded transition-shadow"
+            : ""
+        }
+      >
+        <MDEditor
+          value={value}
+          onChange={(v) => onChange(v || "")}
+          height={height}
+          preview="live"
+        />
+      </div>
+
+      <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+        Paste from Google Docs, Notion, Word, or any webpage — headings,
+        lists, tables, links, and bold/italic come through as markdown
+        automatically. To add an image: click <b>Upload image</b>, drag a
+        file onto the editor, or paste a screenshot from your clipboard.
       </p>
     </div>
   );

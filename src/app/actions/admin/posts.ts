@@ -14,6 +14,24 @@ import {
 } from "@/lib/appwrite/storage";
 import { getCurrentUser } from "@/lib/appwrite/auth";
 
+/**
+ * Wrap revalidatePath in a try/catch and only revalidate the essential
+ * paths (the blog list, the post page, the admin list). The feeds /
+ * sitemap / llms.txt routes are all force-dynamic and re-fetch on the
+ * next request anyway — calling revalidatePath on them adds risk
+ * (revalidatePath crashes the action if the path resolution throws,
+ * with no error surfaced to the client) for no gain.
+ */
+function safeRevalidate(paths: string[]): void {
+  for (const p of paths) {
+    try {
+      revalidatePath(p);
+    } catch (err) {
+      console.error(`[posts action] revalidatePath(${p}) failed:`, err);
+    }
+  }
+}
+
 export interface PostActionResult {
   ok: boolean;
   message?: string;
@@ -117,6 +135,20 @@ export async function createPostAction(
 
   let featuredImageId: string | null = null;
   if (fields.imageFile) {
+    // Hard cap on featured image size. Netlify Functions reject any
+    // synchronous request with a body over 6 MB BEFORE it reaches the
+    // action, with no recoverable error — the client just sees a hang
+    // and the optimistic UI stays flipped to "Published". Capping at
+    // 5 MB leaves headroom for the rest of the form payload (post body,
+    // metadata, slug, etc.) under that ceiling.
+    const MAX_FEATURED_BYTES = 5 * 1024 * 1024;
+    if (fields.imageFile.size > MAX_FEATURED_BYTES) {
+      const mb = (fields.imageFile.size / 1024 / 1024).toFixed(1);
+      return {
+        ok: false,
+        message: `Featured image is ${mb} MB — exceeds the 5 MB limit. Compress it (try Squoosh / TinyPNG) or convert PNG → WebP and try again.`,
+      };
+    }
     const upload = await uploadImageServer(fields.imageFile);
     if ("error" in upload) {
       return { ok: false, message: `Image upload failed: ${upload.error}` };
@@ -136,18 +168,18 @@ export async function createPostAction(
       metaTitle: fields.metaTitle,
       metaDescription: fields.metaDescription,
     });
-    revalidatePath("/blog");
-    revalidatePath(`/blog/${fields.slug}`);
-    revalidatePath("/admin");
-    revalidatePath("/admin/posts");
-    // Feeds + sitemap so subscribers / search engines see the new post
-    // on the next fetch (force-dynamic gives them fresh anyway, but
-    // explicit invalidation evicts any CDN cache in front).
-    revalidatePath("/feed.xml");
-    revalidatePath("/feed.json");
-    revalidatePath("/sitemap.xml");
-    revalidatePath("/llms.txt");
-    revalidatePath("/llms-full.txt");
+    // Only revalidate the essential paths. The feeds, sitemap, and
+    // llms routes are all force-dynamic — they regenerate on the
+    // next request automatically. revalidatePath crashes the whole
+    // action if any individual path resolution throws (with no
+    // recoverable error surfaced to the client), so keeping the
+    // list short minimizes blast radius.
+    safeRevalidate([
+      "/blog",
+      `/blog/${fields.slug}`,
+      "/admin",
+      "/admin/posts",
+    ]);
     redirect(`/admin/posts/${post.$id}/edit?created=1`);
   } catch (err) {
     if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
@@ -194,6 +226,16 @@ export async function updatePostAction(
   }
 
   if (fields.imageFile) {
+    // Same 5 MB ceiling as createPostAction — see the comment there
+    // for why (Netlify 6 MB function payload limit).
+    const MAX_FEATURED_BYTES = 5 * 1024 * 1024;
+    if (fields.imageFile.size > MAX_FEATURED_BYTES) {
+      const mb = (fields.imageFile.size / 1024 / 1024).toFixed(1);
+      return {
+        ok: false,
+        message: `Featured image is ${mb} MB — exceeds the 5 MB limit. Compress it (try Squoosh / TinyPNG) or convert PNG → WebP and try again.`,
+      };
+    }
     if (existing.featuredImageId) {
       await deleteImageServer(existing.featuredImageId);
     }
@@ -216,16 +258,13 @@ export async function updatePostAction(
       metaDescription: fields.metaDescription,
       ...(featuredImageId !== undefined ? { featuredImageId } : {}),
     });
-    revalidatePath("/blog");
-    revalidatePath(`/blog/${fields.slug}`);
-    revalidatePath(`/blog/${existing.slug}`);
-    revalidatePath("/admin");
-    revalidatePath("/admin/posts");
-    revalidatePath("/feed.xml");
-    revalidatePath("/feed.json");
-    revalidatePath("/sitemap.xml");
-    revalidatePath("/llms.txt");
-    revalidatePath("/llms-full.txt");
+    safeRevalidate([
+      "/blog",
+      `/blog/${fields.slug}`,
+      `/blog/${existing.slug}`,
+      "/admin",
+      "/admin/posts",
+    ]);
     return { ok: true, message: "Post saved.", postId };
   } catch (err) {
     console.error("updatePostAction error:", err);
@@ -246,15 +285,12 @@ export async function deletePostAction(postId: string): Promise<void> {
     await deleteImageServer(post.featuredImageId);
   }
   await deletePost(postId);
-  revalidatePath("/blog");
-  if (post) revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/admin");
-  revalidatePath("/admin/posts");
-  revalidatePath("/feed.xml");
-  revalidatePath("/feed.json");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/llms.txt");
-  revalidatePath("/llms-full.txt");
+  safeRevalidate([
+    "/blog",
+    ...(post ? [`/blog/${post.slug}`] : []),
+    "/admin",
+    "/admin/posts",
+  ]);
   redirect("/admin/posts");
 }
 

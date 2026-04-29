@@ -22,9 +22,24 @@ export default function FeaturedImageUploader({
   const [removed, setRemoved] = useState(false);
   const [pendingFileName, setPendingFileName] = useState<string | null>(null);
 
+  const [sizeError, setSizeError] = useState<string | null>(null);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Same 5 MB ceiling the server action enforces — surface it
+    // immediately so the user can compress and re-pick instead of
+    // discovering the limit after a failed publish.
+    const MAX_BYTES = 5 * 1024 * 1024;
+    if (file.size > MAX_BYTES) {
+      const mb = (file.size / 1024 / 1024).toFixed(1);
+      setSizeError(
+        `${file.name} is ${mb} MB — exceeds the 5 MB limit. Compress (Squoosh / TinyPNG) or convert PNG → WebP and try again.`
+      );
+      // Clear the input so re-picking the SAME file still triggers a change event
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    setSizeError(null);
     setPreviewUrl(URL.createObjectURL(file));
     setPendingFileName(file.name);
     setRemoved(false);
@@ -97,9 +112,15 @@ export default function FeaturedImageUploader({
             Upload featured image
           </span>
           <span className="text-xs text-gray-500">
-            JPG, PNG, WEBP, or AVIF
+            JPG, PNG, WEBP, or AVIF · max 5 MB
           </span>
         </button>
+      )}
+
+      {sizeError && (
+        <p className="text-xs text-red-600 mt-2 leading-relaxed" role="alert">
+          {sizeError}
+        </p>
       )}
     </div>
   );

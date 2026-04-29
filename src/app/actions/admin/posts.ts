@@ -53,7 +53,22 @@ async function extractPostFields(formData: FormData): Promise<{
   if (!slug && title) slug = slugify(title);
   const excerpt = String(formData.get("excerpt") || "").trim();
   const content = String(formData.get("content") || "");
-  const published = formData.get("published") === "on";
+  // The form has TWO sources of publish state, in priority order:
+  //   1. `publishAction` — set by the top-bar buttons:
+  //         "publish"   → published=true
+  //         "draft"     → published=false
+  //         "save"      → keep current state (the hidden input below)
+  //   2. `published` — hidden input that mirrors whatever the post was
+  //      most recently saved as. Used as the fallback for a "save"
+  //      action so plain Save Changes doesn't accidentally toggle.
+  const publishAction = String(formData.get("publishAction") || "").trim();
+  const currentPublished = formData.get("published") === "on";
+  const published =
+    publishAction === "publish"
+      ? true
+      : publishAction === "draft"
+      ? false
+      : currentPublished;
   const removeImage = formData.get("removeImage") === "on";
   const rawImage = formData.get("image");
   const imageFile =

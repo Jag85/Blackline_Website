@@ -2,7 +2,7 @@
 
 import { useState, useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Trash2, Eye } from "lucide-react";
+import { Save, Trash2, Eye, Send, Archive, FileText } from "lucide-react";
 import MarkdownEditor from "./MarkdownEditor";
 import FeaturedImageUploader from "./FeaturedImageUploader";
 import {
@@ -39,12 +39,21 @@ export default function PostForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(post?.slug));
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
+  // `published` mirrors the post's last-saved state. The two top-bar
+  // buttons each pass an explicit `publishAction` value that the server
+  // action honors over this hidden field — so this is essentially a
+  // safety net for a plain Save (not Publish / Unpublish).
   const [published, setPublished] = useState(post?.published || false);
-  // SEO overrides — empty string here means "use the fallback (title /
-  // excerpt) on the public page". The action stores blanks as null.
   const [metaTitle, setMetaTitle] = useState(post?.metaTitle || "");
   const [metaDescription, setMetaDescription] = useState(
     post?.metaDescription || ""
+  );
+
+  // Track which button the user clicked so we can show a button-specific
+  // spinner instead of "every button is loading at once". State (not ref)
+  // so the change re-triggers render alongside `pending` flipping to true.
+  const [lastAction, setLastAction] = useState<"draft" | "publish" | "save" | null>(
+    null
   );
 
   const action =
@@ -64,19 +73,149 @@ export default function PostForm({
 
   const handleDelete = async () => {
     if (!post) return;
-    if (
-      !confirm(
-        `Delete "${post.title}"? This cannot be undone.`
-      )
-    )
-      return;
+    if (!confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
     await deletePostAction(post.$id);
   };
 
+  // Marker for the spinner / disabled state on the clicked button.
+  const isPending = (which: "draft" | "publish" | "save") =>
+    pending && lastAction === which;
+
+  /**
+   * Top action bar — rendered both at the top (sticky) and conceptually
+   * the only place the user needs to look to publish. Two clear primary
+   * buttons map directly to the two states (Draft / Published) so there
+   * is no ambiguity about what "Save" does to the publish state.
+   *
+   * Optimistically updates the local `published` state on click so the
+   * status pill flips immediately (server confirms on the next render).
+   */
+  const renderActionBar = (sticky: boolean) => (
+    <div
+      className={
+        sticky
+          ? "sticky top-0 z-30 -mx-6 md:-mx-10 px-6 md:px-10 py-3 bg-white/95 backdrop-blur-sm border-b border-gray-200 mb-6 flex items-center justify-between gap-4 flex-wrap"
+          : "bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-between gap-4 flex-wrap"
+      }
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <span
+          className={`inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded ${
+            published
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-700"
+          }`}
+        >
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              published ? "bg-green-600" : "bg-gray-400"
+            }`}
+          />
+          {published ? "Published" : "Draft"}
+        </span>
+        {mode === "edit" && published && post?.slug && (
+          <a
+            href={`/blog/${post.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-black transition-colors"
+          >
+            <Eye size={12} />
+            View live
+          </a>
+        )}
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Save Draft / Unpublish — same intent, different label depending
+            on whether the post is currently published. */}
+        <button
+          type="submit"
+          name="publishAction"
+          value="draft"
+          disabled={pending}
+          onClick={() => {
+            setLastAction("draft");
+            setPublished(false);
+          }}
+          className="inline-flex items-center gap-2 border border-gray-300 text-sm font-medium px-4 py-2 rounded hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {published ? (
+            <>
+              <Archive size={14} />
+              {isPending("draft") ? "Unpublishing…" : "Unpublish"}
+            </>
+          ) : (
+            <>
+              <FileText size={14} />
+              {isPending("draft") ? "Saving…" : "Save Draft"}
+            </>
+          )}
+        </button>
+
+        {/* Publish / Save Changes — the primary action, always black. */}
+        <button
+          type="submit"
+          name="publishAction"
+          value={published ? "save" : "publish"}
+          disabled={pending}
+          onClick={() => {
+            if (published) {
+              setLastAction("save");
+            } else {
+              setLastAction("publish");
+              setPublished(true);
+            }
+          }}
+          className="inline-flex items-center gap-2 bg-black text-white text-sm font-semibold px-5 py-2 rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {published ? (
+            <>
+              <Save size={14} />
+              {isPending("save") ? "Saving…" : "Save Changes"}
+            </>
+          ) : (
+            <>
+              <Send size={14} />
+              {isPending("publish") ? "Publishing…" : "Publish Now"}
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Inline status feedback from the last action */}
+      {state && (
+        <p
+          className={`w-full text-xs ${
+            state.ok ? "text-green-700" : "text-red-600"
+          }`}
+          role="status"
+        >
+          {state.message}
+        </p>
+      )}
+    </div>
+  );
+
   return (
     <form action={formAction} className="space-y-6">
-      {/* Hidden field carries content (textarea is hidden visually) */}
+      {/* Hidden fields the server action reads */}
       <input type="hidden" name="content" value={content} />
+      {/*
+        Mirror of the last-saved publish state. The top-bar buttons
+        override this via `publishAction`, but if the form is submitted
+        some other way (e.g. browser autofill, rare edge cases) we want
+        a sensible default.
+      */}
+      <input
+        type="hidden"
+        name="published"
+        value={published ? "on" : "off"}
+      />
+
+      {/* Sticky top action bar — visible no matter how far the user has
+          scrolled into the markdown editor. */}
+      {renderActionBar(true)}
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         {/* Main column */}
@@ -225,48 +364,15 @@ export default function PostForm({
             </label>
             <MarkdownEditor value={content} onChange={setContent} height={550} />
           </div>
+
+          {/* Bottom action bar — duplicate of the top bar for the case
+              where the author has scrolled to the end of the editor and
+              wants to save without scrolling back up. Not sticky. */}
+          {renderActionBar(false)}
         </div>
 
         {/* Sidebar */}
         <aside className="space-y-6">
-          <div className="bg-white border border-gray-200 rounded-lg p-5">
-            <h3 className="font-bold text-black mb-4">Publishing</h3>
-            <label className="flex items-center gap-3 mb-4 cursor-pointer">
-              <input
-                type="checkbox"
-                name="published"
-                checked={published}
-                onChange={(e) => setPublished(e.target.checked)}
-                className="w-4 h-4 accent-black"
-              />
-              <span className="text-sm font-medium text-gray-800">
-                {published ? "Published" : "Draft"}
-              </span>
-            </label>
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-4 py-3 rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save size={14} />
-              {pending
-                ? "Saving..."
-                : mode === "create"
-                ? "Create Post"
-                : "Save Changes"}
-            </button>
-            {state && (
-              <p
-                className={`text-xs mt-3 ${
-                  state.ok ? "text-green-700" : "text-red-600"
-                }`}
-                role="status"
-              >
-                {state.message}
-              </p>
-            )}
-          </div>
-
           <div className="bg-white border border-gray-200 rounded-lg p-5">
             <h3 className="font-bold text-black mb-4">URL Slug</h3>
             <input

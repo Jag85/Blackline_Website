@@ -96,6 +96,29 @@ export default function PostForm({
     }
   }, [state, post?.published]);
 
+  /**
+   * Client-side navigation after a successful create.
+   *
+   * The create action used to call `redirect()` server-side, but Next.js 16
+   * + Netlify returns 403 on the post-redirect RSC fetch in this stack
+   * (the post saves fine; the post-action navigation throws "An unexpected
+   * response was received from the server"). Pushing the route from the
+   * client side after the action returns avoids the framework-redirect
+   * path entirely and is reliable across edge proxies.
+   */
+  useEffect(() => {
+    if (
+      mode === "create" &&
+      state?.ok &&
+      state.postId &&
+      // Only navigate once per action result — guard against re-fires
+      // when this effect's deps change for unrelated reasons.
+      !state.message?.includes("redirected")
+    ) {
+      router.push(`/admin/posts/${state.postId}/edit?created=1`);
+    }
+  }, [mode, state, router]);
+
   const handleTitleChange = (v: string) => {
     setTitle(v);
     if (!slugTouched) setSlug(slugify(v));

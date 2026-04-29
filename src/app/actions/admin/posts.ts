@@ -213,15 +213,19 @@ export async function createPostAction(
       "/admin",
       "/admin/posts",
     ]);
-    redirect(`/admin/posts/${post.$id}/edit?created=1`);
+    // Don't `redirect()` from inside the server action. Next.js 16 +
+    // Netlify can return 403 on the post-redirect RSC fetch in some
+    // configurations (the post saves fine; the navigation that follows
+    // the action throws "An unexpected response was received from the
+    // server"). Instead, return the new postId and let the client
+    // navigate via router.push — avoids the framework-redirect path
+    // entirely and is more reliable across edge proxies.
+    return {
+      ok: true,
+      message: "Post created.",
+      postId: post.$id,
+    };
   } catch (err) {
-    // CRITICAL: re-throw framework errors (redirect / notFound / etc.)
-    // so Next.js can handle them. The previous check
-    //   `err.message === "NEXT_REDIRECT"`
-    // is wrong for Next.js 16 — the error's `message` is no longer that
-    // exact string, so the redirect was being swallowed and converted
-    // into a generic "Failed to create post" response. unstable_rethrow
-    // is the documented framework-error rethrow.
     unstable_rethrow(err);
     console.error("createPostAction error:", err);
     return {

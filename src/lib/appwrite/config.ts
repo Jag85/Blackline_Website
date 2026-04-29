@@ -23,6 +23,17 @@ export const COLLECTIONS = {
   POSTS: "69eadde20023e9f7e1ce",
   CONTACT_SUBMISSIONS: "69eade02001e33b3f657",
   SUBSCRIBERS: "69eadeb400062e7bfcbb",
+  /**
+   * Lead-magnet submissions from the free diagnostic tools.
+   *
+   * Default ID is the custom string `lead_submissions` so you can
+   * create the collection in Appwrite Console with that exact ID and
+   * the app works out of the box. If you let Appwrite auto-generate
+   * an ID instead, set `NEXT_PUBLIC_APPWRITE_LEADS_COLLECTION` in
+   * Netlify env vars to that auto-generated value.
+   */
+  LEAD_SUBMISSIONS:
+    process.env.NEXT_PUBLIC_APPWRITE_LEADS_COLLECTION || "lead_submissions",
 } as const;
 
 export const STORAGE_BUCKETS = {

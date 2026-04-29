@@ -25,6 +25,8 @@ const BIZ_TYPE_OPTIONS = [
 
 const config: DiagnosticConfig<FciCategory> = {
   storagePrefix: "fci",
+  toolKey: "clarity-index",
+  toolLabel: "Founder Clarity Index",
   intro: {
     eyebrow: "Free Diagnostic Tool · 10 Questions",
     headline: "Founder Clarity Index",

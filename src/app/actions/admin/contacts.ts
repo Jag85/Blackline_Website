@@ -6,6 +6,7 @@ import {
   deleteContact,
 } from "@/lib/appwrite/contacts";
 import { deleteSubscriber } from "@/lib/appwrite/subscribers";
+import { deleteLead } from "@/lib/appwrite/leads";
 import { getCurrentUser } from "@/lib/appwrite/auth";
 import type { ContactStatus } from "@/lib/appwrite/types";
 
@@ -36,4 +37,11 @@ export async function deleteSubscriberAction(id: string): Promise<void> {
   await deleteSubscriber(id);
   revalidatePath("/admin");
   revalidatePath("/admin/subscribers");
+}
+
+export async function deleteLeadAction(id: string): Promise<void> {
+  await requireAdmin();
+  await deleteLead(id);
+  revalidatePath("/admin");
+  revalidatePath("/admin/leads");
 }

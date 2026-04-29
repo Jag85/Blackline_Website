@@ -34,7 +34,12 @@ export default function Pagination({
   const start = (current - 1) * pageSize + 1;
   const end = Math.min(current * pageSize, total);
 
-  const hrefFor = (n: number) => (n === 1 ? basePath : `${basePath}?page=${n}`);
+  // basePath may already carry a query string (e.g. `/admin/leads?tool=foo`),
+  // so use `&` when there's already a `?` and `?` otherwise. Page-1 strips
+  // the `page` param entirely so the canonical URL stays clean.
+  const sep = basePath.includes("?") ? "&" : "?";
+  const hrefFor = (n: number) =>
+    n === 1 ? basePath : `${basePath}${sep}page=${n}`;
 
   // Build a compact page list: 1 … (current-1) current (current+1) … last
   const pages: (number | "…")[] = [];

@@ -32,6 +32,8 @@ const BIZ_TYPE_OPTIONS = [
 
 const config: DiagnosticConfig<FocusCategory> = {
   storagePrefix: "ffs",
+  toolKey: "focus-scorecard",
+  toolLabel: "FOCUS Founder Scorecard",
   intro: {
     eyebrow: "Free Diagnostic · 10 Questions",
     headline: "FOCUS Founder Scorecard",

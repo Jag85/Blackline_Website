@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,6 +12,10 @@ import RadioOption from "../RadioOption";
 import IntakeForm from "./IntakeForm";
 import ScorecardGrid from "./ScorecardGrid";
 import type { DiagnosticConfig, IntakeData } from "./types";
+import {
+  submitLeadAction,
+  completeLeadAction,
+} from "@/app/actions/leads";
 
 type Stage = "intro" | "intake" | "questions" | "result";
 
@@ -42,6 +46,7 @@ export default function DiagnosticEngine<C extends string>({
   config,
 }: DiagnosticEngineProps<C>) {
   const intakeKey = `${config.storagePrefix}_intake`;
+  const leadIdKey = `${config.storagePrefix}_lead_id`;
 
   const [stage, setStage] = useState<Stage>("intro");
   const [intake, setIntake] = useState<IntakeData>(
@@ -57,6 +62,17 @@ export default function DiagnosticEngine<C extends string>({
   );
   const [currentQ, setCurrentQ] = useState(0);
   const [emptyFlash, setEmptyFlash] = useState(false);
+
+  // Lead-submission document id, persisted in localStorage so a hard
+  // refresh between intake and result still updates the same record
+  // instead of creating a duplicate. `null` means no lead yet.
+  const leadIdRef = useRef<string | null>(
+    typeof window === "undefined"
+      ? null
+      : window.localStorage.getItem(leadIdKey)
+  );
+  // Guard so we only call completeLeadAction once per session per result.
+  const completionSentRef = useRef(false);
 
   const total = config.questions.length;
   const progress = Math.round(((currentQ + 1) / total) * 100);
@@ -75,8 +91,40 @@ export default function DiagnosticEngine<C extends string>({
     saveJSON(intakeKey, data);
     setAnswers(new Array(total).fill(null));
     setCurrentQ(0);
+    completionSentRef.current = false;
     setStage("questions");
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Best-effort lead capture. Non-blocking — if the network call
+    // fails, the user still continues into the diagnostic. We persist
+    // the returned id so the completion-stage update targets the
+    // same record even after a refresh.
+    const { firstName, email, businessName, ...rest } = data;
+    void submitLeadAction({
+      toolKey: config.toolKey,
+      toolLabel: config.toolLabel,
+      firstName,
+      email,
+      businessName,
+      extraFields: rest,
+    })
+      .then((res) => {
+        if (res.ok && res.id) {
+          leadIdRef.current = res.id;
+          if (typeof window !== "undefined") {
+            try {
+              window.localStorage.setItem(leadIdKey, res.id);
+            } catch {
+              /* localStorage disabled — fine, the in-memory ref still works */
+            }
+          }
+        } else if (!res.ok) {
+          console.warn("[diagnostic] lead capture failed:", res.message);
+        }
+      })
+      .catch((err) => {
+        console.warn("[diagnostic] lead capture error:", err);
+      });
   };
 
   const handleSelect = (i: number) => {
@@ -114,6 +162,17 @@ export default function DiagnosticEngine<C extends string>({
     setAnswers(new Array(total).fill(null));
     setCurrentQ(0);
     setStage("intro");
+    // A fresh run is a fresh lead — clear so the next intake submit
+    // creates a new document instead of updating the previous one.
+    leadIdRef.current = null;
+    completionSentRef.current = false;
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(leadIdKey);
+      } catch {
+        /* ignore */
+      }
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -148,6 +207,28 @@ export default function DiagnosticEngine<C extends string>({
       count > 0 ? Math.round((((sum / count) - 1) / 3) * 100) : 0;
     return { scores: computedScores, primary: primaryKey, overallScore: overall };
   }, [answers, config.questions, config.categoryOrder]);
+
+  /* ─── Lead completion update ─── */
+
+  // When the user reaches the result stage, push the score + bottleneck
+  // onto the previously-created lead row. Best-effort — failures don't
+  // surface to the user. Guarded by a ref so a re-render doesn't fire
+  // a second update.
+  useEffect(() => {
+    if (stage !== "result") return;
+    if (completionSentRef.current) return;
+    if (!leadIdRef.current) return; // intake call failed; nothing to update
+    completionSentRef.current = true;
+
+    void completeLeadAction({
+      id: leadIdRef.current,
+      overallScore,
+      primaryCategory: String(primary),
+      categoryScores: scores as Record<string, number>,
+    }).catch((err) => {
+      console.warn("[diagnostic] lead completion error:", err);
+    });
+  }, [stage, overallScore, primary, scores]);
 
   /* ─── Result email ─── */
 

@@ -32,6 +32,8 @@ const BIZ_TYPE_OPTIONS = [
 
 const config: DiagnosticConfig<CccCategory> = {
   storagePrefix: "ccc",
+  toolKey: "capital-conversion",
+  toolLabel: "Capital Conversion Compass",
   intro: {
     eyebrow: "Free Diagnostic · 10 Questions",
     headline: "Capital Conversion Compass",

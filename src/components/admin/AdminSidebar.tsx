@@ -7,6 +7,7 @@ import {
   FileText,
   Inbox,
   Users,
+  Sparkles,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { logoutAction } from "@/app/actions/admin/auth";
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Posts", href: "/admin/posts", icon: FileText, exact: false },
+  { label: "Leads", href: "/admin/leads", icon: Sparkles, exact: false },
   { label: "Contacts", href: "/admin/contacts", icon: Inbox, exact: false },
   {
     label: "Subscribers",

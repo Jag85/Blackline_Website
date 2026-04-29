@@ -3,6 +3,7 @@ import {
   FileText,
   Inbox,
   Users,
+  Sparkles,
   CheckCircle,
   Clock,
   ArrowRight,
@@ -10,14 +11,18 @@ import {
 import { listAllPosts } from "@/lib/appwrite/posts";
 import { listContacts } from "@/lib/appwrite/contacts";
 import { listSubscribers } from "@/lib/appwrite/subscribers";
+import { listLeadsPage } from "@/lib/appwrite/leads";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [posts, contacts, subscribers] = await Promise.all([
+  // Lead count is fetched via the paginated helper with pageSize=1 so we
+  // pay one cheap query for the total without dragging back every row.
+  const [posts, contacts, subscribers, leadsResult] = await Promise.all([
     listAllPosts(),
     listContacts(),
     listSubscribers(),
+    listLeadsPage({ page: 1, pageSize: 1 }),
   ]);
 
   const publishedCount = posts.filter((p) => p.published).length;
@@ -26,6 +31,7 @@ export default async function AdminDashboard() {
   const activeSubsCount = subscribers.filter(
     (s) => s.status === "active"
   ).length;
+  const leadCount = leadsResult?.total ?? 0;
 
   const stats = [
     {
@@ -34,6 +40,14 @@ export default async function AdminDashboard() {
       sub: `${draftCount} draft${draftCount === 1 ? "" : "s"}`,
       icon: FileText,
       href: "/admin/posts",
+    },
+    {
+      label: "Lead Submissions",
+      value: leadCount,
+      sub: "From the free diagnostic tools",
+      icon: Sparkles,
+      href: "/admin/leads",
+      highlight: leadCount > 0 && newContactCount === 0,
     },
     {
       label: "New Contacts",
@@ -65,7 +79,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (

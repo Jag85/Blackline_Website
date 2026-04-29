@@ -42,3 +42,37 @@ export interface Subscriber extends Models.Document {
   email: string;
   status: SubscriberStatus;
 }
+
+export type LeadStatus = "started" | "completed";
+
+/**
+ * Submission from one of the free diagnostic tools (FOCUS Scorecard,
+ * Founder Clarity Index, Capital Conversion Compass). One row per
+ * lead, written when the user completes the intake form and updated
+ * with results when they finish the diagnostic.
+ *
+ * Two writes are intentional: the intake-time write captures the email
+ * even if the user abandons partway through; the completion-time update
+ * adds score + bottleneck so the admin sees the actionable summary
+ * when the user does finish.
+ */
+export interface LeadSubmission extends Models.Document {
+  /** Stable tool identifier — "focus-scorecard" | "clarity-index" | "capital-conversion" */
+  toolKey: string;
+  /** Human-readable tool name, captured at write time so the label is stable even if we rename the tool later */
+  toolLabel: string;
+  firstName: string;
+  email: string;
+  businessName: string;
+  /** JSON-stringified record of tool-specific intake fields (revenueBand, stage, bizType, etc.) */
+  extraFields: string;
+  status: LeadStatus;
+  /** 0–100 overall score, set when the diagnostic is completed */
+  overallScore: number | null;
+  /** Lowest-scoring category — the bottleneck the tool identifies */
+  primaryCategory: string | null;
+  /** JSON-stringified `{ category: score }` map, set when completed */
+  categoryScores: string | null;
+  /** ISO datetime when the diagnostic was completed (null until then) */
+  completedAt: string | null;
+}

@@ -108,6 +108,14 @@ export interface IntakeData {
 export interface DiagnosticConfig<C extends string = string> {
   /** Slug used for localStorage keys (e.g. "ffs", "fci", "ccc") */
   storagePrefix: string;
+  /**
+   * Stable identifier used when persisting lead submissions to Appwrite.
+   * Should be URL-safe and stable forever (renaming the tool is fine,
+   * changing this key fragments your historical lead list).
+   */
+  toolKey: string;
+  /** Human-readable tool name shown in the admin leads list. */
+  toolLabel: string;
   /** Welcome screen copy */
   intro: {
     eyebrow: string;

@@ -31,14 +31,19 @@ export async function generateMetadata({
     getImageUrl(post.featuredImageId, { width: 1200, quality: 85 });
   const path = `/blog/${post.slug}`;
 
+  // Per-post SEO overrides win, with a clean fallback to title/excerpt
+  // for any post created before the override fields existed.
+  const seoTitle = post.metaTitle?.trim() || post.title;
+  const seoDescription = post.metaDescription?.trim() || post.excerpt;
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: seoTitle,
+    description: seoDescription,
     alternates: { canonical: path },
     openGraph: {
       type: "article",
-      title: post.title,
-      description: post.excerpt,
+      title: seoTitle,
+      description: seoDescription,
       url: path,
       siteName: SITE_NAME,
       publishedTime: post.publishedAt || undefined,
@@ -47,8 +52,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
+      title: seoTitle,
+      description: seoDescription,
       images: imageUrl ? [imageUrl] : undefined,
     },
   };

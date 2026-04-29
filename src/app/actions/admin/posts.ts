@@ -45,6 +45,8 @@ async function extractPostFields(formData: FormData): Promise<{
   published: boolean;
   imageFile: File | null;
   removeImage: boolean;
+  metaTitle: string;
+  metaDescription: string;
 }> {
   const title = String(formData.get("title") || "").trim();
   let slug = String(formData.get("slug") || "").trim();
@@ -56,7 +58,21 @@ async function extractPostFields(formData: FormData): Promise<{
   const rawImage = formData.get("image");
   const imageFile =
     rawImage instanceof File && rawImage.size > 0 ? rawImage : null;
-  return { title, slug, excerpt, content, published, imageFile, removeImage };
+  // SEO overrides — trimmed; downstream code stores `null` when blank
+  // so the public page falls back to title/excerpt cleanly.
+  const metaTitle = String(formData.get("metaTitle") || "").trim();
+  const metaDescription = String(formData.get("metaDescription") || "").trim();
+  return {
+    title,
+    slug,
+    excerpt,
+    content,
+    published,
+    imageFile,
+    removeImage,
+    metaTitle,
+    metaDescription,
+  };
 }
 
 export async function createPostAction(
@@ -92,6 +108,8 @@ export async function createPostAction(
       featuredImageId,
       published: fields.published,
       authorEmail: user.email,
+      metaTitle: fields.metaTitle,
+      metaDescription: fields.metaDescription,
     });
     revalidatePath("/blog");
     revalidatePath(`/blog/${fields.slug}`);
@@ -154,6 +172,8 @@ export async function updatePostAction(
       content: fields.content,
       published: fields.published,
       wasPublished: existing.published,
+      metaTitle: fields.metaTitle,
+      metaDescription: fields.metaDescription,
       ...(featuredImageId !== undefined ? { featuredImageId } : {}),
     });
     revalidatePath("/blog");

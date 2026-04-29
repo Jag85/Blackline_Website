@@ -17,6 +17,17 @@ export interface BlogPost extends Models.Document {
   published: boolean;
   publishedAt: string | null;
   authorEmail: string;
+  /**
+   * SEO override for the `<title>` tag. When null/empty the public blog
+   * post page falls back to `title`. Optional in Appwrite — older posts
+   * created before this field was added will be `null`.
+   */
+  metaTitle?: string | null;
+  /**
+   * SEO override for `<meta name="description">` and Open Graph
+   * description. Falls back to `excerpt` when null/empty.
+   */
+  metaDescription?: string | null;
 }
 
 export interface ContactSubmission extends Models.Document {

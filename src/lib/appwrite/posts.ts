@@ -12,6 +12,10 @@ interface PostInput {
   featuredImageId?: string | null;
   published: boolean;
   authorEmail: string;
+  /** Optional SEO override for `<title>`. Stored as null when blank. */
+  metaTitle?: string | null;
+  /** Optional SEO override for meta description / OG description. */
+  metaDescription?: string | null;
 }
 
 /**
@@ -168,6 +172,12 @@ export async function createPost(input: PostInput): Promise<BlogPost> {
       published: input.published,
       publishedAt: input.published ? new Date().toISOString() : null,
       authorEmail: input.authorEmail,
+      // SEO overrides — stored as null when blank so the public page's
+      // fallback (title / excerpt) takes over cleanly.
+      metaTitle: input.metaTitle?.trim() ? input.metaTitle.trim() : null,
+      metaDescription: input.metaDescription?.trim()
+        ? input.metaDescription.trim()
+        : null,
     }
   );
   return doc as unknown as BlogPost;
@@ -191,6 +201,17 @@ export async function updatePost(
     if (input.published && !input.wasPublished) {
       data.publishedAt = new Date().toISOString();
     }
+  }
+  // SEO overrides — explicit null when the user clears the field, so
+  // the next render falls back to title/excerpt instead of keeping a
+  // stale override.
+  if (input.metaTitle !== undefined) {
+    data.metaTitle = input.metaTitle?.trim() ? input.metaTitle.trim() : null;
+  }
+  if (input.metaDescription !== undefined) {
+    data.metaDescription = input.metaDescription?.trim()
+      ? input.metaDescription.trim()
+      : null;
   }
   const doc = await databases.updateDocument(
     APPWRITE_DATABASE_ID,

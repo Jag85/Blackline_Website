@@ -40,6 +40,12 @@ export default function PostForm({
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
   const [published, setPublished] = useState(post?.published || false);
+  // SEO overrides — empty string here means "use the fallback (title /
+  // excerpt) on the public page". The action stores blanks as null.
+  const [metaTitle, setMetaTitle] = useState(post?.metaTitle || "");
+  const [metaDescription, setMetaDescription] = useState(
+    post?.metaDescription || ""
+  );
 
   const action =
     mode === "create"
@@ -115,6 +121,102 @@ export default function PostForm({
             <p className="text-xs text-gray-500 mt-1">
               {excerpt.length}/300 characters
             </p>
+          </div>
+
+          {/* SEO overrides — what Google + social previews show */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-black">SEO</h3>
+              <p className="text-xs text-gray-500">
+                Optional — falls back to title &amp; excerpt
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="metaTitle"
+                  className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1"
+                >
+                  Meta title
+                </label>
+                <input
+                  type="text"
+                  id="metaTitle"
+                  name="metaTitle"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                  maxLength={70}
+                  placeholder={title || "Defaults to the post title"}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-black transition-colors"
+                />
+                <p
+                  className={`text-xs mt-1 ${
+                    metaTitle.length > 60
+                      ? metaTitle.length > 65
+                        ? "text-red-600"
+                        : "text-amber-600"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {metaTitle.length}/70 chars · Google typically truncates
+                  around 60.
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="metaDescription"
+                  className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1"
+                >
+                  Meta description
+                </label>
+                <textarea
+                  id="metaDescription"
+                  name="metaDescription"
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  maxLength={200}
+                  rows={3}
+                  placeholder={excerpt || "Defaults to the post excerpt"}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-black transition-colors resize-none"
+                />
+                <p
+                  className={`text-xs mt-1 ${
+                    metaDescription.length > 160
+                      ? metaDescription.length > 175
+                        ? "text-red-600"
+                        : "text-amber-600"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {metaDescription.length}/200 chars · Google typically
+                  truncates around 155–160.
+                </p>
+              </div>
+
+              {/* SERP preview — gives authors immediate visual feedback */}
+              <div className="border-t border-gray-100 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+                  Google preview
+                </p>
+                <div className="bg-gray-50 border border-gray-200 rounded p-4">
+                  <p className="text-[#1a0dab] text-base leading-snug truncate">
+                    {(metaTitle || title || "Untitled post").slice(0, 60)}
+                  </p>
+                  <p className="text-[#006621] text-xs mt-0.5 truncate">
+                    blacklinestrategypartners.com › blog ›{" "}
+                    {slug || "post-slug"}
+                  </p>
+                  <p className="text-sm text-gray-700 mt-1 line-clamp-2">
+                    {(metaDescription || excerpt || "(no description set)").slice(
+                      0,
+                      160
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div>

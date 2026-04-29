@@ -34,6 +34,8 @@ function toPlainPost(doc: BlogPost) {
     published: Boolean(doc.published),
     publishedAt: doc.publishedAt ? String(doc.publishedAt) : null,
     authorEmail: String(doc.authorEmail ?? ""),
+    metaTitle: doc.metaTitle ? String(doc.metaTitle) : null,
+    metaDescription: doc.metaDescription ? String(doc.metaDescription) : null,
   };
 }
 

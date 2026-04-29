@@ -104,6 +104,16 @@ export async function createPostAction(
     return { ok: false, message: "Excerpt is required." };
   if (!fields.content.trim())
     return { ok: false, message: "Content cannot be empty." };
+  // Hard cap matching the Appwrite `content` String attribute size.
+  // Bumping this requires also bumping the attribute size in Appwrite
+  // Console (see APPWRITE_SETUP.md / the deploy notes).
+  const CONTENT_MAX = 1_000_000;
+  if (fields.content.length > CONTENT_MAX) {
+    return {
+      ok: false,
+      message: `Post content is ${fields.content.length.toLocaleString()} chars — exceeds the ${CONTENT_MAX.toLocaleString()}-char limit. Trim it or split into multiple posts.`,
+    };
+  }
 
   let featuredImageId: string | null = null;
   if (fields.imageFile) {
@@ -165,6 +175,13 @@ export async function updatePostAction(
   if (!fields.excerpt) return { ok: false, message: "Excerpt is required." };
   if (!fields.content.trim())
     return { ok: false, message: "Content cannot be empty." };
+  const CONTENT_MAX = 1_000_000;
+  if (fields.content.length > CONTENT_MAX) {
+    return {
+      ok: false,
+      message: `Post content is ${fields.content.length.toLocaleString()} chars — exceeds the ${CONTENT_MAX.toLocaleString()}-char limit. Trim it or split into multiple posts.`,
+    };
+  }
 
   const existing = await getPostById(postId);
   if (!existing) return { ok: false, message: "Post not found." };

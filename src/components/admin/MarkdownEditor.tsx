@@ -180,12 +180,30 @@ export default function MarkdownEditor({
     });
     turndown.use(gfmModule.gfm);
 
+    // Turndown's default behavior is to KEEP the text content of any tag
+    // it doesn't have a converter for. That means <style>, <script>, and
+    // <head> blocks dump their CSS / JS source straight into the body of
+    // the document as plain text — which is what produced the
+    // ".ak-article-table { width: 100%; ... }" garbage in the
+    // user-reported failed-post case. Strip those tags WITH their
+    // contents up front so turndown never sees them.
     const cleaned = html
-      .replace(/<b[^>]*id="docs-internal-guid-[^"]*"[^>]*>/gi, "")
-      .replace(/<\/b>(?=\s*$|\s*<)/gi, "")
+      // Tags that should be removed including their inner content
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, "")
+      .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, "")
+      .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, "")
+      .replace(/<meta\b[^>]*>/gi, "")
+      .replace(/<link\b[^>]*>/gi, "")
+      // MS Word / Outlook artifacts
       .replace(/<o:p>[\s\S]*?<\/o:p>/gi, "")
       .replace(/<\/?xml[^>]*>/gi, "")
       .replace(/<!\[if[^\]]*\][^]*?<!\[endif\]>/gi, "")
+      // Google Docs wrapper that otherwise emits stray ** on every paragraph
+      .replace(/<b[^>]*id="docs-internal-guid-[^"]*"[^>]*>/gi, "")
+      .replace(/<\/b>(?=\s*$|\s*<)/gi, "")
+      // HTML comments
       .replace(/<!--[\s\S]*?-->/g, "");
 
     return turndown.turndown(cleaned).trim();

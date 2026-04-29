@@ -359,9 +359,24 @@ export default function PostForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Content (Markdown)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Content (Markdown)
+              </label>
+              {/* Soft cap warning so authors see bigger pastes coming
+                  before they hit the Appwrite attribute size limit. */}
+              <p
+                className={`text-xs ${
+                  content.length > 900_000
+                    ? "text-red-600"
+                    : content.length > 500_000
+                    ? "text-amber-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {content.length.toLocaleString()} / 1,000,000 chars
+              </p>
+            </div>
             <MarkdownEditor value={content} onChange={setContent} height={550} />
           </div>
 

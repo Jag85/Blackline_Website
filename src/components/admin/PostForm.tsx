@@ -1,8 +1,16 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Trash2, Eye, Send, Archive, FileText } from "lucide-react";
+import {
+  Save,
+  Trash2,
+  Eye,
+  Send,
+  Archive,
+  FileText,
+  AlertTriangle,
+} from "lucide-react";
 import MarkdownEditor from "./MarkdownEditor";
 import FeaturedImageUploader from "./FeaturedImageUploader";
 import {
@@ -65,6 +73,28 @@ export default function PostForm({
     PostActionResult | null,
     FormData
   >(action, null);
+
+  /**
+   * Optimistic-state rollback. The publish/draft buttons flip the local
+   * `published` state immediately on click so the status pill responds
+   * instantly. If the server action then comes back with ok:false (e.g.
+   * Appwrite rejected the write because content exceeded the attribute
+   * size), the optimistic flip is wrong — roll back to whatever the
+   * post's persisted value was. Without this, a failed publish would
+   * leave the pill saying "Published" while the post never actually
+   * saved, masking the failure.
+   *
+   * eslint-disable: setState in effect is the right pattern here —
+   * we react to a server-side ok:false result that's only known after
+   * the action returns. Deriving from props isn't an option (the
+   * rollback target is a prop, but the trigger is the action result).
+   */
+  useEffect(() => {
+    if (state && !state.ok) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPublished(post?.published || false);
+    }
+  }, [state, post?.published]);
 
   const handleTitleChange = (v: string) => {
     setTitle(v);
@@ -183,17 +213,43 @@ export default function PostForm({
         </button>
       </div>
 
-      {/* Inline status feedback from the last action */}
-      {state && (
-        <p
-          className={`w-full text-xs ${
-            state.ok ? "text-green-700" : "text-red-600"
-          }`}
-          role="status"
-        >
-          {state.message}
-        </p>
-      )}
+      {/* Inline status feedback from the last action.
+          Errors get a full banner — the previous one-liner-of-red-text
+          was missable, which let users think a failed publish had
+          succeeded (the optimistic status pill flip didn't help). */}
+      {state &&
+        (state.ok ? (
+          <p
+            className="w-full text-xs text-green-700"
+            role="status"
+          >
+            {state.message}
+          </p>
+        ) : (
+          <div
+            role="alert"
+            className="w-full bg-red-50 border border-red-200 rounded p-3 flex items-start gap-2"
+          >
+            <AlertTriangle
+              size={14}
+              className="text-red-600 mt-0.5 shrink-0"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-red-900">
+                Save failed — your post was NOT published
+              </p>
+              <p className="text-xs text-red-800 mt-0.5 break-words">
+                {state.message}
+              </p>
+              <p className="text-[11px] text-red-700 mt-1 leading-relaxed">
+                If this mentions a character / size limit, the Appwrite{" "}
+                <code className="bg-red-100 px-1 rounded">content</code>{" "}
+                attribute needs to be resized to at least 1,000,000 chars
+                (delete + recreate the attribute in the Appwrite Console).
+              </p>
+            </div>
+          </div>
+        ))}
     </div>
   );
 

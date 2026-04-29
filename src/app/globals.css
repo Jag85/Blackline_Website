@@ -30,3 +30,23 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
 }
+
+/* MDXEditor — light theme overrides + content sizing.
+   The editor's default styles are dark-ish; force a light surface that
+   matches the rest of the admin chrome. The --mdx-min-h custom property
+   is set inline by the editor wrapper so the content area gets a sensible
+   minimum height (MDXEditor doesn't expose a minHeight prop directly). */
+.mdx-editor {
+  background: #fff;
+  color: var(--color-foreground);
+  border-radius: 0.25rem;
+}
+.mdx-editor [contenteditable="true"].mdx-editor-content {
+  min-height: var(--mdx-min-h, 500px);
+  padding: 1rem 1.25rem;
+}
+.mdx-editor [role="toolbar"] {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0.25rem 0.25rem 0 0;
+}

@@ -235,20 +235,48 @@ export default function DiagnosticEngine<C extends string>({
 
   const handleEmailToSelf = () => {
     const r = config.results[primary];
+    const name = intake.firstName || "Founder";
     const scoreLines = config.categoryOrder
       .map((c) => `  ${config.categories[c].label}: ${scores[c]}/100`)
       .join("\n");
 
-    const body = `${r.headline.toUpperCase()}
+    // Email body now mirrors the full result page so the user has a
+    // useful self-contained reference document, not just a teaser.
+    const sublineText = r.subline ? `\n${r.subline(name)}\n` : "";
+    const bulletsText = r.bullets.map((b) => `  - ${b}`).join("\n");
+    const costText =
+      r.costItems && r.costItems.length > 0
+        ? `\n\nWHAT THIS IS COSTING YOU\n${r.costItems
+            .map((c) => `  - ${c.title}: ${c.body}`)
+            .join("\n")}`
+        : "";
+    const movesText =
+      r.moves && r.moves.length > 0
+        ? `\n\nCONCRETE MOVES TO MAKE\n${r.moves
+            .map((m, i) => `  ${i + 1}. ${m}`)
+            .join("\n")}`
+        : "";
 
+    const body = `${r.headline.toUpperCase()}
+${sublineText}
 ${config.scoreLabel}: ${overallScore}/100
 
 CATEGORY SCORES
 ${scoreLines}
 
-The full breakdown \u2014 what this is costing you, the consequences, and your exact next steps \u2014 is delivered in your Growth Roadmap Session.
+WHAT THIS MEANS
+${r.meaning}
 
-Book your session: ${config.bookingUrl}`;
+WHAT YOU'RE LIKELY SEEING
+${bulletsText}
+
+YOUR HIGHEST-LEVERAGE NEXT MOVE
+${r.next}${costText}${movesText}
+
+\u2014\u2014\u2014\u2014
+
+Want a custom 30-day execution plan? Book a Growth Roadmap Session:
+${config.bookingUrl}`;
     window.location.href = `mailto:?subject=${encodeURIComponent(
       `My ${config.intro.headline} Results`
     )}&body=${encodeURIComponent(body)}`;
@@ -380,9 +408,13 @@ Book your session: ${config.bookingUrl}`;
     );
   }
 
-  /* Result — free version: pillar scores + bottleneck label only.
-     Full breakdown (meaning, consequences, cost analysis, next steps) is
-     intentionally gated behind the paid Growth Roadmap Session. */
+  /* Result — full breakdown.
+     Renders the per-category scores AND the substantive analysis
+     (meaning, observable signs, recommended next move). The Growth
+     Roadmap Session CTA below the result is now an upsell ("want a
+     custom 30-day plan to fix this?") rather than a gate ("the real
+     answer is behind the paywall") — every founder gets the actual
+     diagnosis they came for. */
   const r = config.results[primary];
   const name = intake.firstName || "Founder";
 
@@ -402,10 +434,11 @@ Book your session: ${config.bookingUrl}`;
         <h2 className="text-xl md:text-3xl font-bold text-black leading-tight max-w-xl mx-auto">
           {r.headline}
         </h2>
-        <p className="text-sm md:text-base text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
-          {name}, your top constraint is identified above. The full breakdown
-          is delivered in your Growth Roadmap Session.
-        </p>
+        {r.subline && (
+          <p className="text-sm md:text-base text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
+            {r.subline(name)}
+          </p>
+        )}
       </div>
 
       {/* Score grid */}
@@ -416,18 +449,140 @@ Book your session: ${config.bookingUrl}`;
         categories={config.categories}
       />
 
-      {/* CTA — paid breakdown sells inside the Growth Roadmap Session */}
+      {/* Full breakdown — what the bottleneck means, the observable
+          signs that confirm it, and the recommended next move. */}
+      <div className="space-y-8 mb-10 max-w-3xl mx-auto">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+            What this means
+          </p>
+          <p className="text-sm md:text-base text-gray-800 leading-relaxed">
+            {r.meaning}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+            What you&apos;re likely seeing
+          </p>
+          <ul className="space-y-3">
+            {r.bullets.map((bullet, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm md:text-base text-gray-800 leading-relaxed"
+              >
+                <span className="mt-2 w-1.5 h-1.5 rounded-full bg-black shrink-0" />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-gray-50 border-l-4 border-black p-6 rounded-r-lg">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+            Your highest-leverage next move
+          </p>
+          <p className="text-sm md:text-base text-gray-800 leading-relaxed">
+            {r.next}
+          </p>
+        </div>
+
+        {/* Optional deep-dive paragraphs — render only when populated.
+            These were originally future-proofed for a "paid" tier but
+            are surfaced freely now that the gate is gone. */}
+        {r.deep && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+              Going deeper
+            </p>
+            <p className="text-sm md:text-base text-gray-800 leading-relaxed">
+              {r.deep}
+            </p>
+          </div>
+        )}
+
+        {r.urgency && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+              Why this matters now
+            </p>
+            <p className="text-sm md:text-base text-gray-800 leading-relaxed">
+              {r.urgency}
+            </p>
+          </div>
+        )}
+
+        {r.costItems && r.costItems.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">
+              What this is costing you
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {r.costItems.map((item, i) => (
+                <div
+                  key={i}
+                  className="bg-white border border-gray-200 rounded-lg p-5"
+                >
+                  <h4 className="text-sm font-bold text-black mb-2">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {r.moves && r.moves.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+              Concrete moves to make
+            </p>
+            <ol className="space-y-3 counter-reset">
+              {r.moves.map((move, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-3 text-sm md:text-base text-gray-800 leading-relaxed"
+                >
+                  <span className="mt-0.5 w-6 h-6 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center shrink-0">
+                    {i + 1}
+                  </span>
+                  <span>{move}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {r.positioning && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+              Reframe the positioning
+            </p>
+            <p className="text-sm md:text-base text-gray-800 leading-relaxed">
+              {r.positioning}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* CTA — Growth Roadmap as upsell, not gate. Pitches the
+          custom 30-day plan + business-model deep dive a paid
+          session adds on top of this diagnostic, rather than
+          implying the diagnostic itself was incomplete. */}
       <div className="bg-black text-white p-6 md:p-8 rounded-lg mb-8 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
-          Get the Full Breakdown
+          Want a Custom Plan to Fix It?
         </p>
         <h3 className="text-xl md:text-2xl font-bold mb-3 max-w-xl mx-auto leading-snug">
-          Your full results &mdash; what this is costing you and your exact next
-          steps &mdash; are delivered in your Growth Roadmap Session.
+          Turn this diagnosis into a 30-day execution plan tailored to your
+          business in a Growth Roadmap Session.
         </h3>
         <p className="text-gray-300 mb-6 max-w-xl mx-auto leading-relaxed">
-          90 minutes. Full 30-day plan, business model deep dive, and a written
-          summary you keep.
+          90 minutes, 1:1. Business model deep dive, prioritized roadmap, and
+          a written summary you keep.
         </p>
         <a
           href={config.bookingUrl}
@@ -436,7 +591,7 @@ Book your session: ${config.bookingUrl}`;
           className="inline-flex items-center justify-center gap-2 bg-white text-black text-sm font-medium px-8 py-4 rounded hover:bg-gray-100 transition-colors"
         >
           <Calendar size={16} />
-          Book Now
+          Book Growth Roadmap Session
         </a>
       </div>
 

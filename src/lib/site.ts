@@ -53,19 +53,25 @@ export const BUSINESS = {
 export const BOOKING_URL = "https://cal.com/blacklinestrategypartners";
 
 /**
- * Stripe Checkout links — one per paid tier. Used by:
+ * Per-tier booking links (Cal.com). Used by:
  *  - Pricing page tier cards (each tier's "Book Now" / "Get Started")
- *  - Tool result CTAs that specifically promote the Growth Roadmap
- *    Session (FOCUS Scorecard, Clarity Index, Capital Conversion)
+ *  - Services bento grid (each tile's "Book this tier" link)
+ *  - Tool result CTAs that promote the Growth Roadmap Session
+ *    (FOCUS Scorecard, Clarity Index, Capital Conversion)
  *
- * Update these here only — Pricing.tsx and DiagnosticEngine.tsx
- * import them so a single edit flows everywhere.
+ * Update these here only — every importer reads from this constant
+ * so a single edit flows site-wide.
+ *
+ * Note: previously named STRIPE_CHECKOUT and pointed at Stripe
+ * direct-buy URLs. Now points at Cal.com so the booking,
+ * scheduling, and payment all happen inside one flow.
  */
-export const STRIPE_CHECKOUT = {
-  STRATEGY_SESSION: "https://buy.stripe.com/dRm3cx85Zevh6MOfMY18c00",
-  GROWTH_ROADMAP: "https://buy.stripe.com/dRm7sN4TN0Er6MOcAM18c01",
-  CORE_RETAINER: "https://buy.stripe.com/fZu5kF4TN3QD9Z0eIU18c04",
-  FRACTIONAL_CSO: "https://buy.stripe.com/eVq3cxgCv1IvgnobwI18c02",
+export const BOOKING_LINKS = {
+  STRATEGY_SESSION: "https://cal.com/blacklinestrategypartners/30min",
+  GROWTH_ROADMAP: "https://cal.com/blacklinestrategypartners/90-min",
+  CORE_RETAINER: "https://cal.com/blacklinestrategypartners/core-retainer",
+  FRACTIONAL_CSO:
+    "https://cal.com/blacklinestrategypartners/fractional-chief-strategy-officer",
 } as const;
 
 /** Build an absolute URL from a path. */

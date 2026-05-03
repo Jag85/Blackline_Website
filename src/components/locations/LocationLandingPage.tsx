@@ -8,7 +8,7 @@ import {
   localBusinessSchema,
   faqSchema,
 } from "@/lib/schema";
-import { BOOKING_URL, STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_URL, BOOKING_LINKS } from "@/lib/site";
 import type { LocationData } from "@/lib/locations";
 
 /**
@@ -198,14 +198,14 @@ export default function LocationLandingPage({ loc }: { loc: LocationData }) {
             title: "Strategy Session",
             description:
               "60 minutes. Diagnose your primary constraint and the highest-leverage next move. $297.",
-            href: STRIPE_CHECKOUT.STRATEGY_SESSION,
+            href: BOOKING_LINKS.STRATEGY_SESSION,
             cta: "Book Strategy Session",
           },
           {
             title: "Growth Roadmap Session",
             description:
               "90 minutes. Full 30-day execution plan and a written summary you keep. $997.",
-            href: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+            href: BOOKING_LINKS.GROWTH_ROADMAP,
             cta: "Book Growth Roadmap",
             primary: true,
           },

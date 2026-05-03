@@ -2,7 +2,7 @@
 
 import DiagnosticEngine from "./_shared/DiagnosticEngine";
 import type { DiagnosticConfig } from "./_shared/types";
-import { STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_LINKS } from "@/lib/site";
 
 type FciCategory = "clarity" | "direction" | "focus" | "execution";
 
@@ -73,8 +73,8 @@ const config: DiagnosticConfig<FciCategory> = {
   scoreLabel: "Clarity Score",
   primaryLabel: "Primary Constraint",
   // Tool result CTA copy specifically promotes the Growth Roadmap Session,
-  // so send users straight to that Stripe checkout.
-  bookingUrl: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+  // so send users straight to that Cal.com booking link.
+  bookingUrl: BOOKING_LINKS.GROWTH_ROADMAP,
   categoryOrder: ["clarity", "direction", "focus", "execution"],
   categories: {
     clarity: { label: "Clarity Gap", abbr: "Clarity" },

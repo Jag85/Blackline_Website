@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle, Compass, Map, Users, Briefcase } from "lucide-
 import AnimateOnScroll from "./AnimateOnScroll";
 import Tilt3D from "./motion/Tilt3D";
 import BorderBeam from "./motion/BorderBeam";
-import { STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_LINKS } from "@/lib/site";
 
 interface ServiceTile {
   name: string;
@@ -11,7 +11,7 @@ interface ServiceTile {
   description: string;
   includes: string[];
   icon: typeof Compass;
-  /** Stripe checkout for this tier */
+  /** Cal.com booking link for this tier */
   checkoutUrl: string;
   /** When true, this tile gets the large bento cell + border beam */
   featured?: boolean;
@@ -36,7 +36,7 @@ const services: ServiceTile[] = [
       "Best for first-time clients",
     ],
     icon: Compass,
-    checkoutUrl: STRIPE_CHECKOUT.STRATEGY_SESSION,
+    checkoutUrl: BOOKING_LINKS.STRATEGY_SESSION,
   },
   {
     name: "Growth Roadmap Session",
@@ -51,7 +51,7 @@ const services: ServiceTile[] = [
       "Includes diagnostic + bottleneck analysis",
     ],
     icon: Map,
-    checkoutUrl: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+    checkoutUrl: BOOKING_LINKS.GROWTH_ROADMAP,
     featured: true,
   },
   {
@@ -67,7 +67,7 @@ const services: ServiceTile[] = [
       "3-month minimum",
     ],
     icon: Users,
-    checkoutUrl: STRIPE_CHECKOUT.CORE_RETAINER,
+    checkoutUrl: BOOKING_LINKS.CORE_RETAINER,
   },
   {
     name: "Fractional CSO",
@@ -81,7 +81,7 @@ const services: ServiceTile[] = [
       "Offer, funnel, and growth strategy",
     ],
     icon: Briefcase,
-    checkoutUrl: STRIPE_CHECKOUT.FRACTIONAL_CSO,
+    checkoutUrl: BOOKING_LINKS.FRACTIONAL_CSO,
   },
 ];
 

@@ -11,7 +11,7 @@ import {
 import AnimateOnScroll from "./AnimateOnScroll";
 import BorderBeam from "./motion/BorderBeam";
 import MagneticButton from "./motion/MagneticButton";
-import { STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_LINKS } from "@/lib/site";
 
 interface Tier {
   name: string;
@@ -32,7 +32,7 @@ interface Tier {
   features: string[];
   /** CTA button label */
   cta: string;
-  /** Direct Stripe Checkout URL for this tier */
+  /** Direct Cal.com booking URL for this tier */
   checkoutUrl: string;
 }
 
@@ -50,7 +50,7 @@ const oneTimeTiers: Tier[] = [
       "Best for first-time clients",
     ],
     cta: "Book Now",
-    checkoutUrl: STRIPE_CHECKOUT.STRATEGY_SESSION,
+    checkoutUrl: BOOKING_LINKS.STRATEGY_SESSION,
   },
   {
     name: "Growth Roadmap Session",
@@ -68,7 +68,7 @@ const oneTimeTiers: Tier[] = [
       "Best path forward for most founders",
     ],
     cta: "Book Now",
-    checkoutUrl: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+    checkoutUrl: BOOKING_LINKS.GROWTH_ROADMAP,
   },
 ];
 
@@ -89,7 +89,7 @@ const retainerTiers: Tier[] = [
       "Priority access between sessions",
     ],
     cta: "Get Started",
-    checkoutUrl: STRIPE_CHECKOUT.CORE_RETAINER,
+    checkoutUrl: BOOKING_LINKS.CORE_RETAINER,
   },
   {
     name: "Fractional CSO",
@@ -105,7 +105,7 @@ const retainerTiers: Tier[] = [
       "Offer, funnel, and growth strategy",
     ],
     cta: "Get Started",
-    checkoutUrl: STRIPE_CHECKOUT.FRACTIONAL_CSO,
+    checkoutUrl: BOOKING_LINKS.FRACTIONAL_CSO,
   },
 ];
 
@@ -239,9 +239,9 @@ function PricingCard({ tier }: { tier: Tier }) {
         ))}
       </ul>
 
-      {/* CTA — direct Stripe Checkout for this tier. Featured tiers
-          get the magnetic-pull button to reinforce the recommended
-          path; non-featured stays as a normal button. */}
+      {/* CTA — direct Cal.com booking link for this tier. Featured
+          tiers get the magnetic-pull button to reinforce the
+          recommended path; non-featured stays as a normal button. */}
       {isFeatured ? (
         <MagneticButton
           href={tier.checkoutUrl}

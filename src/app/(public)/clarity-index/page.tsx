@@ -4,7 +4,7 @@ import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
-import { STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_LINKS } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
   title: "Founder Clarity Index",
@@ -55,7 +55,7 @@ export default function ClarityIndexPage() {
             title: "Book a Growth Roadmap Session",
             description:
               "90 minutes that produces a full 30-day execution plan, business model deep dive, and a written summary you keep.",
-            href: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+            href: BOOKING_LINKS.GROWTH_ROADMAP,
             cta: "Book a Session",
             primary: true,
           },

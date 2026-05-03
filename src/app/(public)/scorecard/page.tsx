@@ -4,7 +4,7 @@ import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
-import { STRIPE_CHECKOUT } from "@/lib/site";
+import { BOOKING_LINKS } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
   title: "FOCUS Founder Scorecard",
@@ -55,7 +55,7 @@ export default function ScorecardPage() {
             title: "Book a Growth Roadmap Session",
             description:
               "Walk through your results with a strategist and walk away with a 30-day plan to fix your bottleneck.",
-            href: STRIPE_CHECKOUT.GROWTH_ROADMAP,
+            href: BOOKING_LINKS.GROWTH_ROADMAP,
             cta: "Book a Session",
             primary: true,
           },

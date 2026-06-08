@@ -14,8 +14,13 @@ import { absoluteUrl, SITE_NAME } from "@/lib/site";
 
 const PAGE_SIZE = 9;
 
-// Always render at request time so newly published posts show up immediately
-export const dynamic = "force-dynamic";
+// ISR: cache the rendered list for 5 minutes instead of rebuilding on
+// every request. The publish action calls revalidatePath("/blog") so a
+// newly published post still appears immediately; this just spares the
+// Appwrite round-trip on the steady-state traffic in between. (Paginated
+// requests with ?page=N are rendered dynamically by Next regardless,
+// since the component reads searchParams.)
+export const revalidate = 300;
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;

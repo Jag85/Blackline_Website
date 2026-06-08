@@ -31,6 +31,31 @@ body {
   color: var(--color-foreground);
 }
 
+/* ── Reveal-up animation ──────────────────────────────────────────────
+   Used by WordReveal + above-the-fold hero copy. Deliberately built so
+   the element's BASE state is fully visible (opacity:1) — the animation
+   only plays the entrance. This is the key robustness property: CSS
+   animations run without JS, and if animations are unavailable or the
+   user prefers reduced motion, the content is simply visible. This is
+   the opposite of a framer-motion `initial={{opacity:0}}`, which leaves
+   content invisible whenever JS fails to hydrate. `backwards` fill-mode
+   shows the from-keyframe during any animation-delay. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-up {
+    animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+}
+
 /* MDXEditor — light theme overrides + content sizing.
    The editor's default styles are dark-ish; force a light surface that
    matches the rest of the admin chrome. The --mdx-min-h custom property

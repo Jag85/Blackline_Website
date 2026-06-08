@@ -54,10 +54,11 @@ export default function Contact() {
               {/* Contact image */}
               <div className="relative rounded-lg overflow-hidden shadow-lg hidden md:block">
                 <Image
-                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80&auto=format&fit=crop"
-                  alt="Professional handshake"
+                  src="/images/contact-handshake.jpg"
+                  alt="Founder and strategic advisor shaking hands"
                   width={500}
                   height={250}
+                  sizes="(min-width: 768px) 500px, 1px"
                   className="object-cover w-full h-[200px]"
                 />
               </div>

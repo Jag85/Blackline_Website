@@ -11,10 +11,25 @@ import GridBackground from "@/components/motion/GridBackground";
 import MagneticButton from "@/components/motion/MagneticButton";
 import { Target, TrendingUp, Zap, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/pageMetadata";
 
-// BlogTeaser fetches the latest published posts from Appwrite at request
-// time, so the home page must render dynamically.
-export const dynamic = "force-dynamic";
+// Homepage-tuned metadata. This is the single highest-value <title> on
+// the site, so it targets the terms we actually want to rank for rather
+// than falling back to the generic root-layout default. The root layout's
+// title template appends " | Blackline Strategy Partners".
+export const metadata = buildPageMetadata({
+  title: "Business Strategy Consultant for Founders",
+  description:
+    "Blackline Strategy Partners helps founders and business leaders find the one constraint holding back growth — and build a clear, executable path forward. Houston-based, serving founders nationwide.",
+  path: "/",
+});
+
+// ISR rather than force-dynamic. Only BlogTeaser reads from Appwrite; the
+// rest of the page is static. Caching the rendered page for 5 minutes
+// gives fast TTFB + CDN caching for the overwhelming majority of visits,
+// while the publish action's revalidatePath("/") flushes it instantly
+// when a new post is published.
+export const revalidate = 300;
 
 const pillars = [
   {

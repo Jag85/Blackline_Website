@@ -43,12 +43,24 @@ export default function AnimateOnScroll({
     const el = ref.current;
     if (!el) return;
 
-    // Fail-safe: if for any reason the IntersectionObserver never fires
-    // (no JS, observer not supported, the element is taller than the
-    // viewport's intersection threshold can ever reach, etc.), reveal
-    // the content after a short timeout. Hidden content is a much worse
-    // failure mode than a missed animation.
-    const fallback = window.setTimeout(() => setIsVisible(true), 1500);
+    // Reduced-motion users (and the accessibility tree) get the content
+    // immediately with no animation — never gate visibility on a scroll
+    // trigger for them.
+    const prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsVisible(true);
+      return;
+    }
+
+    // Fail-safe: if the IntersectionObserver never fires (observer
+    // unsupported, element taller than the threshold can ever satisfy,
+    // etc.), reveal the content after a short timeout. Hidden content is
+    // a far worse failure mode than a missed animation, so this is kept
+    // tight (700ms) to minimize any window of invisible primary copy.
+    const fallback = window.setTimeout(() => setIsVisible(true), 700);
 
     if (typeof IntersectionObserver === "undefined") {
       // Let the fallback timeout reveal it instead of double-setting state.

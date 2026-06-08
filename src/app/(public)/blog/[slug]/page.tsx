@@ -18,7 +18,20 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamic = "force-dynamic";
+// ISR: each post is rendered on demand and cached for 5 minutes.
+// `revalidatePath("/blog/<slug>")` in the publish/update action flushes a
+// post the moment it's edited, so the cache window only affects passive
+// traffic.
+export const revalidate = 300;
+
+// Returning [] (rather than omitting this) opts the dynamic segment into
+// the static/ISR pipeline with on-demand params: nothing is pre-rendered
+// at build (the build env has no Appwrite credentials), but each slug
+// requested at runtime is rendered once and cached for `revalidate`
+// seconds instead of being fully server-rendered on every hit.
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,

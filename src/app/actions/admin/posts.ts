@@ -198,6 +198,7 @@ export async function createPostAction(
     // recoverable error surfaced to the client), so keeping the
     // list short minimizes blast radius.
     safeRevalidate([
+      "/",
       "/blog",
       `/blog/${fields.slug}`,
       "/admin",
@@ -285,6 +286,7 @@ export async function updatePostAction(
       ...(featuredImageId !== undefined ? { featuredImageId } : {}),
     });
     safeRevalidate([
+      "/",
       "/blog",
       `/blog/${fields.slug}`,
       `/blog/${existing.slug}`,
@@ -313,6 +315,7 @@ export async function deletePostAction(postId: string): Promise<void> {
   }
   await deletePost(postId);
   safeRevalidate([
+    "/",
     "/blog",
     ...(post ? [`/blog/${post.slug}`] : []),
     "/admin",

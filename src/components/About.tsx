@@ -31,10 +31,11 @@ export default function About() {
           <AnimateOnScroll variant="slide-left">
             <div className="relative rounded-lg overflow-hidden shadow-xl">
               <Image
-                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80&auto=format&fit=crop"
-                alt="Strategic planning and consulting"
+                src="/images/about-planning.jpg"
+                alt="Strategic planning session at Blackline Strategy Partners"
                 width={600}
                 height={400}
+                sizes="(min-width: 768px) 600px, 100vw"
                 className="object-cover w-full h-[400px]"
               />
             </div>

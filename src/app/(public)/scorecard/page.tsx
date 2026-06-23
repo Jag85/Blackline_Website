@@ -7,9 +7,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_LINKS } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "FOCUS Founder Scorecard",
+  title: "FOCUS Founder Scorecard \u2014 Free Bottleneck Diagnostic",
   description:
-    "Take the FOCUS Founder Scorecard \u2014 a free diagnostic to identify your primary bottleneck and unlock clarity on what to fix next.",
+    "Take the free FOCUS Founder Scorecard: a 10-question diagnostic that pinpoints the primary bottleneck limiting your growth across vision, offer, acquisition, unit economics, and systems.",
   path: "/scorecard",
 });
 

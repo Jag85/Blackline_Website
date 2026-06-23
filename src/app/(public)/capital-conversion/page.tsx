@@ -7,9 +7,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_LINKS } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "Capital Conversion Compass",
+  title: "Capital Conversion Compass — Free Conversion Diagnostic",
   description:
-    "A free diagnostic for founders whose business, investor, or sales conversations aren't converting into outcomes. Identify the structural gap costing you the most.",
+    "Free Capital Conversion Compass for founders: find the structural gap — positioning, audience, offer, trust, or stage — stopping your sales and investor conversations from converting.",
   path: "/capital-conversion",
 });
 

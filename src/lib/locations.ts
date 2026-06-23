@@ -59,7 +59,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     stateAbbr: "TX",
     geo: { latitude: 29.7604, longitude: -95.3698 },
     timezone: "America/Chicago",
-    metaTitle: "Houston Business Strategy Consultant | Blackline",
+    metaTitle: "Houston Business Strategy Consultant",
     metaDescription:
       "Houston-based strategy consulting for founders running energy, medical, services, and B2B companies. Diagnose your bottleneck and ship a 30-day plan.",
     h1: "Houston Business Strategy Consultant",
@@ -138,7 +138,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     stateAbbr: "TX",
     geo: { latitude: 30.2672, longitude: -97.7431 },
     timezone: "America/Chicago",
-    metaTitle: "Austin Business Strategy Consultant | Blackline",
+    metaTitle: "Austin Business Strategy Consultant",
     metaDescription:
       "Strategy consulting for Austin founders — bootstrapped SaaS, agencies, and creative-economy businesses. Cut through the noise of the local startup scene.",
     h1: "Austin Business Strategy Consultant",
@@ -213,7 +213,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     stateAbbr: "TX",
     geo: { latitude: 32.7767, longitude: -96.797 },
     timezone: "America/Chicago",
-    metaTitle: "Dallas Business Strategy Consultant | Blackline",
+    metaTitle: "Dallas Business Strategy Consultant",
     metaDescription:
       "Strategy consulting for Dallas-Fort Worth founders selling into corporate buyers, financial services, and B2B markets. Build a real plan past the founder bottleneck.",
     h1: "Dallas Business Strategy Consultant",
@@ -289,7 +289,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     stateAbbr: "TX",
     geo: { latitude: 29.4241, longitude: -98.4936 },
     timezone: "America/Chicago",
-    metaTitle: "San Antonio Business Strategy Consultant | Blackline",
+    metaTitle: "San Antonio Business Strategy Consultant",
     metaDescription:
       "Strategy consulting for San Antonio founders in cybersecurity, defense services, healthcare, and tourism. Build a plan past the local-market ceiling.",
     h1: "San Antonio Business Strategy Consultant",

@@ -39,11 +39,14 @@ export async function generateMetadata({
   const { page: pageParam } = await searchParams;
   const page = parsePageParam(pageParam);
   const path = page > 1 ? `/blog?page=${page}` : "/blog";
-  const title = page > 1 ? `Blog (Page ${page})` : "Blog";
+  const title =
+    page > 1
+      ? `Founder Strategy Blog (Page ${page})`
+      : "Founder Strategy Blog & Growth Insights";
   return buildPageMetadata({
     title,
     description:
-      "Strategy insights, founder lessons, and growth essays from the Blackline team.",
+      "Business strategy essays, founder lessons, and growth insights from Blackline Strategy Partners — practical thinking on clarity, constraints, and momentum.",
     path,
   });
 }

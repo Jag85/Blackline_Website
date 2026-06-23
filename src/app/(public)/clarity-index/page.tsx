@@ -7,9 +7,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_LINKS } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "Founder Clarity Index",
+  title: "Founder Clarity Index — Free Strategic Clarity Test",
   description:
-    "A free assessment that measures your strategic clarity across the dimensions that matter most for founders.",
+    "Take the free Founder Clarity Index: a 10-question assessment that scores your strategic clarity across vision, direction, focus, and execution — and reveals your #1 gap.",
   path: "/clarity-index",
 });
 

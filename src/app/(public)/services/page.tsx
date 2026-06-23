@@ -9,9 +9,9 @@ import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
 import { BOOKING_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "Services",
+  title: "Strategy Consulting Services for Founders",
   description:
-    "From diagnostic sessions to fractional CSO advisory, explore Blackline's strategic consulting services for founders.",
+    "Explore Blackline's strategy consulting services for founders — from a $297 Strategy Session and $997 Growth Roadmap to monthly advisory and Fractional CSO.",
   path: "/services",
 });
 
@@ -67,7 +67,7 @@ export default function ServicesPage() {
               What We Offer
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Our Services
+              Strategy Consulting Services for Founders
             </h1>
             <p className="text-gray-600 max-w-2xl mb-6">
               Not sure which is right for you? See pricing for each tier or

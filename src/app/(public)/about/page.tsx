@@ -7,9 +7,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "About",
+  title: "About Our Founder Strategy Practice",
   description:
-    "Learn how Blackline Strategy Partners delivers clarity, strategy, and momentum for founders and business leaders.",
+    "Meet Blackline Strategy Partners — founder-led business strategy consulting for founders and CEOs. Led by Jarrell Green in Houston, serving clients nationwide.",
   path: "/about",
 });
 
@@ -29,7 +29,7 @@ export default function AboutPage() {
               Who We Are
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black">
-              About Blackline
+              About Blackline Strategy Partners
             </h1>
           </AnimateOnScroll>
         </div>

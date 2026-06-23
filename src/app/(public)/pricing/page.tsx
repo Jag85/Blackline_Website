@@ -8,9 +8,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "Pricing",
+  title: "Strategy Consulting Pricing & Advisory Plans",
   description:
-    "Transparent pricing for strategy sessions and monthly advisory retainers. Start at $297 for a Strategy Session, or $997 for a Growth Roadmap Session.",
+    "Transparent strategy consulting pricing for founders: Strategy Session $297, Growth Roadmap $997, monthly advisory from $1,500/mo, and Fractional CSO from $5,000/mo.",
   path: "/pricing",
 });
 
@@ -86,7 +86,7 @@ export default function PricingPage() {
               Investment
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Pricing
+              Strategy Consulting Pricing
             </h1>
             <p className="text-gray-600 max-w-2xl mb-6">
               Want to learn more first? Read about{" "}

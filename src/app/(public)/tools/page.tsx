@@ -8,9 +8,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
-  title: "Free Tools",
+  title: "Free Strategy Diagnostics for Founders",
   description:
-    "Free strategic tools and diagnostics for founders. Identify bottlenecks, sharpen your strategy, and measure your clarity.",
+    "Free strategy tools for founders: diagnose your primary growth bottleneck, measure strategic clarity, and find what's blocking conversions — results in minutes.",
   path: "/tools",
 });
 
@@ -57,7 +57,7 @@ export default function ToolsPage() {
               Free Strategic Tools
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Tools & Diagnostics
+              Free Strategy Tools for Founders
             </h1>
             <p className="text-gray-600 max-w-2xl">
               Get clarity on where you are and what to do next. Use any of our

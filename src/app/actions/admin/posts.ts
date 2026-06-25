@@ -23,12 +23,25 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
 }
 
 /**
- * Wrap revalidatePath in a try/catch and only revalidate the essential
- * paths (the blog list, the post page, the admin list). The feeds /
- * sitemap / llms.txt routes are all force-dynamic and re-fetch on the
- * next request anyway — calling revalidatePath on them adds risk
- * (revalidatePath crashes the action if the path resolution throws,
- * with no error surfaced to the client) for no gain.
+ * Crawl/syndication routes that now use ISR (revalidate) rather than
+ * force-dynamic. Flushing them on publish makes a new post appear in the
+ * sitemap, feeds, and llms.txt immediately instead of waiting for the
+ * hourly/10-min revalidate window. Each path is revalidated inside its
+ * own try/catch (see safeRevalidate) so one bad path can't crash the
+ * publish action.
+ */
+const CRAWL_PATHS = [
+  "/sitemap.xml",
+  "/llms.txt",
+  "/llms-full.txt",
+  "/feed.xml",
+  "/feed.json",
+];
+
+/**
+ * Wrap revalidatePath in a per-path try/catch so a single failing path
+ * can't crash the whole action (revalidatePath throws on some path
+ * resolutions, with no error surfaced to the client).
  */
 function safeRevalidate(paths: string[]): void {
   for (const p of paths) {
@@ -203,6 +216,7 @@ export async function createPostAction(
       `/blog/${fields.slug}`,
       "/admin",
       "/admin/posts",
+      ...CRAWL_PATHS,
     ]);
     // Don't `redirect()` from inside the server action. Next.js 16 +
     // Netlify can return 403 on the post-redirect RSC fetch in some
@@ -292,6 +306,7 @@ export async function updatePostAction(
       `/blog/${existing.slug}`,
       "/admin",
       "/admin/posts",
+      ...CRAWL_PATHS,
     ]);
     return { ok: true, message: "Post saved.", postId };
   } catch (err) {
@@ -320,6 +335,7 @@ export async function deletePostAction(postId: string): Promise<void> {
     ...(post ? [`/blog/${post.slug}`] : []),
     "/admin",
     "/admin/posts",
+    ...CRAWL_PATHS,
   ]);
   redirect("/admin/posts");
 }

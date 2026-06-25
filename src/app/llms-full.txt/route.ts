@@ -1,7 +1,9 @@
 import { listPublishedPosts } from "@/lib/appwrite/posts";
 import { absoluteUrl } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+// ISR (not force-dynamic) — see /llms.txt for the rationale: reliable
+// cached serving + hourly/publish-triggered refresh.
+export const revalidate = 3600;
 
 /**
  * llms-full.txt — the deep-content companion to llms.txt. Ships every

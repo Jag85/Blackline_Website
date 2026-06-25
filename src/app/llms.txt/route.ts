@@ -2,8 +2,12 @@ import { listPublishedPosts } from "@/lib/appwrite/posts";
 import { absoluteUrl } from "@/lib/site";
 import { LOCATION_LIST } from "@/lib/locations";
 
-// Always render at request time so newly published posts appear in /llms.txt.
-export const dynamic = "force-dynamic";
+// ISR (not force-dynamic): pre-rendered into the deploy so it's served as
+// a stable cached response, and refreshed hourly (or immediately when the
+// publish action revalidates "/llms.txt") to pick up new posts. A
+// per-request function can cold-fail and 404, which we want to avoid for
+// a crawl-facing route.
+export const revalidate = 3600;
 
 /**
  * llms.txt — emerging spec (https://llmstxt.org) that gives LLMs a curated

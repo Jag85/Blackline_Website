@@ -4,7 +4,7 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
-import { breadcrumbSchema } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
 export const metadata = buildPageMetadata({
@@ -67,6 +67,36 @@ const offerCatalog = {
   ],
 };
 
+/**
+ * Pricing FAQ. The lead question targets "how much does a business
+ * consultant cost" (110/mo, KD 6) and "business consulting rates"
+ * (140/mo, KD 2) — both exact-intent, near-zero difficulty, and a
+ * natural fit for a pricing page. Rendered visibly AND exposed as
+ * FAQPage JSON-LD for rich-result eligibility.
+ */
+const pricingFaqs = [
+  {
+    question: "How much does a business consultant cost?",
+    answer:
+      "Business consultant pricing varies widely by scope and engagement model. At Blackline Strategy Partners, a one-time Strategy Session is $297, a 90-minute Growth Roadmap Session is $997, and ongoing advisory runs from $1,500/month for the Core Retainer up to $5,000/month for an embedded Fractional CSO. Traditional management-consulting firms often bill $200–$500+ per hour or five-figure monthly retainers, so a fixed-scope session is usually the most cost-effective way for a founder to start.",
+  },
+  {
+    question: "What are typical business consulting rates?",
+    answer:
+      "Hourly business consulting rates typically range from $100 to $500+ depending on the consultant's experience and the size of the engagement. Blackline uses flat, transparent pricing instead of hourly billing, so you know the total cost up front — sessions are $297 and $997, and monthly advisory runs $1,500–$5,000.",
+  },
+  {
+    question: "How much does a strategy session cost?",
+    answer:
+      "Blackline's entry-level Strategy Session is $297 for 60 minutes — a focused diagnostic that identifies your primary constraint and the highest-leverage next move. The 90-minute Growth Roadmap Session is $997 and includes a written 30-day plan you keep.",
+  },
+  {
+    question: "Do you offer ongoing advisory or only one-time sessions?",
+    answer:
+      "Both. One-time Strategy and Growth Roadmap Sessions are ideal for a specific decision or plan. For sustained support, the Core Retainer is $1,500/month (3-month minimum) with 2–3 sessions per month plus async support, and the Fractional CSO engagement is $5,000/month with a strategist embedded in your business.",
+  },
+];
+
 export default function PricingPage() {
   return (
     <div className="pt-28 md:pt-32">
@@ -77,6 +107,7 @@ export default function PricingPage() {
             { name: "Pricing", path: "/pricing" },
           ]),
           offerCatalog,
+          faqSchema(pricingFaqs),
         ]}
       />
       <div className="bg-gray-50 py-16 md:py-24">
@@ -109,6 +140,35 @@ export default function PricingPage() {
         </div>
       </div>
       <Pricing />
+
+      {/* Pricing FAQ — targets "how much does a business consultant cost"
+          and "business consulting rates". Also emitted as FAQPage schema. */}
+      <section className="py-20 md:py-28 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-6">
+          <AnimateOnScroll variant="fade-up">
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-500 mb-4">
+              Pricing FAQ
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-10">
+              How much does a business consultant cost?
+            </h2>
+          </AnimateOnScroll>
+          <div className="space-y-6">
+            {pricingFaqs.map((f, i) => (
+              <AnimateOnScroll key={f.question} variant="fade-up" delay={i * 60}>
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-base font-bold text-black mb-2">
+                    {f.question}
+                  </h3>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {f.answer}
+                  </p>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <NextStepsCTA
         eyebrow="Still Deciding?"

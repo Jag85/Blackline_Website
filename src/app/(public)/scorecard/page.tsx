@@ -33,8 +33,11 @@ export default function ScorecardPage() {
               FOCUS Founder Scorecard
             </h1>
             <p className="text-gray-600 max-w-2xl">
-              A quick diagnostic that helps you identify your primary
-              bottleneck and where to direct your energy next.
+              The FOCUS Founder Scorecard is a free 10-question diagnostic
+              that pinpoints the primary <strong>business bottleneck</strong>{" "}
+              limiting your growth — across founder vision, offer clarity,
+              customer acquisition, unit economics, and systems — and shows
+              you exactly where to direct your energy next.
             </p>
           </AnimateOnScroll>
         </div>

@@ -61,7 +61,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     timezone: "America/Chicago",
     metaTitle: "Houston Business Strategy Consultant",
     metaDescription:
-      "Houston-based strategy consulting for founders running energy, medical, services, and B2B companies. Diagnose your bottleneck and ship a 30-day plan.",
+      "Business consultant in Houston for founders in energy, medical, services, and B2B. Diagnose your primary bottleneck and leave with a practical 30-day growth plan.",
     h1: "Houston Business Strategy Consultant",
     eyebrow: "Houston · Texas",
     lede:
@@ -140,7 +140,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     timezone: "America/Chicago",
     metaTitle: "Austin Business Strategy Consultant",
     metaDescription:
-      "Strategy consulting for Austin founders — bootstrapped SaaS, agencies, and creative-economy businesses. Cut through the noise of the local startup scene.",
+      "Business consultant in Austin for bootstrapped SaaS, agency, and creative-economy founders. Cut through startup-scene noise with a clear, executable growth plan.",
     h1: "Austin Business Strategy Consultant",
     eyebrow: "Austin · Texas",
     lede:
@@ -215,7 +215,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     timezone: "America/Chicago",
     metaTitle: "Dallas Business Strategy Consultant",
     metaDescription:
-      "Strategy consulting for Dallas-Fort Worth founders selling into corporate buyers, financial services, and B2B markets. Build a real plan past the founder bottleneck.",
+      "Business consultant in Dallas–Fort Worth for founders selling into enterprise, financial services, and B2B markets. Build a real plan past the founder bottleneck.",
     h1: "Dallas Business Strategy Consultant",
     eyebrow: "Dallas–Fort Worth · Texas",
     lede:
@@ -291,7 +291,7 @@ export const LOCATIONS: Record<LocationKey, LocationData> = {
     timezone: "America/Chicago",
     metaTitle: "San Antonio Business Strategy Consultant",
     metaDescription:
-      "Strategy consulting for San Antonio founders in cybersecurity, defense services, healthcare, and tourism. Build a plan past the local-market ceiling.",
+      "Business consultant in San Antonio for founders in cybersecurity, defense, healthcare, and tourism. Build a plan past the local-market ceiling.",
     h1: "San Antonio Business Strategy Consultant",
     eyebrow: "San Antonio · Texas",
     lede:

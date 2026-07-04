@@ -7,9 +7,9 @@ import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
 
 export const metadata = buildPageMetadata({
-  title: "Book a Founder Strategy Session",
+  title: "Book a Strategy Consultation for Founders",
   description:
-    "Contact Blackline Strategy Partners to book a strategy session for your business. Founder-focused strategy consulting in Houston, serving clients nationwide — we reply within 24 hours.",
+    "Book a strategy consultation with Blackline Strategy Partners — founder-focused business strategy consulting in Houston, serving clients nationwide. We reply within 24 hours.",
   path: "/contact",
 });
 
@@ -29,7 +29,7 @@ export default function ContactPage() {
               Get Started
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Book a Strategy Session
+              Book a Strategy Consultation
             </h1>
             <p className="text-gray-600 max-w-2xl mb-6">
               Not ready to book? Explore our{" "}

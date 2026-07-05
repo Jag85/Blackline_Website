@@ -1,5 +1,5 @@
 import { listPublishedPosts } from "@/lib/appwrite/posts";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, BUSINESS } from "@/lib/site";
 
 // ISR (not force-dynamic) — see /llms.txt for the rationale: reliable
 // cached serving + hourly/publish-triggered refresh.
@@ -35,9 +35,20 @@ ${p.content}
 
   const body = `# Blackline Strategy Partners — Full Content
 
-> Strategic consulting firm helping founders and business leaders cut through noise, identify bottlenecks, and build clear paths to growth. Based in Houston, TX.
+> Blackline Strategy Partners is a business strategy consulting and fractional Chief Strategy Officer (CSO) firm for founders, headquartered in Houston, Texas and serving clients across the United States. Founded and led by ${BUSINESS.founder}. It helps founders find the single primary constraint limiting growth and build an executable plan to remove it.
 
-This document contains all published blog content from blacklinestrategypartners.com in a single file for LLM ingestion. Pricing, service details, and tool descriptions live at the URLs referenced in [/llms.txt](${absoluteUrl("/llms.txt")}).
+## Key facts
+
+- Name: Blackline Strategy Partners, Inc.
+- Founder: ${BUSINESS.founder}
+- Location: Houston, Texas, USA — works remotely with founders nationwide.
+- Method: Constraint-first diagnosis (Theory of Constraints applied to a founder's business).
+- Services & pricing: Strategy Session ($297, 60 min), Growth Roadmap Session ($997, 90 min), Core Retainer ($1,500/month, 3-month minimum), Fractional CSO ($5,000/month).
+- Free tools: FOCUS Founder Scorecard, Founder Clarity Index, Capital Conversion Compass.
+- Texas location pages: Houston, Austin, Dallas–Fort Worth, San Antonio.
+- Contact: ${BUSINESS.email}
+
+This document contains all published blog content from blacklinestrategypartners.com in a single file for LLM ingestion. Pricing, service, tool, and location details live at the URLs referenced in [/llms.txt](${absoluteUrl("/llms.txt")}).
 
 # Blog Posts
 

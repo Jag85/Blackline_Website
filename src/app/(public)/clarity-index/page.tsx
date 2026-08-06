@@ -1,6 +1,7 @@
 import FounderClarityIndex from "@/components/tools/FounderClarityIndex";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import RelatedLinks from "@/components/RelatedLinks";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -46,6 +47,35 @@ export default function ClarityIndexPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      {/* Contextual in-body internal links — sibling diagnostics +
+          the commercial pages. Sitewide nav links are discounted; these
+          are what actually pass equity between related pages. */}
+      <RelatedLinks
+        eyebrow="Related"
+        heading="Other free founder diagnostics"
+        tone="gray"
+        links={[
+          {
+            href: "/scorecard",
+            label: "FOCUS Founder Scorecard",
+            description:
+              "Pinpoint the primary business bottleneck limiting growth across vision, offer, acquisition, unit economics, and systems.",
+          },
+          {
+            href: "/capital-conversion",
+            label: "Capital Conversion Compass",
+            description:
+              "Find the structural gap keeping your sales and investor conversations from converting.",
+          },
+          {
+            href: "/services",
+            label: "Strategy consulting services",
+            description:
+              "See how a Strategy Session, Growth Roadmap, or Fractional CSO engagement turns clarity into execution.",
+          },
+        ]}
+      />
 
       <NextStepsCTA
         heading="Where to go from here"

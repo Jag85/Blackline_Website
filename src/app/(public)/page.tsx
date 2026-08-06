@@ -6,6 +6,8 @@ import Testimonials from "@/components/Testimonials";
 import BlogTeaser from "@/components/BlogTeaser";
 import StatsStrip from "@/components/StatsStrip";
 import IndustryMarquee from "@/components/IndustryMarquee";
+import RelatedLinks from "@/components/RelatedLinks";
+import { LOCATION_LIST } from "@/lib/locations";
 import Tilt3D from "@/components/motion/Tilt3D";
 import GridBackground from "@/components/motion/GridBackground";
 import MagneticButton from "@/components/motion/MagneticButton";
@@ -153,6 +155,20 @@ export default async function Home() {
 
       {/* Who we work with */}
       <BestFitClients />
+
+      {/* In-body links to the location pages. They otherwise only get
+          sitewide header/footer links, which search engines discount —
+          this passes real contextual equity from the highest-authority
+          page on the site. */}
+      <RelatedLinks
+        eyebrow="Texas Locations"
+        heading="Business strategy consulting across Texas"
+        links={LOCATION_LIST.map((l) => ({
+          href: `/${l.urlSlug}`,
+          label: `Business consultant in ${l.city}`,
+          description: `${l.industries.slice(0, 3).join(", ")}, and more.`,
+        }))}
+      />
 
       {/* Social proof */}
       <Testimonials />

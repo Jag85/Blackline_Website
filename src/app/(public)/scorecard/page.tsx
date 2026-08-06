@@ -1,6 +1,7 @@
 import FocusScorecard from "@/components/tools/FocusScorecard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import RelatedLinks from "@/components/RelatedLinks";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -49,6 +50,34 @@ export default function ScorecardPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      {/* Contextual in-body internal links — sibling diagnostics +
+          commercial pages, with descriptive keyword-bearing anchors. */}
+      <RelatedLinks
+        eyebrow="Related"
+        heading="Other free founder diagnostics"
+        tone="gray"
+        links={[
+          {
+            href: "/clarity-index",
+            label: "Founder Clarity Index",
+            description:
+              "Score your strategic clarity across vision, direction, focus, and execution — and find your biggest gap.",
+          },
+          {
+            href: "/capital-conversion",
+            label: "Capital Conversion Compass",
+            description:
+              "Find the structural gap keeping your sales and investor conversations from converting.",
+          },
+          {
+            href: "/pricing",
+            label: "Strategy consulting pricing",
+            description:
+              "See what it costs to work through your bottleneck with a strategist — sessions from $297.",
+          },
+        ]}
+      />
 
       <NextStepsCTA
         heading="Got your results? Here's what's next."

@@ -8,8 +8,9 @@ import {
   localBusinessSchema,
   faqSchema,
 } from "@/lib/schema";
+import RelatedLinks from "@/components/RelatedLinks";
 import { BOOKING_URL, BOOKING_LINKS } from "@/lib/site";
-import type { LocationData } from "@/lib/locations";
+import { LOCATION_LIST, type LocationData } from "@/lib/locations";
 
 /**
  * Shared layout for a city landing page. Content is fully driven by the
@@ -188,6 +189,48 @@ export default function LocationLandingPage({ loc }: { loc: LocationData }) {
           </div>
         </div>
       </section>
+
+      {/* In-body links to the commercial pages. The hero only links to
+          /services, so these give each location page real contextual
+          outbound equity with keyword-bearing anchors. */}
+      <RelatedLinks
+        eyebrow="Next Steps"
+        heading={`Working with a business consultant in ${loc.city}`}
+        links={[
+          {
+            href: "/services",
+            label: "Strategy consulting services",
+            description:
+              "Strategy Sessions, Growth Roadmaps, monthly advisory, and Fractional CSO engagements.",
+          },
+          {
+            href: "/pricing",
+            label: "Strategy consulting pricing",
+            description:
+              "Flat, transparent pricing — sessions from $297, ongoing advisory from $1,500/month.",
+          },
+          {
+            href: "/scorecard",
+            label: "Free FOCUS Founder Scorecard",
+            description:
+              "Diagnose the primary business bottleneck limiting your growth in about five minutes.",
+          },
+        ]}
+      />
+
+      {/* Sibling-city cross-links. Without these the location pages are
+          siloed from each other and rely entirely on sitewide nav. */}
+      <RelatedLinks
+        eyebrow="Other Texas Metros"
+        heading="Business strategy consulting elsewhere in Texas"
+        tone="gray"
+        columns={3}
+        links={LOCATION_LIST.filter((l) => l.key !== loc.key).map((l) => ({
+          href: `/${l.urlSlug}`,
+          label: `Business consultant in ${l.city}`,
+          description: `${l.industries.slice(0, 3).join(", ")}, and more.`,
+        }))}
+      />
 
       <NextStepsCTA
         eyebrow={`Working with ${loc.city} Founders`}

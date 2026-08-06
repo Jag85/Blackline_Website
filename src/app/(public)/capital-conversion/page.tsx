@@ -1,6 +1,7 @@
 import CapitalConversionCompass from "@/components/tools/CapitalConversionCompass";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import RelatedLinks from "@/components/RelatedLinks";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -47,6 +48,34 @@ export default function CapitalConversionPage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      {/* Contextual in-body internal links — sibling diagnostics +
+          commercial pages, with descriptive keyword-bearing anchors. */}
+      <RelatedLinks
+        eyebrow="Related"
+        heading="Other free founder diagnostics"
+        tone="gray"
+        links={[
+          {
+            href: "/scorecard",
+            label: "FOCUS Founder Scorecard",
+            description:
+              "Pinpoint the primary business bottleneck limiting growth across five areas of your business.",
+          },
+          {
+            href: "/clarity-index",
+            label: "Founder Clarity Index",
+            description:
+              "Score your strategic clarity across vision, direction, focus, and execution.",
+          },
+          {
+            href: "/services",
+            label: "Strategy consulting services",
+            description:
+              "See how a Strategy Session or Growth Roadmap turns a diagnosed gap into an executable plan.",
+          },
+        ]}
+      />
 
       <NextStepsCTA
         heading="Ready to put this into action?"

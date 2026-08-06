@@ -1,10 +1,12 @@
 import About from "@/components/About";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import NextStepsCTA from "@/components/NextStepsCTA";
+import RelatedLinks from "@/components/RelatedLinks";
 import JsonLd from "@/components/JsonLd";
 import { buildPageMetadata } from "@/lib/pageMetadata";
 import { breadcrumbSchema } from "@/lib/schema";
 import { BOOKING_URL } from "@/lib/site";
+import { LOCATION_LIST } from "@/lib/locations";
 
 export const metadata = buildPageMetadata({
   title: "About Our Founder Strategy Practice",
@@ -35,6 +37,46 @@ export default function AboutPage() {
         </div>
       </div>
       <About />
+
+      {/* In-body links to the commercial pages — /about previously had
+          zero contextual outbound links (nav/footer only). */}
+      <RelatedLinks
+        eyebrow="Explore"
+        heading="How we work with founders"
+        tone="gray"
+        links={[
+          {
+            href: "/services",
+            label: "Strategy consulting services",
+            description:
+              "Strategy Sessions, Growth Roadmaps, monthly advisory, and Fractional CSO engagements.",
+          },
+          {
+            href: "/pricing",
+            label: "Strategy consulting pricing",
+            description:
+              "Transparent flat pricing — sessions from $297, advisory from $1,500/month.",
+          },
+          {
+            href: "/tools",
+            label: "Free founder diagnostics",
+            description:
+              "Diagnose your bottleneck, measure strategic clarity, or find your conversion gap.",
+          },
+        ]}
+      />
+
+      {/* Body links into the location pages. These otherwise only receive
+          sitewide header/footer links, which search engines discount. */}
+      <RelatedLinks
+        eyebrow="Texas Locations"
+        heading="Business strategy consulting across Texas"
+        links={LOCATION_LIST.map((l) => ({
+          href: `/${l.urlSlug}`,
+          label: `Business consultant in ${l.city}`,
+          description: l.lede.split(". ").slice(0, 1).join(". ") + ".",
+        }))}
+      />
 
       <NextStepsCTA
         eyebrow="Get Started"

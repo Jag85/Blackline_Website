@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import RelatedLinks from "@/components/RelatedLinks";
 import ScrollProgress from "@/components/motion/ScrollProgress";
 import JsonLd from "@/components/JsonLd";
 import { getPostBySlug } from "@/lib/appwrite/posts";
@@ -170,6 +171,36 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           </div>
         </section>
+
+        {/* Contextual links out of the article. Blog posts previously
+            linked only back to /blog, so they passed no equity to the
+            commercial pages and sat in their own silo — which also hurts
+            their own chance of being indexed. */}
+        <RelatedLinks
+          eyebrow="Put This Into Practice"
+          heading="Related tools and services"
+          tone="gray"
+          links={[
+            {
+              href: "/scorecard",
+              label: "Free FOCUS Founder Scorecard",
+              description:
+                "Diagnose the primary business bottleneck limiting your growth in about five minutes.",
+            },
+            {
+              href: "/services",
+              label: "Strategy consulting services",
+              description:
+                "Strategy Sessions, Growth Roadmaps, monthly advisory, and Fractional CSO engagements.",
+            },
+            {
+              href: "/pricing",
+              label: "Strategy consulting pricing",
+              description:
+                "Flat, transparent pricing — sessions from $297, ongoing advisory from $1,500/month.",
+            },
+          ]}
+        />
 
         <section className="py-16 md:py-24 bg-black text-white">
           <div className="max-w-3xl mx-auto px-6 text-center">
